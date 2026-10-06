@@ -1898,9 +1898,22 @@
     }
 
     async function openSnDWindow() { 
-      if (ipcRenderer) await ipcRenderer.invoke('launch-snd-portal'); 
-      else window.open('https://snd.example.com', '_blank');
-    }
+  if (ipcRenderer) {
+    await ipcRenderer.invoke('launch-snd-portal'); 
+  } else {
+    // Web Browser me direct Mayfair SnD Pro khulega:
+    window.open('https://mayfair.sndpro.net', '_blank');
+  }
+}
+
+async function openDSSWindow() { 
+  if (ipcRenderer) {
+    await ipcRenderer.invoke('launch-dss-portal'); 
+  } else {
+    // Web Browser me direct Centegy DSS Portal khulega:
+    window.open('https://dss.centegytechnologies.com', '_blank');
+  }
+}
     
     async function openDSSWindow() { 
       if (ipcRenderer) await ipcRenderer.invoke('launch-dss-portal'); 
