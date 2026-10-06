@@ -1,1262 +1,112 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, clipboard, nativeImage } = require('electron');
+===FILE:main.js===
+const { app, BrowserWindow, ipcMain, dialog, clipboard, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
 const ExcelJS = require('exceljs');
 
 let mainWindow;
-let portalWindow = null;
-let dssWindow = null;
 
-// SSL & Network Security Bypass Flags
-app.commandLine.appendSwitch('ignore-certificate-errors');
-app.commandLine.appendSwitch('allow-running-insecure-content');
-app.commandLine.appendSwitch('disable-web-security');
-
-const SND_URL = 'https://mayfair.sndpro.app:1132/Mayfair/Default.aspx';
-const DSS_URL = 'https://mayfair.sndpro.app:1163/DSS/Presentation/Login.aspx';
-
-// Production Safe Data Storage Path
-const STORAGE_DIR = path.join(__dirname, 'app_storage');
-if (!fs.existsSync(STORAGE_DIR)) {
-  fs.mkdirSync(STORAGE_DIR, { recursive: true });
+const DATA_DIR = path.join(app.getPath('userData'), 'DataStore');
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-const SHOP_MASTER_FILE = path.join(STORAGE_DIR, 'SHOP_MASTER_DATA.json');
-const TARGET_MASTER_FILE = path.join(STORAGE_DIR, 'MONTHLY_TARGETS.json');
-const CRED_FILE = path.join(STORAGE_DIR, 'APP_CREDENTIALS.json');
-const HISTORY_FILE = path.join(STORAGE_DIR, 'DAILY_SALES_HISTORY.json');
-const BOOKING_EXE_FILE = path.join(STORAGE_DIR, 'BOOKING_EXECUTION_DATA.json');
-const DSR_DIV_TARGET_FILE = path.join(STORAGE_DIR, 'DSR_DIVISION_TARGETS.json');
-const LIVE_CACHE_FILE = path.join(STORAGE_DIR, 'LIVE_SALES_CACHE.json');
+const SHOP_MASTER_FILE = path.join(DATA_DIR, 'SHOP_MASTER_DATA.json');
+const TARGET_REPORT_FILE = path.join(DATA_DIR, 'TARGET_REPORT_DATA.json');
+const DSR_TARGETS_FILE = path.join(DATA_DIR, 'DSR_SAVED_TARGETS.json');
+const CUSTOM_BRANDS_FILE = path.join(DATA_DIR, 'CUSTOM_BRANDS.json');
+const CREDENTIALS_FILE = path.join(DATA_DIR, 'CREDENTIALS.json');
+const DUMP_CM_FILE = path.join(DATA_DIR, 'SALES_DUMP_CM.json');
+const DUMP_LM_FILE = path.join(DATA_DIR, 'SALES_DUMP_LM.json');
+const STOCK_DATA_FILE = path.join(DATA_DIR, 'STOCK_DISPATCH_DATA.json');
+const DAILY_HISTORY_FILE = path.join(DATA_DIR, 'DAILY_SALES_HISTORY.json');
 
-// Stock Module Specific Storage
-const STOCK_BALANCE_FILE = path.join(STORAGE_DIR, 'STOCK_CURRENT_BALANCE.json');
-const DISPATCH_DATA_FILE = path.join(STORAGE_DIR, 'TODAY_DISPATCH_DATA.json');
-const MAPPING_CONFIG_FILE = path.join(STORAGE_DIR, 'STOCK_MAPPING_CONFIG.json');
-const HIDDEN_SKU_FILE = path.join(STORAGE_DIR, 'HIDDEN_SKU_CONFIG.json');
-
-// -------------------------------------------------------------
-// GITHUB AUTO-SYNC / AUTO-UPDATE ENGINE
-// -------------------------------------------------------------
-function syncWithGitHub() {
-  try {
-    console.log("Checking for GitHub updates...");
-    if (fs.existsSync(path.join(__dirname, '.git'))) {
-      execSync('git pull origin main', {
-        cwd: __dirname,
-        stdio: 'inherit',
-        timeout: 10000
-      });
-      console.log("App code is fully up to date with GitHub!");
-    } else {
-      console.log("Git repository not initialized in this directory. Skipping sync.");
-    }
-  } catch (err) {
-    console.log("GitHub sync skipped or offline:", err.message);
-  }
-}
-
-// Helper: Wait until file is unlocked
-async function waitForFileUnlock(filePath, maxRetries = 25, delayMs = 300) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      if (fs.existsSync(filePath)) {
-        const stats = fs.statSync(filePath);
-        if (stats.size > 0) {
-          const fd = fs.openSync(filePath, 'r');
-          fs.closeSync(fd);
-          return true;
-        }
-      }
-    } catch (err) {}
-    await new Promise(res => setTimeout(res, delayMs));
-  }
-  return fs.existsSync(filePath);
-}
-
-// -------------------------------------------------------------
-// DAILY SALES HISTORY HANDLERS
-// -------------------------------------------------------------
-ipcMain.handle('save-daily-sales-history', async (event, { dateKey, records }) => {
-  try {
-    let history = {};
-    if (fs.existsSync(HISTORY_FILE)) {
-      try { history = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8')); } catch (e) { history = {}; }
-    }
-    history[dateKey] = records;
-    fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
-    return { success: true, message: `Report saved successfully for ${dateKey}!` };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('get-daily-sales-history', async () => {
-  try {
-    if (fs.existsSync(HISTORY_FILE)) {
-      return { success: true, history: JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf8')) };
-    }
-    return { success: true, history: {} };
-  } catch (err) {
-    return { success: false, history: {}, error: err.message };
-  }
-});
-
-// Credentials Storage Engine
-function getSavedCredentials() {
-  const defaultCreds = {
-    snd: { distributor: '102336', username: 'kpo', password: 'kpo321' },
-    dss: { username: 'asmkhib', password: '' }
-  };
-  if (fs.existsSync(CRED_FILE)) {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(CRED_FILE, 'utf8'));
-      return {
-        snd: parsed.snd || defaultCreds.snd,
-        dss: parsed.dss || defaultCreds.dss
-      };
-    } catch (e) {
-      return defaultCreds;
-    }
-  }
-  return defaultCreds;
-}
-
-ipcMain.handle('get-all-credentials', async () => {
-  return { success: true, credentials: getSavedCredentials() };
-});
-
-ipcMain.handle('save-all-credentials', async (event, newCreds) => {
-  try {
-    fs.writeFileSync(CRED_FILE, JSON.stringify(newCreds, null, 2), 'utf8');
-    return { success: true, message: 'Credentials saved successfully!' };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-// Image to Clipboard
-ipcMain.handle('copy-image-to-clipboard', async (event, dataUrl) => {
-  try {
-    if (!dataUrl || !dataUrl.startsWith('data:image')) {
-      throw new Error('Invalid image data URL');
-    }
-    const img = nativeImage.createFromDataURL(dataUrl);
-    clipboard.writeImage(img);
-    return { success: true, message: 'Image copied to clipboard!' };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-function createMainWindow() {
+function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1540,
-    height: 920,
+    width: 1400,
+    height: 900,
     minWidth: 1100,
     minHeight: 700,
-    title: 'Multi Tracking System Powered by Danish Rais',
-    backgroundColor: '#070d18',
+    title: 'MULTI TRACKING SYSTEM - POWERED BY DANISH RAIS',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+  mainWindow.loadFile('index.html');
+  mainWindow.maximize();
 }
 
-app.whenReady().then(() => {
-  syncWithGitHub();
-  createMainWindow();
-  startFolderWatchers();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
-  });
-});
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-function sendWindowStatus(targetWin, msg, badge, color, showProgress, percent) {
-  if (targetWin && !targetWin.isDestroyed()) {
-    const js = `
-      (function() {
-        let bar = document.getElementById('__app_floating_status_bar__');
-        if (!bar) {
-          bar = document.createElement('div');
-          bar.id = '__app_floating_status_bar__';
-          bar.style.cssText = \`
-            position: fixed;
-            top: 10px;
-            right: 15px;
-            z-index: 9999999;
-            background: rgba(7, 13, 24, 0.95);
-            color: #ffffff;
-            border: 1.5px solid #0284c7;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 280px;
-            pointer-events: auto;
-          \`;
-
-          bar.innerHTML = \`
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="display:flex; align-items:center; gap:6px;">
-                <span id="__app_badge__" style="padding:2px 7px; border-radius:4px; font-weight:800; font-size:10.5px; text-transform:uppercase;"></span>
-                <span id="__app_msg__" style="font-weight:600; font-size:11.5px; color:#f8fafc;"></span>
-              </div>
-              <span onclick="this.parentElement.parentElement.style.display='none'" style="cursor:pointer; color:#94a3b8; font-weight:bold; font-size:13px; margin-left:8px;">✕</span>
-            </div>
-            <div id="__app_prog_box__" style="width:100%; height:5px; background:#1e293b; border-radius:3px; overflow:hidden; display:none;">
-              <div id="__app_prog_fill__" style="height:100%; width:0%; transition:width 0.2s; background:#38bdf8;"></div>
-            </div>
-          \`;
-          document.body.appendChild(bar);
-        }
-
-        bar.style.display = 'flex';
-        const badgeEl = document.getElementById('__app_badge__');
-        const msgEl = document.getElementById('__app_msg__');
-        const progBox = document.getElementById('__app_prog_box__');
-        const progFill = document.getElementById('__app_prog_fill__');
-
-        if (badgeEl) {
-          badgeEl.innerText = ${JSON.stringify(badge)};
-          badgeEl.style.background = ${JSON.stringify(color)};
-          badgeEl.style.color = '#ffffff';
-        }
-        if (msgEl) msgEl.innerText = ${JSON.stringify(msg)};
-
-        if (progBox && progFill) {
-          if (${showProgress}) {
-            progBox.style.display = 'block';
-            progFill.style.width = (${percent} || 0) + '%';
-            progFill.style.background = ${JSON.stringify(color)};
-          } else {
-            progBox.style.display = 'none';
-          }
-        }
-      })();
-    `;
-    targetWin.webContents.executeJavaScript(js).catch(() => {});
+async function waitForFileUnlock(filePath, retries = 5, delay = 600) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const handle = await fs.promises.open(filePath, 'r');
+      await handle.close();
+      return true;
+    } catch (err) {
+      if (i === retries - 1) throw new Error("File Excel mein khuli hui hai. Meharbani karke pehle Excel file band karein!");
+      await new Promise(r => setTimeout(r, delay));
+    }
   }
+}
+
+function getSafeCellString(cell) {
+  if (!cell || cell.value === null || cell.value === undefined) return '';
+  const val = cell.value;
+  if (typeof val === 'string' || typeof val === 'number') {
+    return String(val).trim();
+  }
+  if (typeof val === 'object') {
+    if (val.result !== undefined && val.result !== null) {
+      if (typeof val.result === 'object' && val.result.richText) {
+        return val.result.richText.map(t => t.text).join('').trim();
+      }
+      return String(val.result).trim();
+    }
+    if (val.richText && Array.isArray(val.richText)) {
+      return val.richText.map(t => t.text).join('').trim();
+    }
+    if (val.text !== undefined && val.text !== null) {
+      return String(val.text).trim();
+    }
+    if (val.sharedString !== undefined) {
+      return String(val.sharedString).trim();
+    }
+  }
+  if (cell.text && typeof cell.text === 'string') {
+    return cell.text.trim();
+  }
+  return '';
 }
 
 function cleanDSRName(rawName) {
   let cleaned = (rawName || '').toString().trim();
-  if (!cleaned) return '';
+  if (!cleaned) return 'Unassigned';
   const dashPos = cleaned.indexOf('-');
-  if (dashPos > -1 && dashPos < cleaned.length - 1) cleaned = cleaned.substring(dashPos + 1).trim();
+  if (dashPos > -1 && dashPos < cleaned.length - 1 && dashPos <= 6) {
+    cleaned = cleaned.substring(dashPos + 1).trim();
+  }
   const mergePos = cleaned.toUpperCase().indexOf('-MERGE');
   if (mergePos > -1) cleaned = cleaned.substring(0, mergePos).trim();
   const parenPos = cleaned.indexOf('(');
   if (parenPos > -1) cleaned = cleaned.substring(0, parenPos).trim();
+  const wsPos = cleaned.toUpperCase().indexOf('-WS');
+  if (wsPos > -1) cleaned = cleaned.substring(0, wsPos).trim();
   if (cleaned.endsWith('-')) cleaned = cleaned.substring(0, cleaned.length - 1).trim();
-  return cleaned;
+  return cleaned || 'Unassigned';
 }
 
-function getBaseSKUKey(sku) {
-  let s = (sku || '').toString();
-  s = s.replace(/\s*\([^)]*\)\s*$/g, '').trim();
-  s = s.replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
-  return s;
-}
-
-function normalizeDisplaySKU(sku) {
-  return (sku || '').toString().replace(/[\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-// -------------------------------------------------------------
-// STOCK REPORT & DISPATCH ENGINE
-// -------------------------------------------------------------
-async function parseStockBalanceReport(filePath) {
-  await waitForFileUnlock(filePath);
-  const fileBuffer = fs.readFileSync(filePath);
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(fileBuffer);
-
-  const sheet = workbook.getWorksheet('Stock_Data') || workbook.worksheets[0];
-  if (!sheet) throw new Error("Stock sheet nahi mili!");
-
-  const stockRows = [];
-  let colBrand = 8, colSku = 9, colDesc = 10, colCtn = 11, colBox = 12;
-
-  const headerRow = sheet.getRow(1);
-  headerRow.eachCell((cell, colNumber) => {
-    const val = (cell.value || '').toString().trim().toLowerCase();
-    if (val.includes('brand')) colBrand = colNumber;
-    if (val.includes('sku code') || val === 'sku') colSku = colNumber;
-    if (val.includes('product') || val.includes('description') || val.includes('item')) colDesc = colNumber;
-    if (val.includes('ctn') || val.includes('carton')) colCtn = colNumber;
-    if (val.includes('box')) colBox = colNumber;
-  });
-
-  let currentBrand = "OTHER BRANDS";
-  const totalRows = sheet.rowCount;
-
-  for (let r = 2; r <= totalRows; r++) {
-    const row = sheet.getRow(r);
-    const skuCode = (row.getCell(colSku).value || '').toString().trim();
-    const bCell = (row.getCell(colBrand).value || '').toString().trim();
-    const prodName = (row.getCell(colDesc).value || '').toString().trim();
-
-    if (bCell && !bCell.toUpperCase().includes('TOTAL')) {
-      currentBrand = bCell;
-    }
-
-    if (currentBrand.toUpperCase() === "OTHER BRANDS") {
-      if (prodName.toUpperCase().includes("CHASKA")) currentBrand = "CHASKA";
-      else if (prodName.toUpperCase().includes("MILKO")) currentBrand = "MILKO";
-    }
-
-    if (skuCode && !skuCode.toUpperCase().includes('TOTAL')) {
-      const rawCtn = row.getCell(colCtn).value;
-      const rawBox = row.getCell(colBox).value;
-      const ctnVal = typeof rawCtn === 'number' ? rawCtn : (parseFloat(rawCtn) || 0);
-      const boxVal = typeof rawBox === 'number' ? rawBox : (parseFloat(rawBox) || 0);
-
-      stockRows.push({
-        brand: currentBrand,
-        sku: skuCode,
-        name: prodName,
-        ctn: ctnVal,
-        box: boxVal
-      });
-    }
-  }
-
-  fs.writeFileSync(STOCK_BALANCE_FILE, JSON.stringify(stockRows, null, 2), 'utf8');
-  return { success: true, count: stockRows.length, fileName: path.basename(filePath), data: stockRows };
-}
-
-// -------------------------------------------------------------
-// STRICT TODAY DISPATCH PARSER
-// -------------------------------------------------------------
-async function parseDispatchReport(filePath) {
-  await waitForFileUnlock(filePath);
-  const fileBuffer = fs.readFileSync(filePath);
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(fileBuffer);
-
-  const sheet = workbook.getWorksheet('TODAY_DISPATCH') || workbook.worksheets[0];
-  if (!sheet) throw new Error("Dispatch sheet nahi mili!");
-
-  const dispatchRows = [];
-  const totalRows = sheet.rowCount;
-
-  for (let r = 2; r <= totalRows; r++) {
-    const row = sheet.getRow(r);
-    const distCode = (row.getCell(3).value || '').toString().trim();
-    const rawDistName = (row.getCell(4).value || '').toString().trim();
-    const cleanDistName = rawDistName.replace(/\u2013|\u2014/g, '-').replace(/\s+/g, ' ').toUpperCase();
-
-    const isTargetBR2 = 
-      distCode === "102336" || 
-      cleanDistName === "KHI - REHMAN ENT-BR2" || 
-      (cleanDistName.includes("REHMAN ENT") && (cleanDistName.includes("BR2") || cleanDistName.includes("BR-2")));
-
-    if (isTargetBR2) {
-      let matCode = (row.getCell(10).value || '').toString().trim();
-      const prodName = (row.getCell(11).value || '').toString().trim();
-      const rawQty = row.getCell(9).value;
-      const qtyVal = typeof rawQty === 'number' ? rawQty : (parseFloat(rawQty) || 0);
-
-      if (matCode.includes('.')) matCode = matCode.split('.')[0];
-      matCode = matCode.replace(/[^0-9]/g, '');
-
-      if (matCode && qtyVal > 0) {
-        dispatchRows.push({
-          materialCode: matCode,
-          productName: prodName,
-          qty: qtyVal
-        });
-      }
-    }
-  }
-
-  fs.writeFileSync(DISPATCH_DATA_FILE, JSON.stringify(dispatchRows, null, 2), 'utf8');
-  return { 
-    success: true, 
-    count: dispatchRows.length, 
-    fileName: path.basename(filePath), 
-    data: dispatchRows,
-    message: `${dispatchRows.length} Dispatch items loaded strictly for KHI – REHMAN ENT-BR2!`
-  };
-}
-
-ipcMain.handle('upload-stock-balance-file', async () => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'MF SKU And Div Wise Stock Current Balance Excel Select Karein',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel ho gaya.' };
-    const res = await parseStockBalanceReport(filePaths[0]);
-    return { success: true, message: `Stock Balance Loaded! (${res.count} Items)`, data: res.data };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('upload-total-dispatch-file', async () => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Total Dispatch / TODAY_DISPATCH Excel Select Karein',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel ho gaya.' };
-    const res = await parseDispatchReport(filePaths[0]);
-    return { success: true, message: res.message || `Dispatch Data Loaded! (${res.count} Entries)`, data: res.data };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('get-stock-report-data', async () => {
-  try {
-    const stock = fs.existsSync(STOCK_BALANCE_FILE) ? JSON.parse(fs.readFileSync(STOCK_BALANCE_FILE, 'utf8')) : [];
-    const dispatch = fs.existsSync(DISPATCH_DATA_FILE) ? JSON.parse(fs.readFileSync(DISPATCH_DATA_FILE, 'utf8')) : [];
-    const mapping = fs.existsSync(MAPPING_CONFIG_FILE) ? JSON.parse(fs.readFileSync(MAPPING_CONFIG_FILE, 'utf8')) : {};
-    const hidden = fs.existsSync(HIDDEN_SKU_FILE) ? JSON.parse(fs.readFileSync(HIDDEN_SKU_FILE, 'utf8')) : {};
-
-    return {
-      success: true,
-      stockData: stock,
-      dispatchData: dispatch,
-      mappingConfig: mapping,
-      hiddenConfig: hidden
-    };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('save-stock-mapping-config', async (event, newMapping) => {
-  try {
-    fs.writeFileSync(MAPPING_CONFIG_FILE, JSON.stringify(newMapping, null, 2), 'utf8');
-    return { success: true, message: 'Mapping successfully save ho gayi!' };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('save-hidden-sku-config', async (event, newHidden) => {
-  try {
-    fs.writeFileSync(HIDDEN_SKU_FILE, JSON.stringify(newHidden, null, 2), 'utf8');
-    return { success: true, message: 'Hidden SKU settings save ho gayi!' };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-// -------------------------------------------------------------
-// SALES DUMP PARSER ENGINE
-// -------------------------------------------------------------
-async function parseGenericSalesDump(filePath) {
-  await waitForFileUnlock(filePath);
-  return new Promise((resolve, reject) => {
-    try {
-      const options = { entries: "emit", sharedStrings: "cache", hyperlinks: "ignore", worksheets: "emit" };
-      const workbookReader = new ExcelJS.stream.xlsx.WorkbookReader(filePath, options);
-      
-      let colDSR = -1, colBrand = -1, colSKU = -1, colPOP = -1, colDate = -1, colQty = -1, colNet = -1, colPopName = -1, colSection = -1;
-      const deliveredRecords = [];
-      const allDumpPOPsByDSR = new Map();
-      const dateCounts = new Map();
-      let isFirstSheet = true;
-
-      workbookReader.on('worksheet', (worksheetReader) => {
-        if (!isFirstSheet && !worksheetReader.name.toLowerCase().includes('dump')) {
-          worksheetReader.destroy();
-          return;
-        }
-        isFirstSheet = false;
-
-        worksheetReader.on('row', (row) => {
-          const rowNumber = row.number;
-          const values = row.values;
-
-          if (rowNumber === 1) {
-            for (let c = 1; c < values.length; c++) {
-              const val = (values[c] || '').toString().trim().toLowerCase();
-              if (val === 'dsr name' || val === 'dsr') colDSR = c;
-              if (val === 'brand') colBrand = c;
-              if (val === 'sku description' || val === 'sku') colSKU = c;
-              if (val === 'pop') colPOP = c;
-              if (val === 'pop name') colPopName = c;
-              if (val === 'section name') colSection = c;
-              if (val === 'fulldate' || val === 'date') colDate = c;
-              if (val === 'delivered qty1' || val === 'qty1' || val === 'ctn') colQty = c;
-              if (val === 'net sale' || val === 'netsale') colNet = c;
-            }
-
-            if (colDSR === -1) colDSR = 8;
-            if (colBrand === -1) colBrand = 9;
-            if (colSKU === -1) colSKU = 11;
-            if (colPOP === -1) colPOP = 13;
-            if (colPopName === -1) colPopName = 14;
-            if (colSection === -1) colSection = 15;
-            if (colDate === -1) colDate = 18;
-            if (colQty === -1) colQty = 19;
-            if (colNet === -1) colNet = 25;
-            return;
-          }
-
-          const rawQty = values[colQty];
-          const qtyVal = typeof rawQty === 'number' ? rawQty : (parseFloat(rawQty) || 0);
-          const rawDsr = values[colDSR] ? String(values[colDSR]).trim() : '';
-          const popVal = values[colPOP] ? String(values[colPOP]).trim() : '';
-
-          if (rawDsr && popVal) {
-            const dsrName = cleanDSRName(rawDsr);
-            if (!allDumpPOPsByDSR.has(dsrName)) allDumpPOPsByDSR.set(dsrName, new Set());
-            allDumpPOPsByDSR.get(dsrName).add(popVal);
-
-            if (qtyVal > 0) {
-              const brandVal = values[colBrand] ? String(values[colBrand]).trim() : '';
-              const skuVal = normalizeDisplaySKU(values[colSKU]);
-              const popNameVal = values[colPopName] ? String(values[colPopName]).trim() : '';
-              const sectionVal = values[colSection] ? String(values[colSection]).trim() : '';
-
-              let dateVal = '';
-              const rawDate = values[colDate];
-              if (rawDate instanceof Date) {
-                dateVal = rawDate.toISOString().split('T')[0];
-              } else if (rawDate) {
-                dateVal = String(rawDate).split(' ')[0].trim();
-              }
-
-              if (dateVal) dateCounts.set(dateVal, (dateCounts.get(dateVal) || 0) + 1);
-
-              deliveredRecords.push({
-                dsr: dsrName,
-                rawDsr: rawDsr,
-                brand: brandVal,
-                sku: skuVal,
-                pop: popVal,
-                popName: popNameVal,
-                section: sectionVal,
-                date: dateVal,
-                qty: qtyVal,
-                net: typeof values[colNet] === 'number' ? values[colNet] : (parseFloat(values[colNet]) || 0)
-              });
-            }
-          }
-        });
-      });
-
-      workbookReader.on('end', () => {
-        const dsrUniverse = {};
-        allDumpPOPsByDSR.forEach((setObj, k) => { dsrUniverse[k] = setObj.size; });
-
-        let identifiedType = 'CM';
-        const allDates = Array.from(dateCounts.keys()).sort();
-        if (allDates.length > 0) {
-          const sampleDate = new Date(allDates[Math.floor(allDates.length / 2)]);
-          const currentNow = new Date();
-          if (!isNaN(sampleDate.getTime())) {
-            const isCurrentMonth =
-              sampleDate.getFullYear() === currentNow.getFullYear() &&
-              sampleDate.getMonth() === currentNow.getMonth();
-            identifiedType = isCurrentMonth ? 'CM' : 'LM';
-          }
-        }
-
-        resolve({ deliveredRecords, dsrUniverse, identifiedType, allDates, fileName: path.basename(filePath) });
-      });
-
-      workbookReader.on('error', (err) => reject(err));
-      workbookReader.read();
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
-
-async function processAndSaveDumpDirectly(filePath, targetWindow = null) {
-  try {
-    sendWindowStatus(targetWindow || dssWindow, 'Identifying Dump dates...', 'Processing', '#f59e0b', true, 60);
-    const parsed = await parseGenericSalesDump(filePath);
-    const saveFileName = parsed.identifiedType === 'LM' ? 'LM_SALES_DUMP.json' : 'CM_SALES_DUMP.json';
-    const savePath = path.join(STORAGE_DIR, saveFileName);
-
-    fs.writeFileSync(savePath, JSON.stringify(parsed, null, 2), 'utf8');
-
-    sendWindowStatus(targetWindow || dssWindow, `${parsed.identifiedType} Dump Updated! (${parsed.deliveredRecords.length} Rows)`, 'Success', '#10b981', false, 100);
-
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('dump-auto-updated', {
-        dumpType: parsed.identifiedType,
-        totalRecords: parsed.deliveredRecords.length,
-        fileName: parsed.fileName
-      });
-    }
-    return { success: true, dumpType: parsed.identifiedType, count: parsed.deliveredRecords.length };
-  } catch (err) {
-    sendWindowStatus(targetWindow || dssWindow, `Error: ${err.message}`, 'Failed', '#ef4444', false, 0);
-    return { success: false, error: err.message };
-  }
-}
-
-ipcMain.handle('upload-sales-dump-tagged', async (event, dumpType) => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: `${dumpType === 'LM' ? 'Last Month (LM)' : 'Current Month (CM)'} Sales Dump Select Karein`,
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel kar diya gaya.' };
-
-    const parsed = await parseGenericSalesDump(filePaths[0]);
-    const saveFileName = dumpType === 'LM' ? 'LM_SALES_DUMP.json' : 'CM_SALES_DUMP.json';
-    const savePath = path.join(STORAGE_DIR, saveFileName);
-
-    fs.writeFileSync(savePath, JSON.stringify(parsed, null, 2), 'utf8');
-
-    return {
-      success: true,
-      dumpType: dumpType,
-      fileName: parsed.fileName,
-      totalProductive: parsed.deliveredRecords.length,
-      message: `${dumpType} Sales Dump save ho gaya! (${parsed.deliveredRecords.length} Delivered Rows)`
-    };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('get-both-sales-dumps', async () => {
-  try {
-    const lmPath = path.join(STORAGE_DIR, 'LM_SALES_DUMP.json');
-    const cmPath = path.join(STORAGE_DIR, 'CM_SALES_DUMP.json');
-    const lmData = fs.existsSync(lmPath) ? JSON.parse(fs.readFileSync(lmPath, 'utf8')) : null;
-    const cmData = fs.existsSync(cmPath) ? JSON.parse(fs.readFileSync(cmPath, 'utf8')) : null;
-    return { success: true, lmData, cmData };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
-// -------------------------------------------------------------
-// PORTAL INTEGRATIONS & AUTOMATION
-// -------------------------------------------------------------
-ipcMain.handle('launch-dss-portal', async () => {
-  try {
-    if (dssWindow && !dssWindow.isDestroyed()) {
-      dssWindow.show();
-      dssWindow.focus();
-      return { success: true };
-    }
-    const creds = getSavedCredentials().dss;
-    dssWindow = new BrowserWindow({
-      width: 1300,
-      height: 880,
-      show: true,
-      title: 'DSS -- Decision Support System (Centegy)',
-      webPreferences: { nodeIntegration: false, contextIsolation: false, webSecurity: false }
-    });
-
-    dssWindow.webContents.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-    dssWindow.webContents.session.setCertificateVerifyProc((req, cb) => cb(0));
-
-    dssWindow.webContents.on('did-finish-load', () => {
-      const autoFillScript = `
-        (function() {
-          const uInput = document.querySelector('input[name*="User"], input[id*="User"], input[placeholder*="User"]') || document.querySelectorAll('input[type="text"]')[0];
-          const pInput = document.querySelector('input[type="password"]');
-          if (uInput && !uInput.value) uInput.value = ${JSON.stringify(creds.username)};
-          if (pInput && !pInput.value) pInput.value = ${JSON.stringify(creds.password)};
-        })();
-      `;
-      dssWindow.webContents.executeJavaScript(autoFillScript).catch(() => {});
-      sendWindowStatus(dssWindow, 'DSS Portal Connected', 'Ready', '#10b981', false, 100);
-    });
-
-    dssWindow.webContents.setWindowOpenHandler(({ url }) => {
-      if (url && (url.toLowerCase().includes('.xlsx') || url.toLowerCase().includes('dump') || url.toLowerCase().includes('export'))) {
-        dssWindow.webContents.downloadURL(url);
-      }
-      return { action: 'deny' };
-    });
-
-    dssWindow.webContents.session.on('will-download', (event, item) => {
-      const origFileName = item.getFilename();
-      const ext = path.extname(origFileName) || '.xlsx';
-      const baseName = path.basename(origFileName, ext);
-      const safeFileName = `${baseName}_${Date.now()}${ext}`;
-      const savePath = path.join(STORAGE_DIR, safeFileName);
-      item.setSavePath(savePath);
-
-      sendWindowStatus(dssWindow, `Downloading Sales Dump...`, 'Downloading', '#38bdf8', true, 30);
-      item.on('updated', (ev, state) => {
-        if (state === 'progressing') {
-          const total = item.getTotalBytes();
-          const received = item.getReceivedBytes();
-          const pct = total > 0 ? Math.round((received / total) * 100) : 60;
-          sendWindowStatus(dssWindow, `Downloading (${pct}%)...`, 'Downloading', '#38bdf8', true, pct);
-        }
-      });
-
-      item.once('done', async (ev, state) => {
-        if (state === 'completed') {
-          sendWindowStatus(dssWindow, 'Identifying Month & Processing...', 'Parsing', '#f59e0b', true, 85);
-          setTimeout(async () => {
-            await processAndSaveDumpDirectly(savePath, dssWindow);
-          }, 1000);
-        } else {
-          sendWindowStatus(dssWindow, 'Download Failed', 'Failed', '#ef4444', false, 0);
-        }
-      });
-    });
-
-    dssWindow.loadURL(DSS_URL);
-    dssWindow.on('closed', () => { dssWindow = null; });
-    return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('launch-snd-portal', async () => {
-  try {
-    if (portalWindow && !portalWindow.isDestroyed()) {
-      portalWindow.show();
-      portalWindow.focus();
-      return { success: true };
-    }
-
-    const creds = getSavedCredentials().snd;
-    portalWindow = new BrowserWindow({
-      width: 1280,
-      height: 850,
-      show: true,
-      title: 'SnD Pro Enterprise Portal',
-      webPreferences: { nodeIntegration: false, contextIsolation: false, webSecurity: false }
-    });
-
-    portalWindow.webContents.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0');
-    portalWindow.webContents.session.setCertificateVerifyProc((req, cb) => cb(0));
-
-    portalWindow.webContents.on('did-finish-load', () => {
-      const initScript = `
-        (function() {
-          const distInput = document.querySelector('input[name*="Distributor"], input[id*="Distributor"]') || document.querySelectorAll('input[type="text"]')[0];
-          const userInput = document.querySelector('input[name*="User"], input[id*="User"]') || document.querySelectorAll('input[type="text"]')[1];
-          const passInput = document.querySelector('input[type="password"]');
-          if (distInput && !distInput.value) distInput.value = ${JSON.stringify(creds.distributor)};
-          if (userInput && !userInput.value) userInput.value = ${JSON.stringify(creds.username)};
-          if (passInput && !passInput.value) passInput.value = ${JSON.stringify(creds.password)};
-        })();
-      `;
-      portalWindow.webContents.executeJavaScript(initScript).catch(() => {});
-      sendWindowStatus(portalWindow, 'SnD Portal Ready', 'Connected', '#10b981', false, 100);
-    });
-
-    portalWindow.webContents.setWindowOpenHandler(({ url }) => {
-      if (url && (url.toLowerCase().includes('.xlsx') || url.toLowerCase().includes('export') || url.toLowerCase().includes('report'))) {
-        portalWindow.webContents.downloadURL(url);
-      }
-      return { action: 'deny' };
-    });
-
-    portalWindow.webContents.session.on('will-download', (event, item) => {
-      const origFileName = item.getFilename();
-      const ext = path.extname(origFileName) || '.xlsx';
-      const baseName = path.basename(origFileName, ext);
-      const safeFileName = `${baseName}_${Date.now()}${ext}`;
-      const savePath = path.join(STORAGE_DIR, safeFileName);
-      item.setSavePath(savePath);
-
-      sendWindowStatus(portalWindow, `Downloading Report...`, 'Downloading', '#38bdf8', true, 20);
-      item.on('updated', (ev, state) => {
-        if (state === 'progressing') {
-          const total = item.getTotalBytes();
-          const received = item.getReceivedBytes();
-          const pct = total > 0 ? Math.round((received / total) * 100) : 60;
-          sendWindowStatus(portalWindow, `Downloading (${pct}%)`, 'Downloading', '#38bdf8', true, pct);
-        }
-      });
-
-      item.once('done', async (ev, state) => {
-        if (state === 'completed') {
-          setTimeout(async () => {
-            if (origFileName.includes('Stock Current Balance') || origFileName.includes('Stock') || origFileName.includes('Current Balance')) {
-              sendWindowStatus(portalWindow, 'Processing Current Stock Balance...', 'Parsing', '#f59e0b', true, 80);
-              try {
-                await parseStockBalanceReport(savePath);
-                sendWindowStatus(portalWindow, 'Stock Balance Synced!', 'Success', '#10b981', false, 100);
-                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('stock-balance-updated');
-              } catch(e) {
-                sendWindowStatus(portalWindow, `Stock Error: ${e.message}`, 'Failed', '#ef4444', false, 0);
-              }
-            } else if (origFileName.includes('Order Booking') || origFileName.includes('Execution') || origFileName.includes('EXE')) {
-              sendWindowStatus(portalWindow, 'Processing Booking vs Execution...', 'Parsing', '#f59e0b', true, 80);
-              try {
-                await parseBookingExecutionReport(savePath);
-                sendWindowStatus(portalWindow, 'Booking vs Execution Updated!', 'Success', '#10b981', false, 100);
-                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('booking-execution-updated');
-              } catch (e) {
-                sendWindowStatus(portalWindow, `Parse Error: ${e.message}`, 'Failed', '#ef4444', false, 0);
-              }
-            } else {
-              sendWindowStatus(portalWindow, 'Merging Sales Data...', 'Processing', '#f59e0b', true, 85);
-              await triggerAutoMerge(savePath);
-            }
-          }, 1200);
-        } else {
-          sendWindowStatus(portalWindow, 'Download Failed', 'Failed', '#ef4444', false, 0);
-        }
-      });
-    });
-
-    portalWindow.loadURL(SND_URL);
-    portalWindow.on('closed', () => { portalWindow = null; });
-    return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
-// Watcher Engine
-let lastProcessedTime = 0;
-function startFolderWatchers() {
-  const dirs = [STORAGE_DIR, path.join(app.getPath('home'), 'Downloads')];
-  dirs.forEach(watchDir => {
-    if (!fs.existsSync(watchDir)) return;
-    try {
-      fs.watch(watchDir, async (eventType, filename) => {
-        if (!filename) return;
-        if (filename.endsWith('.xlsx') && !filename.startsWith('~$') && !filename.includes('Target VS')) {
-          const now = Date.now();
-          if (now - lastProcessedTime < 2500) return;
-          lastProcessedTime = now;
-          const fullPath = path.join(watchDir, filename);
-
-          if (filename.includes('Stock Current Balance') || filename.includes('Stock_Data')) {
-            sendWindowStatus(portalWindow, `Parsing: ${filename}`, 'Processing', '#f59e0b', true, 75);
-            setTimeout(async () => {
-              try {
-                await parseStockBalanceReport(fullPath);
-                sendWindowStatus(portalWindow, 'Stock Data Synced!', 'Success', '#10b981', false, 100);
-                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('stock-balance-updated');
-              } catch(e) {}
-            }, 1200);
-          } else if (filename.includes('TODAY_DISPATCH') || filename.includes('Total Dispatch')) {
-            setTimeout(async () => {
-              try {
-                await parseDispatchReport(fullPath);
-                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('dispatch-data-updated');
-              } catch(e) {}
-            }, 1200);
-          } else if (filename.includes('Sales Dump') || filename.includes('Dump')) {
-            setTimeout(async () => { await processAndSaveDumpDirectly(fullPath); }, 1000);
-          } else if (filename.includes('Order Booking') || filename.includes('Execution') || filename.includes('EXE')) {
-            sendWindowStatus(portalWindow, `Parsing: ${filename}`, 'Processing', '#f59e0b', true, 75);
-            setTimeout(async () => {
-              try {
-                await parseBookingExecutionReport(fullPath);
-                sendWindowStatus(portalWindow, 'Booking vs Execution Synced!', 'Success', '#10b981', false, 100);
-                if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('booking-execution-updated');
-              } catch (e) {}
-            }, 1200);
-          } else if (filename.includes('MF DSR Wise') || filename.includes('Sales')) {
-            sendWindowStatus(portalWindow, `Downloaded: ${filename}`, 'Processing', '#f59e0b', true, 85);
-            setTimeout(async () => { await triggerAutoMerge(fullPath); }, 1500);
-          }
-        }
-      });
-    } catch (e) { console.error("Watch error:", e); }
-  });
-}
-
-// -------------------------------------------------------------
-// BOOKING VS EXECUTION PARSER
-// -------------------------------------------------------------
-async function parseBookingExecutionReport(filePath) {
-  const isUnlocked = await waitForFileUnlock(filePath, 15, 500);
-  const fileBuffer = fs.readFileSync(filePath);
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(fileBuffer);
-  const sheet = workbook.getWorksheet('EXE') || workbook.worksheets[0];
-  if (!sheet) throw new Error('Booking/Execution sheet nahi mili!');
-
-  const row2 = sheet.getRow(2);
-  let maxDate1 = null, maxDate2 = null, maxCol1 = -1, maxCol2 = -1;
-
-  row2.eachCell({ includeEmpty: false }, (cell, colNumber) => {
-    if (colNumber >= 28) {
-      let val = cell.value;
-      let d = null;
-      if (val instanceof Date) d = val;
-      else if (val) {
-        const parsedD = new Date(val);
-        if (!isNaN(parsedD.getTime())) d = parsedD;
-      }
-      if (d) {
-        const curDtTime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
-        if (!maxDate1 || curDtTime > maxDate1.getTime()) {
-          maxDate2 = maxDate1; maxCol2 = maxCol1;
-          maxDate1 = new Date(curDtTime); maxCol1 = colNumber;
-        } else if (!maxDate2 || (curDtTime > maxDate2.getTime() && curDtTime < maxDate1.getTime())) {
-          maxDate2 = new Date(curDtTime); maxCol2 = colNumber;
-        }
-      }
-    }
-  });
-
-  const executionMap = {};
-  const totalRows = sheet.rowCount;
-
-  for (let r = 4; r <= totalRows; r++) {
-    const row = sheet.getRow(r);
-    const rawDsr = (row.getCell(22).value || '').toString().trim();
-    if (!rawDsr) continue;
-
-    let todayBooking = 0, yesterdayExe = 0, yesterdayRtg = 0;
-    if (maxCol1 > 0) {
-      const bkgVal = row.getCell(maxCol1).value;
-      todayBooking = typeof bkgVal === 'number' ? bkgVal : (parseFloat(bkgVal) || 0);
-    }
-    if (maxCol2 > 0) {
-      const ordVal = row.getCell(maxCol2).value;
-      const delVal = row.getCell(maxCol2 + 1).value;
-      const ordQty = typeof ordVal === 'number' ? ordVal : (parseFloat(ordVal) || 0);
-      const delQty = typeof delVal === 'number' ? delVal : (parseFloat(delVal) || 0);
-      yesterdayExe = ordQty;
-      yesterdayRtg = Math.max(0, ordQty - delQty);
-    }
-
-    executionMap[rawDsr] = { todayBooking, yesterdayExe, yesterdayRtg };
-  }
-
-  fs.writeFileSync(BOOKING_EXE_FILE, JSON.stringify(executionMap, null, 2), 'utf8');
-  return { success: true, count: Object.keys(executionMap).length, data: executionMap };
-}
-
-ipcMain.handle('upload-booking-execution-file', async () => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'MF - Order Booking Vs Execution Report (New) Excel Select Karein',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel ho gaya.' };
-    const res = await parseBookingExecutionReport(filePaths[0]);
-    return { success: true, message: `Booking vs Execution Processed! (${res.count} DSRs)`, data: res.data };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('get-booking-vs-execution-data', async () => {
-  try {
-    if (fs.existsSync(BOOKING_EXE_FILE)) {
-      return { success: true, data: JSON.parse(fs.readFileSync(BOOKING_EXE_FILE, 'utf8')) };
-    }
-    return { success: true, data: {} };
-  } catch (err) {
-    return { success: false, data: {}, error: err.message };
-  }
-});
-
-// -------------------------------------------------------------
-// DSR DIVISION TARGETS ENGINE & MISSING TEMPLATE HANDLER
-// -------------------------------------------------------------
-ipcMain.handle('download-dsr-target-template', async () => {
-  try {
-    const { canceled, filePath } = await dialog.showSaveDialog({
-      title: 'DSR Target Template Save Karein',
-      defaultPath: 'DSR_Target_Template.xlsx',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx'] }]
-    });
-    if (canceled || !filePath) return { success: false, message: 'Cancelled' };
-
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet('DSR_Targets');
-    sheet.addRow(['DSR Name', 'Total Shops', 'BAKERY', 'BISCUITS', 'CONFECTIONERY']);
-    sheet.addRow(['SAMPLE DSR 1', 250, 100, 150, 200]);
-
-    await workbook.xlsx.writeFile(filePath);
-    return { success: true, message: 'Template successfully download ho gaya!' };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-ipcMain.handle('get-saved-dsr-targets', async () => {
-  try {
-    if (fs.existsSync(DSR_DIV_TARGET_FILE)) {
-      return { success: true, targets: JSON.parse(fs.readFileSync(DSR_DIV_TARGET_FILE, 'utf8')) };
-    }
-    return { success: true, targets: {} };
-  } catch (err) {
-    return { success: false, targets: {}, error: err.message };
-  }
-});
-
-ipcMain.handle('upload-dsr-target-template', async () => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Select Filled DSR Target Template Excel',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel ho gaya.' };
-
-    await waitForFileUnlock(filePaths[0]);
-    const fileBuffer = fs.readFileSync(filePaths[0]);
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(fileBuffer);
-
-    const sheet = workbook.getWorksheet('DSR_Targets') || workbook.worksheets[0];
-    if (!sheet) return { success: false, message: 'Sheet nahi mili!' };
-
-    const targetsMap = {};
-    let matchedCount = 0;
-
-    sheet.eachRow((row, rowNumber) => {
-      if (rowNumber <= 2) return;
-      const dsrName = (row.getCell(1).value || '').toString().trim();
-      if (!dsrName) return;
-
-      const totalShops = parseFloat(row.getCell(2).value) || 0;
-      const bakTgt = parseFloat(row.getCell(3).value) || 0;
-      const bisTgt = parseFloat(row.getCell(4).value) || 0;
-      const confTgt = parseFloat(row.getCell(5).value) || 0;
-
-      targetsMap[dsrName] = {
-        totalShops, bakTgt, bisTgt, confTgt,
-        totalTgt: bakTgt + bisTgt + confTgt
-      };
-      matchedCount++;
-    });
-
-    fs.writeFileSync(DSR_DIV_TARGET_FILE, JSON.stringify(targetsMap, null, 2), 'utf8');
-    return { success: true, message: `DSR Targets Updated! (${matchedCount} DSRs)`, targets: targetsMap };
-  } catch (err) {
-    return { success: false, message: err.message };
-  }
-});
-
-// -------------------------------------------------------------
-// MONTHLY TARGETS ENGINE
-// -------------------------------------------------------------
-ipcMain.handle('upload-monthly-target-file', async () => {
-  try {
-    const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Target VS Achievement Brand Wise Excel Select Karein',
-      filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
-      properties: ['openFile']
-    });
-    if (canceled || filePaths.length === 0) return { success: false, message: 'Upload cancel kar diya gaya.' };
-
-    await waitForFileUnlock(filePaths[0]);
-    const fileBuffer = fs.readFileSync(filePaths[0]);
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(fileBuffer);
-    const sheet = workbook.getWorksheet('Target VS Achievement Brand Wis') || workbook.worksheets[0];
-    if (!sheet) return { success: false, message: 'Target sheet nahi mili!' };
-
-    let colArea = 2, colDist = 6, colDSR = 8, colBrand = 15, colSKU = 16, colTarget = 17;
-    const headerRow = sheet.getRow(1);
-    headerRow.eachCell((cell, colNumber) => {
-      const val = (cell.value || '').toString().trim().toLowerCase();
-      if (val === 'area') colArea = colNumber;
-      if (val === 'distributor' || val === 'distributor_name') colDist = colNumber;
-      if (val === 'dsr name' || val === 'dsr') colDSR = colNumber;
-      if (val === 'brand') colBrand = colNumber;
-      if (val === 'sku description' || val === 'sku') colSKU = colNumber;
-      if (val === 'mtd_target_uom' || val === 'target') colTarget = colNumber;
-    });
-
-    const targetMap = new Map();
-    const totalRows = sheet.rowCount;
-
-    for (let r = 2; r <= totalRows; r++) {
-      const row = sheet.getRow(r);
-      const areaVal = (row.getCell(colArea).value || '').toString().trim();
-      const distVal = (row.getCell(colDist).value || '').toString().trim();
-      const rawDsr = (row.getCell(colDSR).value || '').toString().trim();
-      const dsrVal = cleanDSRName(rawDsr);
-      const brandVal = (row.getCell(colBrand).value || '').toString().trim();
-      let fullSku = normalizeDisplaySKU(row.getCell(colSKU).value);
-      const targetVal = parseFloat(row.getCell(colTarget).value) || 0;
-
-      if (distVal !== '' && dsrVal !== '' && brandVal !== '' && fullSku !== '') {
-        const baseKey = getBaseSKUKey(fullSku);
-        const mapKey = `${areaVal.toUpperCase()}|${distVal.toUpperCase()}|${dsrVal.toUpperCase()}|${brandVal.toUpperCase()}|${baseKey}`;
-
-        if (!targetMap.has(mapKey)) {
-          targetMap.set(mapKey, {
-            area: areaVal || 'MAIN AREA', distributor: distVal, dsrName: dsrVal, rawDsr: rawDsr,
-            brand: brandVal, sku: fullSku, baseKey: baseKey, target: targetVal, achiv: 0, bills: 0
-          });
-        } else {
-          const item = targetMap.get(mapKey);
-          item.target += targetVal;
-          if (targetVal > 0) item.sku = fullSku;
-        }
-      }
-    }
-
-    const extractedTargets = Array.from(targetMap.values());
-    fs.writeFileSync(TARGET_MASTER_FILE, JSON.stringify(extractedTargets, null, 2), 'utf8');
-    return { success: true, totalRecords: extractedTargets.length, fileName: path.basename(filePaths[0]) };
-  } catch (error) {
-    return { success: false, message: error.message };
-  }
-});
-
-// -------------------------------------------------------------
-// SND AUTO-MERGE ENGINE
-// -------------------------------------------------------------
-async function triggerAutoMerge(filePath) {
-  try {
-    await waitForFileUnlock(filePath);
-    const result = await parseAndMergeSalesReport(filePath);
-    const data = JSON.parse(fs.readFileSync(TARGET_MASTER_FILE, 'utf8'));
-    
-    fs.writeFileSync(LIVE_CACHE_FILE, JSON.stringify(data, null, 2), 'utf8');
-
-    sendWindowStatus(portalWindow, 'Report Merged Successfully!', 'Success', '#10b981', false, 100);
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.send('auto-merge-completed', {
-        success: true, fileName: path.basename(filePath), data: data, meta: result
-      });
-    }
-  } catch (err) {
-    console.error('Auto merge error:', err);
-    sendWindowStatus(portalWindow, `Update Error: ${err.message}`, 'Error', '#ef4444', false, 0);
-  }
-}
-
-async function parseAndMergeSalesReport(salesFilePath) {
-  let targets = [];
-  if (fs.existsSync(TARGET_MASTER_FILE)) {
-    try { targets = JSON.parse(fs.readFileSync(TARGET_MASTER_FILE, 'utf8')); } catch(e) { targets = []; }
-  }
-  targets.forEach(t => { t.achiv = 0; t.bills = 0; });
-
-  await waitForFileUnlock(salesFilePath);
-  const fileBuffer = fs.readFileSync(salesFilePath);
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(fileBuffer);
-  const sheet = workbook.getWorksheet('Sheet1') || workbook.worksheets[0];
-  if (!sheet) throw new Error('Sales Report sheet nahi mili!');
-
-  let colDSR = -1, colBrand = -1, colSKU = -1, colCtn = -1, colBill = -1;
-  const headerRow = sheet.getRow(1);
-  headerRow.eachCell((cell, colNumber) => {
-    const val = (cell.value || '').toString().trim().toLowerCase();
-    if (val === 'dsr' || val.includes('dsr name')) colDSR = colNumber;
-    if (val === 'brand') colBrand = colNumber;
-    if (val === 'sku' || val.includes('sku desc')) colSKU = colNumber;
-    if (val === 'ctn' || val.includes('delivered qty') || val === 'qty1') colCtn = colNumber;
-    if (val === 'bill' || val.includes('bills')) colBill = colNumber;
-  });
-
-  if (colDSR === -1) colDSR = 6;
-  if (colBrand === -1) colBrand = 8;
-  if (colSKU === -1) colSKU = 9;
-  if (colCtn === -1) colCtn = 10;
-  if (colBill === -1) colBill = 11;
-
-  const salesMap = new Map();
-  const rawSalesItems = [];
-  const totalRows = sheet.rowCount;
-
-  for (let r = 2; r <= totalRows; r++) {
-    const row = sheet.getRow(r);
-    const regCheck = (row.getCell(1).value || '').toString().trim();
-    if (regCheck.toLowerCase() === 'total') continue;
-
-    const rawDsr = (row.getCell(colDSR).value || '').toString().trim();
-    const dsrClean = cleanDSRName(rawDsr);
-    const brandVal = (row.getCell(colBrand).value || '').toString().trim();
-    const skuVal = (row.getCell(colSKU).value || '').toString().trim();
-    const ctnVal = parseFloat(row.getCell(colCtn).value) || 0;
-    const billVal = parseInt(row.getCell(colBill).value, 10) || 0;
-
-    if (dsrClean !== '' && brandVal !== '' && skuVal !== '') {
-      const baseKey = getBaseSKUKey(skuVal);
-      const matchKey = `${dsrClean.toUpperCase()}|${brandVal.toUpperCase()}|${baseKey}`;
-      if (!salesMap.has(matchKey)) {
-        salesMap.set(matchKey, { ctn: ctnVal, bill: billVal });
-      } else {
-        const item = salesMap.get(matchKey);
-        item.ctn += ctnVal;
-        item.bill += billVal;
-      }
-      rawSalesItems.push({ dsrName: dsrClean, rawDsr, brand: brandVal, sku: skuVal, baseKey, ctn: ctnVal, bill: billVal });
-    }
-  }
-
-  if (targets.length > 0) {
-    targets.forEach(t => {
-      const baseKey = t.baseKey || getBaseSKUKey(t.sku);
-      const targetKey = `${t.dsrName.toUpperCase()}|${t.brand.toUpperCase()}|${baseKey}`;
-      if (salesMap.has(targetKey)) {
-        const sData = salesMap.get(targetKey);
-        t.achiv = sData.ctn;
-        t.bills = sData.bill;
-      }
-    });
-  } else {
-    targets = rawSalesItems.map(item => ({
-      area: 'MAIN AREA',
-      distributor: 'KHI - REHMAN ENT-BR2',
-      dsrName: item.dsrName,
-      rawDsr: item.rawDsr,
-      brand: item.brand,
-      sku: item.sku,
-      baseKey: item.baseKey,
-      target: 0,
-      achiv: item.ctn,
-      bills: item.bill
-    }));
-  }
-
-  fs.writeFileSync(TARGET_MASTER_FILE, JSON.stringify(targets, null, 2), 'utf8');
-  fs.writeFileSync(LIVE_CACHE_FILE, JSON.stringify(targets, null, 2), 'utf8');
-  return { totalTargets: targets.length, salesItemsFound: salesMap.size };
-}
-
-ipcMain.handle('get-target-report-data', async () => {
-  try {
-    if (fs.existsSync(LIVE_CACHE_FILE)) {
-      return { success: true, data: JSON.parse(fs.readFileSync(LIVE_CACHE_FILE, 'utf8')) };
-    }
-    if (fs.existsSync(TARGET_MASTER_FILE)) {
-      return { success: true, data: JSON.parse(fs.readFileSync(TARGET_MASTER_FILE, 'utf8')) };
-    }
-    return { success: false, data: [] };
-  } catch (e) {
-    return { success: false, data: [], message: e.message };
-  }
-});
-
-// -------------------------------------------------------------
-// DSR CARRY-FORWARD & OUTLET LIST PARSER (ACCURATE FOR MF OUTLET LIST DETAIL)
-// -------------------------------------------------------------
 ipcMain.handle('upload-shop-master-file', async () => {
   try {
     const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'MF Outlet List Detail / Shop Master Excel Select Karein',
+      title: 'MF Outlet List Detail Excel Select Karein',
       filters: [{ name: 'Excel Files', extensions: ['xlsx', 'xls'] }],
       properties: ['openFile']
     });
@@ -1269,66 +119,71 @@ ipcMain.handle('upload-shop-master-file', async () => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(fileBuffer);
 
-    if (!workbook.worksheets || workbook.worksheets.length === 0) {
-      return { success: false, message: 'Excel file me koi sheet nahi mili!' };
-    }
-
-    const shopMap = new Map();
     const sheet = workbook.worksheets[0];
-    const totalRows = sheet.rowCount;
+    if (!sheet) return { success: false, message: 'Excel file me sheet nahi mili!' };
 
-    for (let r = 2; r <= totalRows; r++) {
-      const row = sheet.getRow(r);
-      const fullPop = (row.getCell(1).value || '').toString().trim();
-      let shortPop = (row.getCell(2).value || '').toString().trim();
+    const shopList = [];
 
-      if (!shortPop && fullPop) {
-        shortPop = fullPop.slice(-8);
-      }
+    sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      if (rowNumber === 1) return;
 
-      const shopName = (row.getCell(3).value || '').toString().trim();
-      const rawDsr = (row.getCell(4).value || '').toString().trim();
-      const dsrName = cleanDSRName(rawDsr);
-      const section = (row.getCell(5).value || '').toString().trim();
+      let fullPop = getSafeCellString(row.getCell(1));
+      let shortPop = getSafeCellString(row.getCell(2));
 
-      if (shortPop && shopName && !shortPop.toLowerCase().includes('pop')) {
-        if (!shopMap.has(shortPop)) {
-          shopMap.set(shortPop, {
-            pop: shortPop,
-            fullPop: fullPop,
-            name: shopName,
-            dsr: dsrName || 'Unassigned',
-            rawDsr: rawDsr,
-            section: section || 'General'
-          });
+      if (!shortPop || shortPop === '[object Object]' || shortPop.length < 4) {
+        if (fullPop && fullPop.length >= 7) {
+          shortPop = fullPop.slice(-7);
         }
       }
-    }
+      shortPop = shortPop.replace(/^0+/, '').trim();
 
-    const shopList = Array.from(shopMap.values());
+      const shopName = getSafeCellString(row.getCell(3));
+      const rawDsr = getSafeCellString(row.getCell(4));
+      const dsrName = cleanDSRName(rawDsr);
+      const section = getSafeCellString(row.getCell(5));
+
+      if (!shopName || fullPop.toUpperCase().includes('POP') || fullPop.toUpperCase().includes('TOTAL')) return;
+
+      shopList.push({
+        id: rowNumber,
+        pop: shortPop || fullPop,
+        fullPop: fullPop,
+        name: shopName,
+        dsr: dsrName || 'Unassigned',
+        rawDsr: rawDsr,
+        section: section || 'General'
+      });
+    });
+
     await fs.promises.writeFile(SHOP_MASTER_FILE, JSON.stringify(shopList, null, 2), 'utf8');
 
     return { 
       success: true, 
       count: shopList.length, 
-      message: `${shopList.length} Shops Successfully Loaded with Assigned DSRs!` 
+      message: `⚡ ${shopList.length} Shops Successfully Loaded with Assigned DSRs!` 
     };
   } catch (err) {
     return { success: false, message: 'Shop upload error: ' + err.message };
   }
 });
 
-// -------------------------------------------------------------
-// REQUIRED SHOP DATA IPC HANDLERS
-// -------------------------------------------------------------
+ipcMain.handle('get-saved-shop-data', async () => {
+  try {
+    if (fs.existsSync(SHOP_MASTER_FILE)) {
+      const data = JSON.parse(await fs.promises.readFile(SHOP_MASTER_FILE, 'utf8'));
+      return { success: true, shops: Array.isArray(data) ? data : [] };
+    }
+    return { success: true, shops: [] };
+  } catch (err) {
+    return { success: false, shops: [], message: err.message };
+  }
+});
+
 ipcMain.handle('get-saved-shop-count', async () => {
   try {
     if (fs.existsSync(SHOP_MASTER_FILE)) {
-      const stats = fs.statSync(SHOP_MASTER_FILE);
-      if (stats.size > 10) {
-        const shops = JSON.parse(fs.readFileSync(SHOP_MASTER_FILE, 'utf8'));
-        return { success: true, count: Array.isArray(shops) ? shops.length : 0 };
-      }
+      const data = JSON.parse(await fs.promises.readFile(SHOP_MASTER_FILE, 'utf8'));
+      return { success: true, count: Array.isArray(data) ? data.length : 0 };
     }
     return { success: true, count: 0 };
   } catch (err) {
@@ -1336,46 +191,1171 @@ ipcMain.handle('get-saved-shop-count', async () => {
   }
 });
 
-ipcMain.handle('get-saved-shop-data', async () => {
+ipcMain.handle('copy-image-to-clipboard', async (event, dataUrl) => {
   try {
-    if (fs.existsSync(SHOP_MASTER_FILE)) {
-      return { success: true, shops: JSON.parse(fs.readFileSync(SHOP_MASTER_FILE, 'utf8')) };
-    }
-    return { success: true, shops: [] };
-  } catch (err) {
-    return { success: false, shops: [], error: err.message };
-  }
-});
-
-// -------------------------------------------------------------
-// CUSTOM BRANDS & DIVISION STORAGE ENGINE
-// -------------------------------------------------------------
-ipcMain.handle('get-custom-brands', async () => {
-  try {
-    const filePath = path.join(STORAGE_DIR, 'CUSTOM_BRANDS.json');
-    if (!fs.existsSync(filePath)) return { success: true, customBrands: {} };
-    return { success: true, customBrands: JSON.parse(fs.readFileSync(filePath, 'utf8')) };
-  } catch (err) {
-    return { success: false, customBrands: {}, error: err.message };
-  }
-});
-
-ipcMain.handle('save-custom-brands', async (event, customBrands) => {
-  try {
-    const filePath = path.join(STORAGE_DIR, 'CUSTOM_BRANDS.json');
-    fs.writeFileSync(filePath, JSON.stringify(customBrands, null, 2), 'utf8');
+    const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+    const imgBuffer = Buffer.from(base64Data, 'base64');
+    const nativeImg = nativeImage.createFromBuffer(imgBuffer);
+    clipboard.writeImage(nativeImg);
     return { success: true };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
-});
-
-ipcMain.handle('save-division-mapper-config', async (event, divConfig) => {
-  try {
-    const filePath = path.join(STORAGE_DIR, 'DIVISION_MAP_CONFIG.json');
-    fs.writeFileSync(filePath, JSON.stringify(divConfig, null, 2), 'utf8');
-    return { success: true, message: 'Division mapping saved!' };
   } catch (err) {
     return { success: false, message: err.message };
   }
 });
+
+ipcMain.handle('get-both-sales-dumps', async () => {
+  let lmData = null;
+  let cmData = null;
+  try {
+    if (fs.existsSync(DUMP_LM_FILE)) lmData = JSON.parse(await fs.promises.readFile(DUMP_LM_FILE, 'utf8'));
+    if (fs.existsSync(DUMP_CM_FILE)) cmData = JSON.parse(await fs.promises.readFile(DUMP_CM_FILE, 'utf8'));
+    return { success: true, lmData, cmData };
+  } catch (e) {
+    return { success: false, lmData: null, cmData: null };
+  }
+});
+
+ipcMain.handle('get-target-report-data', async () => {
+  try {
+    if (fs.existsSync(TARGET_REPORT_FILE)) {
+      const data = JSON.parse(await fs.promises.readFile(TARGET_REPORT_FILE, 'utf8'));
+      return { success: true, data };
+    }
+    return { success: true, data: [] };
+  } catch (e) {
+    return { success: false, data: [] };
+  }
+});
+
+ipcMain.handle('get-stock-report-data', async () => {
+  try {
+    if (fs.existsSync(STOCK_DATA_FILE)) {
+      const data = JSON.parse(await fs.promises.readFile(STOCK_DATA_FILE, 'utf8'));
+      return { success: true, stockData: data.stockData || [], dispatchData: data.dispatchData || [] };
+    }
+    return { success: true, stockData: [], dispatchData: [] };
+  } catch (e) {
+    return { success: false, stockData: [], dispatchData: [] };
+  }
+});
+
+ipcMain.handle('get-custom-brands', async () => {
+  try {
+    if (fs.existsSync(CUSTOM_BRANDS_FILE)) {
+      const data = JSON.parse(await fs.promises.readFile(CUSTOM_BRANDS_FILE, 'utf8'));
+      return { success: true, customBrands: data };
+    }
+    return { success: true, customBrands: {} };
+  } catch (e) {
+    return { success: false, customBrands: {} };
+  }
+});
+
+ipcMain.handle('save-custom-brands', async (ev, data) => {
+  try {
+    await fs.promises.writeFile(CUSTOM_BRANDS_FILE, JSON.stringify(data, null, 2), 'utf8');
+    return { success: true };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+});
+
+ipcMain.handle('get-all-credentials', async () => {
+  try {
+    if (fs.existsSync(CREDENTIALS_FILE)) {
+      const creds = JSON.parse(await fs.promises.readFile(CREDENTIALS_FILE, 'utf8'));
+      return { success: true, credentials: creds };
+    }
+    return { success: true, credentials: { snd: {}, dss: {} } };
+  } catch (e) {
+    return { success: false };
+  }
+});
+
+ipcMain.handle('save-all-credentials', async (ev, creds) => {
+  try {
+    await fs.promises.writeFile(CREDENTIALS_FILE, JSON.stringify(creds, null, 2), 'utf8');
+    return { success: true };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+});
+
+ipcMain.handle('save-daily-sales-history', async (ev, payload) => {
+  try {
+    let history = {};
+    if (fs.existsSync(DAILY_HISTORY_FILE)) {
+      history = JSON.parse(await fs.promises.readFile(DAILY_HISTORY_FILE, 'utf8'));
+    }
+    history[payload.dateKey] = payload.records;
+    await fs.promises.writeFile(DAILY_HISTORY_FILE, JSON.stringify(history, null, 2), 'utf8');
+    return { success: true };
+  } catch (e) {
+    return { success: false, message: e.message };
+  }
+});
+
+ipcMain.handle('get-saved-dsr-targets', async () => {
+  try {
+    if (fs.existsSync(DSR_TARGETS_FILE)) {
+      const targets = JSON.parse(await fs.promises.readFile(DSR_TARGETS_FILE, 'utf8'));
+      return { success: true, targets };
+    }
+    return { success: true, targets: {} };
+  } catch (e) {
+    return { success: false, targets: {} };
+  }
+});
+
+ipcMain.handle('get-booking-vs-execution-data', async () => {
+  return { success: true, data: {} };
+});
+===END===
+===FILE:modules/zeroShopWise.js===
+window.ZeroShopModule = {
+  selectedDsr: 'ALL',
+  selectedSection: 'ALL',
+  statusFilter: 'ALL',
+
+  standardizePop: function(val) {
+    if (!val) return "";
+    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    s = String(s).trim();
+    if (s.length > 10) s = s.slice(-8);
+    const num = s.replace(/^0+/, '');
+    return num ? num : s;
+  },
+
+  cleanDSRName: function(rawName) {
+    if (!rawName || rawName === 'Unassigned') return "Unassigned";
+    let s = String(rawName).trim();
+    if (s.includes("-")) {
+      const parts = s.split("-");
+      if (parts[0].trim().length <= 6 && parts.length > 1) {
+        s = s.substring(s.indexOf("-") + 1).trim();
+      }
+    }
+    s = s.replace(/-Merge/gi, "").trim();
+    if (s.includes("(")) s = s.substring(0, s.indexOf("(")).trim();
+    s = s.replace(/-WS/gi, "").trim();
+    if (s.endsWith("-")) s = s.slice(0, -1).trim();
+    return s || "Unassigned";
+  },
+
+  renderHTML: function() {
+    return `
+      <!-- TOP ACTION BAR -->
+      <div class="filter-bar-compact" style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div class="filter-group">
+          <span class="filter-label">DSR:</span>
+          <select id="selectZeroShopDSR" class="custom-select" style="min-width:150px;" onchange="ZeroShopModule.onDsrChange(this.value)">
+            <option value="ALL">ALL DSRs</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Section:</span>
+          <select id="selectZeroShopSection" class="custom-select" style="min-width:150px;" onchange="ZeroShopModule.onSectionChange(this.value)">
+            <option value="ALL">ALL SECTIONS</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Search Shop:</span>
+          <input type="text" id="inputZeroShopSearch" class="date-input-field" placeholder="🔍 Search Code / Name..." oninput="ZeroShopModule.renderTable()" style="width:160px;" />
+        </div>
+
+        <div class="mode-buttons" style="background:var(--bg-main); padding:2px; border-radius:4px; border:1px solid var(--border-color);">
+          <button id="btnShopFilterAll" class="btn-mode active" onclick="ZeroShopModule.setStatusFilter('ALL')">All Shops (<span id="cntShopAll">0</span>)</button>
+          <button id="btnShopFilterZero" class="btn-mode" onclick="ZeroShopModule.setStatusFilter('ZERO_ONLY')" style="color:#ef4444;">Zero Purchase (<span id="cntShopZero">0</span>)</button>
+          <button id="btnShopFilterPur" class="btn-mode" onclick="ZeroShopModule.setStatusFilter('PURCHASED_ONLY')" style="color:#10b981;">Purchased (<span id="cntShopPur">0</span>)</button>
+        </div>
+
+        <div class="filter-group" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+          <span id="shopBuyingRateBadge" style="background:var(--table-header-bg); border:1px solid #38bdf8; color:#38bdf8; font-weight:800; font-size:11.5px; padding:3px 10px; border-radius:4px; font-family:'Consolas', monospace;">
+            Buying Ratio: 0.0%
+          </span>
+          <button class="btn-act btn-copy-text" onclick="copyTableAsImage('zeroShopTable')">📸 Copy Image (Ctrl+C)</button>
+          <button class="btn-act" style="background:#0284c7;" onclick="ZeroShopModule.renderTable()">🔄 Sync</button>
+        </div>
+      </div>
+
+      <!-- FULL-WIDTH SHOP ZERO PURCHASE TABLE -->
+      <div class="table-chart-container">
+        <div class="table-wrapper" tabindex="0">
+          <table id="zeroShopTable">
+            <thead>
+              <tr>
+                <th style="color:#ffffff !important; width:110px;">Shop Code (Col B)</th>
+                <th style="color:#ffffff !important; width:220px;">Shop / Customer Name</th>
+                <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+                <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+                <th style="color:#ffffff !important; text-align:center; width:120px;">Purchase Status</th>
+                <th class="num" style="color:#ffffff !important; width:70px;">Brands</th>
+              </tr>
+            </thead>
+            <tbody id="zeroShopTbody">
+              <tr><td colspan="6" style="text-align:center; padding:35px; color:var(--text-muted); font-weight:bold;">Loading Shop Data...</td></tr>
+            </tbody>
+            <tfoot id="zeroShopTfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  setStatusFilter: function(status) {
+    this.statusFilter = status;
+    const bAll = document.getElementById('btnShopFilterAll');
+    const bZero = document.getElementById('btnShopFilterZero');
+    const bPur = document.getElementById('btnShopFilterPur');
+    if (bAll) bAll.classList.toggle('active', status === 'ALL');
+    if (bZero) bZero.classList.toggle('active', status === 'ZERO_ONLY');
+    if (bPur) bPur.classList.toggle('active', status === 'PURCHASED_ONLY');
+    this.renderTable();
+  },
+
+  onDsrChange: function(val) {
+    this.selectedDsr = val;
+    this.selectedSection = 'ALL';
+    this.updateSectionDropdown();
+    this.renderTable();
+  },
+
+  onSectionChange: function(val) {
+    this.selectedSection = val;
+    this.renderTable();
+  },
+
+  updateSectionDropdown: function() {
+    const rawShopList = window.shopDataMaster || [];
+    const secSelect = document.getElementById('selectZeroShopSection');
+    if (!secSelect) return;
+
+    const sections = new Set();
+    rawShopList.forEach(s => {
+      const d = this.cleanDSRName(s.dsr);
+      if (this.selectedDsr === 'ALL' || d === this.selectedDsr) {
+        const sec = (s.section || '').trim();
+        if (sec) sections.add(sec);
+      }
+    });
+
+    const sortedSec = Array.from(sections).sort();
+    secSelect.innerHTML = `<option value="ALL">ALL SECTIONS</option>` + sortedSec.map(sec => `<option value="${sec}">${sec}</option>`).join('');
+    secSelect.value = this.selectedSection;
+  },
+
+  renderTable: function() {
+    const tbody = document.getElementById('zeroShopTbody');
+    const tfoot = document.getElementById('zeroShopTfoot');
+    if (!tbody) return;
+
+    const rawShopList = window.shopDataMaster || [];
+    if (rawShopList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:35px; color:#ef4444; font-weight:bold;">'Source Files' tab mein jaa kar Shop Data Master upload karein.</td></tr>`;
+      if (tfoot) tfoot.innerHTML = '';
+      return;
+    }
+
+    const activeShopDict = new Map();
+    const dumpDsrByPop = new Map();
+    const salesDumpRecords = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
+
+    salesDumpRecords.forEach(r => {
+      const q = parseFloat(r.qty || 0);
+      const stdPop = this.standardizePop(r.pop);
+      const dsrFromDump = this.cleanDSRName(r.rawDsr || r.dsr);
+
+      if (stdPop && dsrFromDump && dsrFromDump !== 'Unassigned') {
+        dumpDsrByPop.set(stdPop, dsrFromDump);
+      }
+
+      if (q > 0 && stdPop) {
+        if (!activeShopDict.has(stdPop)) activeShopDict.set(stdPop, new Set());
+        if (r.brand) activeShopDict.get(stdPop).add(r.brand.trim());
+      }
+    });
+
+    const dsrSelect = document.getElementById('selectZeroShopDSR');
+    if (dsrSelect && dsrSelect.options.length <= 1) {
+      const allDsrs = new Set();
+      rawShopList.forEach(s => {
+        const stdCode = this.standardizePop(s.pop);
+        let d = this.cleanDSRName(s.dsr);
+        if (d === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+          d = dumpDsrByPop.get(stdCode);
+        }
+        if (d && d !== 'Unassigned') allDsrs.add(d);
+      });
+      const sortedDsrs = Array.from(allDsrs).sort();
+      dsrSelect.innerHTML = `<option value="ALL">ALL DSRs</option>` + sortedDsrs.map(d => `<option value="${d}">${d}</option>`).join('');
+      dsrSelect.value = this.selectedDsr;
+      this.updateSectionDropdown();
+    }
+
+    const searchText = (document.getElementById('inputZeroShopSearch')?.value || '').toLowerCase().trim();
+    const rowsData = [];
+    let totalAllCount = 0;
+    let totalPurchasedCount = 0;
+    let totalZeroCount = 0;
+
+    rawShopList.forEach(shop => {
+      let rawCode = '';
+      if (typeof shop.pop === 'string' && shop.pop !== '[object Object]') {
+        rawCode = shop.pop.trim();
+      } else if (typeof shop.pop === 'number') {
+        rawCode = String(shop.pop);
+      } else if (typeof shop.pop === 'object' && shop.pop !== null) {
+        rawCode = String(shop.pop.result || shop.pop.text || '');
+      }
+
+      if (!rawCode || rawCode === '[object Object]') {
+        const fp = String(shop.fullPop || '').trim();
+        rawCode = fp.length >= 7 ? fp.slice(-7) : fp;
+      }
+      rawCode = rawCode.replace(/^0+/, '');
+
+      const stdCode = this.standardizePop(rawCode);
+
+      let dsrName = this.cleanDSRName(shop.dsr);
+      if (dsrName === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+        dsrName = dumpDsrByPop.get(stdCode);
+      }
+
+      const section = (shop.section || '').trim();
+      const shopName = (shop.name || 'Unnamed Outlet').trim();
+
+      if (this.selectedDsr !== 'ALL' && dsrName !== this.selectedDsr) return;
+      if (this.selectedSection !== 'ALL' && section !== this.selectedSection) return;
+
+      if (searchText) {
+        if (!rawCode.toLowerCase().includes(searchText) &&
+            !shopName.toLowerCase().includes(searchText) &&
+            !dsrName.toLowerCase().includes(searchText) &&
+            !section.toLowerCase().includes(searchText)) {
+          return;
+        }
+      }
+
+      const isPurchased = activeShopDict.has(stdCode) || activeShopDict.has(this.standardizePop(shop.fullPop));
+      let brandCount = 0;
+      if (activeShopDict.has(stdCode)) {
+        brandCount = activeShopDict.get(stdCode).size;
+      } else if (activeShopDict.has(this.standardizePop(shop.fullPop))) {
+        brandCount = activeShopDict.get(this.standardizePop(shop.fullPop)).size;
+      }
+
+      if (this.statusFilter === 'ZERO_ONLY' && isPurchased) return;
+      if (this.statusFilter === 'PURCHASED_ONLY' && !isPurchased) return;
+
+      if (isPurchased) totalPurchasedCount++; else totalZeroCount++;
+      totalAllCount++;
+
+      rowsData.push({
+        code: rawCode,
+        name: shopName,
+        dsr: dsrName,
+        section: section,
+        isPurchased: isPurchased,
+        brands: brandCount
+      });
+    });
+
+    const cntAll = document.getElementById('cntShopAll');
+    const cntZero = document.getElementById('cntShopZero');
+    const cntPur = document.getElementById('cntShopPur');
+    const rateBadge = document.getElementById('shopBuyingRateBadge');
+
+    if (cntAll) cntAll.innerText = totalAllCount.toLocaleString();
+    if (cntZero) cntZero.innerText = totalZeroCount.toLocaleString();
+    if (cntPur) cntPur.innerText = totalPurchasedCount.toLocaleString();
+    if (rateBadge) {
+      const rate = totalAllCount > 0 ? ((totalPurchasedCount / totalAllCount) * 100).toFixed(1) : '0.0';
+      rateBadge.innerText = `Buying Ratio: ${rate}%`;
+    }
+
+    let rowsHtml = '';
+    rowsData.forEach(r => {
+      const statusBadge = r.isPurchased
+        ? `<span style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16, 185, 129, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Purchased</span>`
+        : `<span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Zero Purchase</span>`;
+
+      rowsHtml += `
+        <tr>
+          <td style="font-family:'Consolas', monospace; font-weight:700; color:#0284c7;">${r.code}</td>
+          <td style="font-weight:700; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
+          <td style="font-weight:700; color:#0f172a;">${r.dsr}</td>
+          <td style="color:#475569; font-size:11.5px;">${r.section}</td>
+          <td style="text-align:center;">${statusBadge}</td>
+          <td class="num" style="font-weight:700;">${r.brands}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rowsHtml || `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:bold;">No matching shops found.</td></tr>`;
+
+    if (tfoot) {
+      tfoot.innerHTML = `
+        <tr class="total-row">
+          <td>GRAND TOTAL</td>
+          <td>Visible Shops: ${rowsData.length.toLocaleString()}</td>
+          <td colspan="2"></td>
+          <td style="text-align:center; font-size:11px; color:#ffffff !important;">Purchased: ${totalPurchasedCount} | Zero: ${totalZeroCount}</td>
+          <td class="num" style="color:#ffffff !important;">${rowsData.reduce((acc, x) => acc + x.brands, 0)}</td>
+        </tr>
+      `;
+    }
+
+    if (typeof attachExcelSelectionListeners === 'function') {
+      attachExcelSelectionListeners();
+    }
+  }
+};
+===END===
+===FILE:modules/zeroBrandWise.js===
+window.ZeroBrandModule = {
+  selectedDsr: 'ALL',
+  selectedSection: 'ALL',
+  selectedBrand: 'NONE',
+  statusFilter: 'ALL',
+
+  standardizePop: function(val) {
+    if (!val) return "";
+    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    s = String(s).trim();
+    if (s.length > 10) s = s.slice(-8);
+    const num = s.replace(/^0+/, '');
+    return num ? num : s;
+  },
+
+  cleanDSRName: function(rawName) {
+    if (!rawName || rawName === 'Unassigned') return "Unassigned";
+    let s = String(rawName).trim();
+    if (s.includes("-")) {
+      const parts = s.split("-");
+      if (parts[0].trim().length <= 6 && parts.length > 1) {
+        s = s.substring(s.indexOf("-") + 1).trim();
+      }
+    }
+    s = s.replace(/-Merge/gi, "").trim();
+    if (s.includes("(")) s = s.substring(0, s.indexOf("(")).trim();
+    s = s.replace(/-WS/gi, "").trim();
+    if (s.endsWith("-")) s = s.slice(0, -1).trim();
+    return s || "Unassigned";
+  },
+
+  renderHTML: function() {
+    return `
+      <!-- TOP ACTION BAR -->
+      <div class="filter-bar-compact" style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div class="filter-group">
+          <span class="filter-label">DSR:</span>
+          <select id="selectZeroBrandDSR" class="custom-select" style="min-width:150px;" onchange="ZeroBrandModule.onDsrChange(this.value)">
+            <option value="ALL">ALL DSRs</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Section:</span>
+          <select id="selectZeroBrandSection" class="custom-select" style="min-width:150px;" onchange="ZeroBrandModule.onSectionChange(this.value)">
+            <option value="ALL">ALL SECTIONS</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label" style="color:#f59e0b;">Select Brand:</span>
+          <select id="selectZeroBrandName" class="custom-select" style="min-width:160px; border-color:#f59e0b;" onchange="ZeroBrandModule.onBrandChange(this.value)">
+            <option value="NONE">-- Select Brand --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Search Shop:</span>
+          <input type="text" id="inputZeroBrandSearch" class="date-input-field" placeholder="🔍 Search Code / Name..." oninput="ZeroBrandModule.renderTable()" style="width:160px;" />
+        </div>
+
+        <div class="mode-buttons" style="background:var(--bg-main); padding:2px; border-radius:4px; border:1px solid var(--border-color);">
+          <button id="btnBrandFilterAll" class="btn-mode active" onclick="ZeroBrandModule.setStatusFilter('ALL')">All (<span id="cntBrandAll">0</span>)</button>
+          <button id="btnBrandFilterZero" class="btn-mode" onclick="ZeroBrandModule.setStatusFilter('ZERO_ONLY')" style="color:#ef4444;">Zero Only (<span id="cntBrandZero">0</span>)</button>
+          <button id="btnBrandFilterPur" class="btn-mode" onclick="ZeroBrandModule.setStatusFilter('PURCHASED_ONLY')" style="color:#10b981;">Purchased Only (<span id="cntBrandPur">0</span>)</button>
+        </div>
+
+        <div class="filter-group" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+          <span id="brandBuyingRateBadge" style="background:var(--table-header-bg); border:1px solid #38bdf8; color:#38bdf8; font-weight:800; font-size:11.5px; padding:3px 10px; border-radius:4px; font-family:'Consolas', monospace;">
+            Buying Rate: 0.0%
+          </span>
+          <button class="btn-act btn-copy-text" onclick="copyTableAsImage('zeroBrandTable')">📸 Copy Image (Ctrl+C)</button>
+          <button class="btn-act" style="background:#0284c7;" onclick="ZeroBrandModule.renderTable()">🔄 Sync</button>
+        </div>
+      </div>
+
+      <!-- FULL-WIDTH BRAND ZERO PURCHASE TABLE -->
+      <div class="table-chart-container">
+        <div class="table-wrapper" tabindex="0">
+          <table id="zeroBrandTable">
+            <thead id="zeroBrandThead">
+              <tr>
+                <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+                <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+                <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+                <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+                <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="zeroBrandTbody">
+              <tr><td colspan="5" style="text-align:center; padding:35px; color:#f59e0b; font-weight:bold;">Report dekhne ke liye upar se Brand select karein.</td></tr>
+            </tbody>
+            <tfoot id="zeroBrandTfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  setStatusFilter: function(status) {
+    this.statusFilter = status;
+    const bAll = document.getElementById('btnBrandFilterAll');
+    const bZero = document.getElementById('btnBrandFilterZero');
+    const bPur = document.getElementById('btnBrandFilterPur');
+    if (bAll) bAll.classList.toggle('active', status === 'ALL');
+    if (bZero) bZero.classList.toggle('active', status === 'ZERO_ONLY');
+    if (bPur) bPur.classList.toggle('active', status === 'PURCHASED_ONLY');
+    this.renderTable();
+  },
+
+  onDsrChange: function(val) {
+    this.selectedDsr = val;
+    this.selectedSection = 'ALL';
+    this.updateSectionDropdown();
+    this.renderTable();
+  },
+
+  onSectionChange: function(val) {
+    this.selectedSection = val;
+    this.renderTable();
+  },
+
+  onBrandChange: function(val) {
+    this.selectedBrand = val;
+    this.renderTable();
+  },
+
+  updateSectionDropdown: function() {
+    const rawShopList = window.shopDataMaster || [];
+    const secSelect = document.getElementById('selectZeroBrandSection');
+    if (!secSelect) return;
+
+    const sections = new Set();
+    rawShopList.forEach(s => {
+      let dsrName = this.cleanDSRName(s.dsr);
+      if (this.selectedDsr === 'ALL' || dsrName === this.selectedDsr) {
+        const sec = (s.section || '').trim();
+        if (sec) sections.add(sec);
+      }
+    });
+
+    const sortedSec = Array.from(sections).sort();
+    secSelect.innerHTML = `<option value="ALL">ALL SECTIONS</option>` + sortedSec.map(sec => `<option value="${sec}">${sec}</option>`).join('');
+    secSelect.value = this.selectedSection;
+  },
+
+  renderTable: function() {
+    const thead = document.getElementById('zeroBrandThead');
+    const tbody = document.getElementById('zeroBrandTbody');
+    const tfoot = document.getElementById('zeroBrandTfoot');
+    if (!tbody || !thead) return;
+
+    const rawShopList = window.shopDataMaster || [];
+    if (rawShopList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:35px; color:#ef4444; font-weight:bold;">'Source Files' tab mein jaa kar Shop Data Master upload karein.</td></tr>`;
+      if (tfoot) tfoot.innerHTML = '';
+      return;
+    }
+
+    const allDumpBrands = new Set();
+    const dumpDsrByPop = new Map();
+    const salesDumpRecords = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
+
+    salesDumpRecords.forEach(r => {
+      const brandName = (r.brand || '').trim().toUpperCase();
+      if (brandName) allDumpBrands.add(brandName);
+
+      const stdPop = this.standardizePop(r.pop);
+      const dsrFromDump = this.cleanDSRName(r.rawDsr || r.dsr);
+      if (stdPop && dsrFromDump && dsrFromDump !== 'Unassigned') {
+        dumpDsrByPop.set(stdPop, dsrFromDump);
+      }
+    });
+
+    const sortedBrands = Array.from(allDumpBrands).sort();
+    const brandSelect = document.getElementById('selectZeroBrandName');
+    if (brandSelect && brandSelect.options.length <= 1) {
+      brandSelect.innerHTML = `<option value="NONE">-- Select Brand --</option>` + sortedBrands.map(b => `<option value="${b}">${b}</option>`).join('');
+      brandSelect.value = this.selectedBrand;
+    }
+
+    const dsrSelect = document.getElementById('selectZeroBrandDSR');
+    if (dsrSelect && dsrSelect.options.length <= 1) {
+      const allDsrs = new Set();
+      rawShopList.forEach(s => {
+        const stdCode = this.standardizePop(s.pop);
+        let d = this.cleanDSRName(s.dsr);
+        if (d === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+          d = dumpDsrByPop.get(stdCode);
+        }
+        if (d && d !== 'Unassigned') allDsrs.add(d);
+      });
+      const sortedDsrs = Array.from(allDsrs).sort();
+      dsrSelect.innerHTML = `<option value="ALL">ALL DSRs</option>` + sortedDsrs.map(d => `<option value="${d}">${d}</option>`).join('');
+      dsrSelect.value = this.selectedDsr;
+      this.updateSectionDropdown();
+    }
+
+    if (this.selectedBrand === 'NONE') {
+      thead.innerHTML = `
+        <tr>
+          <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+          <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+          <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+          <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+          <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
+        </tr>
+      `;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:45px; color:#f59e0b; font-weight:bold; font-size:13px;">⚡ Fast Mode: Meharbani karke upar dropdown se Brand select karein.</td></tr>`;
+      if (tfoot) tfoot.innerHTML = '';
+      document.getElementById('cntBrandAll').innerText = '0';
+      document.getElementById('cntBrandZero').innerText = '0';
+      document.getElementById('cntBrandPur').innerText = '0';
+      document.getElementById('brandBuyingRateBadge').innerText = 'Buying Rate: 0.0%';
+      return;
+    }
+
+    const targetBrand = this.selectedBrand.toUpperCase();
+    const purchaseSet = new Set();
+    salesDumpRecords.forEach(r => {
+      const q = parseFloat(r.qty || 0);
+      if (q > 0) {
+        const stdPop = this.standardizePop(r.pop);
+        const bName = (r.brand || '').trim().toUpperCase();
+        if (stdPop && bName === targetBrand) {
+          purchaseSet.add(stdPop);
+        }
+      }
+    });
+
+    thead.innerHTML = `
+      <tr>
+        <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+        <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+        <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+        <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+        <th style="color:#ffffff !important; text-align:center; width:140px;">${targetBrand} Status</th>
+      </tr>
+    `;
+
+    const searchText = (document.getElementById('inputZeroBrandSearch')?.value || '').toLowerCase().trim();
+    const rowsData = [];
+
+    let totalShopsCount = 0;
+    let totalPurchasedCount = 0;
+    let totalZeroCount = 0;
+
+    rawShopList.forEach(shop => {
+      let rawCode = '';
+      if (typeof shop.pop === 'string' && shop.pop !== '[object Object]') {
+        rawCode = shop.pop.trim();
+      } else if (typeof shop.pop === 'number') {
+        rawCode = String(shop.pop);
+      } else if (typeof shop.pop === 'object' && shop.pop !== null) {
+        rawCode = String(shop.pop.result || shop.pop.text || '');
+      }
+
+      if (!rawCode || rawCode === '[object Object]') {
+        const fp = String(shop.fullPop || '').trim();
+        rawCode = fp.length >= 7 ? fp.slice(-7) : fp;
+      }
+      rawCode = rawCode.replace(/^0+/, '');
+
+      const stdCode = this.standardizePop(rawCode);
+
+      let dsrName = this.cleanDSRName(shop.dsr);
+      if (dsrName === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+        dsrName = dumpDsrByPop.get(stdCode);
+      }
+
+      const section = (shop.section || '').trim();
+      const shopName = (shop.name || 'Unnamed Outlet').trim();
+
+      if (this.selectedDsr !== 'ALL' && dsrName !== this.selectedDsr) return;
+      if (this.selectedSection !== 'ALL' && section !== this.selectedSection) return;
+
+      if (searchText) {
+        if (!rawCode.toLowerCase().includes(searchText) &&
+            !shopName.toLowerCase().includes(searchText) &&
+            !dsrName.toLowerCase().includes(searchText) &&
+            !section.toLowerCase().includes(searchText)) {
+          return;
+        }
+      }
+
+      const isPurchased = purchaseSet.has(stdCode) || purchaseSet.has(this.standardizePop(shop.fullPop));
+
+      if (this.statusFilter === 'ZERO_ONLY' && isPurchased) return;
+      if (this.statusFilter === 'PURCHASED_ONLY' && !isPurchased) return;
+
+      if (isPurchased) totalPurchasedCount++; else totalZeroCount++;
+      totalShopsCount++;
+
+      rowsData.push({
+        code: rawCode,
+        name: shopName,
+        dsr: dsrName,
+        section: section,
+        isPurchased: isPurchased
+      });
+    });
+
+    const cntAll = document.getElementById('cntBrandAll');
+    const cntZero = document.getElementById('cntBrandZero');
+    const cntPur = document.getElementById('cntBrandPur');
+    const rateBadge = document.getElementById('brandBuyingRateBadge');
+
+    if (cntAll) cntAll.innerText = totalShopsCount.toLocaleString();
+    if (cntZero) cntZero.innerText = totalZeroCount.toLocaleString();
+    if (cntPur) cntPur.innerText = totalPurchasedCount.toLocaleString();
+    if (rateBadge) {
+      const rate = totalShopsCount > 0 ? ((totalPurchasedCount / totalShopsCount) * 100).toFixed(1) : '0.0';
+      rateBadge.innerText = `Buying Rate: ${rate}%`;
+    }
+
+    let rowsHtml = '';
+    rowsData.forEach(r => {
+      const statusBadge = r.isPurchased
+        ? `<span style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16, 185, 129, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Purchased</span>`
+        : `<span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Zero</span>`;
+
+      rowsHtml += `
+        <tr>
+          <td style="font-family:'Consolas', monospace; font-weight:700; color:#0284c7;">${r.code}</td>
+          <td style="font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
+          <td style="font-weight:700; color:#0f172a;">${r.dsr}</td>
+          <td style="color:#475569; font-size:11.5px;">${r.section}</td>
+          <td style="text-align:center;">${statusBadge}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rowsHtml || `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:bold;">No matching shops found.</td></tr>`;
+
+    if (tfoot) {
+      tfoot.innerHTML = `
+        <tr class="total-row">
+          <td>GRAND TOTAL</td>
+          <td>Visible Shops: ${rowsData.length.toLocaleString()}</td>
+          <td colspan="2"></td>
+          <td style="text-align:center; font-size:11px; color:#ffffff !important;">Active: ${totalPurchasedCount} | Zero: ${totalZeroCount}</td>
+        </tr>
+      `;
+    }
+
+    if (typeof attachExcelSelectionListeners === 'function') {
+      attachExcelSelectionListeners();
+    }
+  }
+};
+===END===
+===FILE:modules/zeroSkuWise.js===
+window.ZeroSkuModule = {
+  selectedDsr: 'ALL',
+  selectedSection: 'ALL',
+  selectedBrand: 'ALL',
+  selectedSku: 'NONE',
+  statusFilter: 'ALL',
+
+  standardizePop: function(val) {
+    if (!val) return "";
+    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    s = String(s).trim();
+    if (s.length > 10) s = s.slice(-8);
+    const num = s.replace(/^0+/, '');
+    return num ? num : s;
+  },
+
+  cleanDSRName: function(rawName) {
+    if (!rawName || rawName === 'Unassigned') return "Unassigned";
+    let s = String(rawName).trim();
+    if (s.includes("-")) {
+      const parts = s.split("-");
+      if (parts[0].trim().length <= 6 && parts.length > 1) {
+        s = s.substring(s.indexOf("-") + 1).trim();
+      }
+    }
+    s = s.replace(/-Merge/gi, "").trim();
+    if (s.includes("(")) s = s.substring(0, s.indexOf("(")).trim();
+    s = s.replace(/-WS/gi, "").trim();
+    if (s.endsWith("-")) s = s.slice(0, -1).trim();
+    return s || "Unassigned";
+  },
+
+  renderHTML: function() {
+    return `
+      <!-- TOP ACTION BAR -->
+      <div class="filter-bar-compact" style="margin-bottom:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div class="filter-group">
+          <span class="filter-label">DSR:</span>
+          <select id="selectZeroSkuDSR" class="custom-select" style="min-width:140px;" onchange="ZeroSkuModule.onDsrChange(this.value)">
+            <option value="ALL">ALL DSRs</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Section:</span>
+          <select id="selectZeroSkuSection" class="custom-select" style="min-width:140px;" onchange="ZeroSkuModule.onSectionChange(this.value)">
+            <option value="ALL">ALL SECTIONS</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Brand:</span>
+          <select id="selectZeroSkuBrand" class="custom-select" style="min-width:130px;" onchange="ZeroSkuModule.onBrandChange(this.value)">
+            <option value="ALL">ALL BRANDS</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label" style="color:#f59e0b;">Select SKU:</span>
+          <select id="selectZeroSkuName" class="custom-select" style="min-width:200px; border-color:#f59e0b;" onchange="ZeroSkuModule.onSkuChange(this.value)">
+            <option value="NONE">-- Select SKU --</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Search:</span>
+          <input type="text" id="inputZeroSkuSearch" class="date-input-field" placeholder="🔍 Search Code / Name..." oninput="ZeroSkuModule.renderTable()" style="width:150px;" />
+        </div>
+
+        <div class="mode-buttons" style="background:var(--bg-main); padding:2px; border-radius:4px; border:1px solid var(--border-color);">
+          <button id="btnSkuFilterAll" class="btn-mode active" onclick="ZeroSkuModule.setStatusFilter('ALL')">All (<span id="cntSkuAll">0</span>)</button>
+          <button id="btnSkuFilterZero" class="btn-mode" onclick="ZeroSkuModule.setStatusFilter('ZERO_ONLY')" style="color:#ef4444;">Zero Only (<span id="cntSkuZero">0</span>)</button>
+          <button id="btnSkuFilterPur" class="btn-mode" onclick="ZeroSkuModule.setStatusFilter('PURCHASED_ONLY')" style="color:#10b981;">Purchased Only (<span id="cntSkuPur">0</span>)</button>
+        </div>
+
+        <div class="filter-group" style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+          <span id="skuBuyingRateBadge" style="background:var(--table-header-bg); border:1px solid #38bdf8; color:#38bdf8; font-weight:800; font-size:11.5px; padding:3px 10px; border-radius:4px; font-family:'Consolas', monospace;">
+            Buying Rate: 0.0%
+          </span>
+          <button class="btn-act btn-copy-text" onclick="copyTableAsImage('zeroSkuTable')">📸 Copy Image (Ctrl+C)</button>
+          <button class="btn-act" style="background:#0284c7;" onclick="ZeroSkuModule.renderTable()">🔄 Sync</button>
+        </div>
+      </div>
+
+      <!-- FULL-WIDTH SKU ZERO PURCHASE TABLE -->
+      <div class="table-chart-container">
+        <div class="table-wrapper" tabindex="0">
+          <table id="zeroSkuTable">
+            <thead id="zeroSkuThead">
+              <tr>
+                <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+                <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+                <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+                <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+                <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="zeroSkuTbody">
+              <tr><td colspan="5" style="text-align:center; padding:35px; color:#f59e0b; font-weight:bold;">Report dekhne ke liye upar dropdown se SKU select karein.</td></tr>
+            </tbody>
+            <tfoot id="zeroSkuTfoot"></tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+  },
+
+  setStatusFilter: function(status) {
+    this.statusFilter = status;
+    const bAll = document.getElementById('btnSkuFilterAll');
+    const bZero = document.getElementById('btnSkuFilterZero');
+    const bPur = document.getElementById('btnSkuFilterPur');
+    if (bAll) bAll.classList.toggle('active', status === 'ALL');
+    if (bZero) bZero.classList.toggle('active', status === 'ZERO_ONLY');
+    if (bPur) bPur.classList.toggle('active', status === 'PURCHASED_ONLY');
+    this.renderTable();
+  },
+
+  onDsrChange: function(val) {
+    this.selectedDsr = val;
+    this.selectedSection = 'ALL';
+    this.updateSectionDropdown();
+    this.renderTable();
+  },
+
+  onSectionChange: function(val) {
+    this.selectedSection = val;
+    this.renderTable();
+  },
+
+  onBrandChange: function(val) {
+    this.selectedBrand = val;
+    this.populateSkuDropdown();
+    this.renderTable();
+  },
+
+  onSkuChange: function(val) {
+    this.selectedSku = val;
+    this.renderTable();
+  },
+
+  populateSkuDropdown: function() {
+    const skuSelect = document.getElementById('selectZeroSkuName');
+    if (!skuSelect) return;
+
+    const salesDumpRecords = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
+    const skuSet = new Set();
+
+    salesDumpRecords.forEach(r => {
+      const b = (r.brand || '').trim().toUpperCase();
+      const s = (r.sku || '').trim();
+      if (s) {
+        if (this.selectedBrand === 'ALL' || b === this.selectedBrand.toUpperCase()) {
+          skuSet.add(s);
+        }
+      }
+    });
+
+    const sortedSkus = Array.from(skuSet).sort();
+    skuSelect.innerHTML = `<option value="NONE">-- Select SKU --</option>` + sortedSkus.map(s => `<option value="${s}">${s}</option>`).join('');
+    if (sortedSkus.includes(this.selectedSku)) {
+      skuSelect.value = this.selectedSku;
+    } else {
+      this.selectedSku = 'NONE';
+      skuSelect.value = 'NONE';
+    }
+  },
+
+  updateSectionDropdown: function() {
+    const rawShopList = window.shopDataMaster || [];
+    const secSelect = document.getElementById('selectZeroSkuSection');
+    if (!secSelect) return;
+
+    const sections = new Set();
+    rawShopList.forEach(s => {
+      let dsrName = this.cleanDSRName(s.dsr);
+      if (this.selectedDsr === 'ALL' || dsrName === this.selectedDsr) {
+        const sec = (s.section || '').trim();
+        if (sec) sections.add(sec);
+      }
+    });
+
+    const sortedSec = Array.from(sections).sort();
+    secSelect.innerHTML = `<option value="ALL">ALL SECTIONS</option>` + sortedSec.map(sec => `<option value="${sec}">${sec}</option>`).join('');
+    secSelect.value = this.selectedSection;
+  },
+
+  renderTable: function() {
+    const thead = document.getElementById('zeroSkuThead');
+    const tbody = document.getElementById('zeroSkuTbody');
+    const tfoot = document.getElementById('zeroSkuTfoot');
+    if (!tbody || !thead) return;
+
+    const rawShopList = window.shopDataMaster || [];
+    if (rawShopList.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:35px; color:#ef4444; font-weight:bold;">'Source Files' tab mein jaa kar Shop Data Master upload karein.</td></tr>`;
+      if (tfoot) tfoot.innerHTML = '';
+      return;
+    }
+
+    const salesDumpRecords = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
+    const dumpDsrByPop = new Map();
+    const brandsSet = new Set();
+
+    salesDumpRecords.forEach(r => {
+      const b = (r.brand || '').trim().toUpperCase();
+      if (b) brandsSet.add(b);
+
+      const stdPop = this.standardizePop(r.pop);
+      const dsrFromDump = this.cleanDSRName(r.rawDsr || r.dsr);
+      if (stdPop && dsrFromDump && dsrFromDump !== 'Unassigned') {
+        dumpDsrByPop.set(stdPop, dsrFromDump);
+      }
+    });
+
+    const brandSelect = document.getElementById('selectZeroSkuBrand');
+    if (brandSelect && brandSelect.options.length <= 1) {
+      const sortedB = Array.from(brandsSet).sort();
+      brandSelect.innerHTML = `<option value="ALL">ALL BRANDS</option>` + sortedB.map(b => `<option value="${b}">${b}</option>`).join('');
+      brandSelect.value = this.selectedBrand;
+      this.populateSkuDropdown();
+    }
+
+    const dsrSelect = document.getElementById('selectZeroSkuDSR');
+    if (dsrSelect && dsrSelect.options.length <= 1) {
+      const allDsrs = new Set();
+      rawShopList.forEach(s => {
+        const stdCode = this.standardizePop(s.pop);
+        let d = this.cleanDSRName(s.dsr);
+        if (d === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+          d = dumpDsrByPop.get(stdCode);
+        }
+        if (d && d !== 'Unassigned') allDsrs.add(d);
+      });
+      const sortedDsrs = Array.from(allDsrs).sort();
+      dsrSelect.innerHTML = `<option value="ALL">ALL DSRs</option>` + sortedDsrs.map(d => `<option value="${d}">${d}</option>`).join('');
+      dsrSelect.value = this.selectedDsr;
+      this.updateSectionDropdown();
+    }
+
+    if (this.selectedSku === 'NONE') {
+      thead.innerHTML = `
+        <tr>
+          <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+          <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+          <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+          <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+          <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
+        </tr>
+      `;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:45px; color:#f59e0b; font-weight:bold; font-size:13px;">⚡ Fast Mode: Meharbani karke upar dropdown se SKU select karein.</td></tr>`;
+      if (tfoot) tfoot.innerHTML = '';
+      document.getElementById('cntSkuAll').innerText = '0';
+      document.getElementById('cntSkuZero').innerText = '0';
+      document.getElementById('cntSkuPur').innerText = '0';
+      document.getElementById('skuBuyingRateBadge').innerText = 'Buying Rate: 0.0%';
+      return;
+    }
+
+    const targetSku = this.selectedSku.toUpperCase();
+    const purchaseSet = new Set();
+    salesDumpRecords.forEach(r => {
+      const q = parseFloat(r.qty || 0);
+      if (q > 0) {
+        const stdPop = this.standardizePop(r.pop);
+        const sName = (r.sku || '').trim().toUpperCase();
+        if (stdPop && sName === targetSku) {
+          purchaseSet.add(stdPop);
+        }
+      }
+    });
+
+    thead.innerHTML = `
+      <tr>
+        <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+        <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+        <th style="color:#ffffff !important; width:160px;">DSR Name</th>
+        <th style="color:#ffffff !important; width:160px;">Section / Town</th>
+        <th style="color:#ffffff !important; text-align:center; width:140px;">SKU Status</th>
+      </tr>
+    `;
+
+    const searchText = (document.getElementById('inputZeroSkuSearch')?.value || '').toLowerCase().trim();
+    const rowsData = [];
+
+    let totalShopsCount = 0;
+    let totalPurchasedCount = 0;
+    let totalZeroCount = 0;
+
+    rawShopList.forEach(shop => {
+      let rawCode = '';
+      if (typeof shop.pop === 'string' && shop.pop !== '[object Object]') {
+        rawCode = shop.pop.trim();
+      } else if (typeof shop.pop === 'number') {
+        rawCode = String(shop.pop);
+      } else if (typeof shop.pop === 'object' && shop.pop !== null) {
+        rawCode = String(shop.pop.result || shop.pop.text || '');
+      }
+
+      if (!rawCode || rawCode === '[object Object]') {
+        const fp = String(shop.fullPop || '').trim();
+        rawCode = fp.length >= 7 ? fp.slice(-7) : fp;
+      }
+      rawCode = rawCode.replace(/^0+/, '');
+
+      const stdCode = this.standardizePop(rawCode);
+
+      let dsrName = this.cleanDSRName(shop.dsr);
+      if (dsrName === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+        dsrName = dumpDsrByPop.get(stdCode);
+      }
+
+      const section = (shop.section || '').trim();
+      const shopName = (shop.name || 'Unnamed Outlet').trim();
+
+      if (this.selectedDsr !== 'ALL' && dsrName !== this.selectedDsr) return;
+      if (this.selectedSection !== 'ALL' && section !== this.selectedSection) return;
+
+      if (searchText) {
+        if (!rawCode.toLowerCase().includes(searchText) &&
+            !shopName.toLowerCase().includes(searchText) &&
+            !dsrName.toLowerCase().includes(searchText) &&
+            !section.toLowerCase().includes(searchText)) {
+          return;
+        }
+      }
+
+      const isPurchased = purchaseSet.has(stdCode) || purchaseSet.has(this.standardizePop(shop.fullPop));
+
+      if (this.statusFilter === 'ZERO_ONLY' && isPurchased) return;
+      if (this.statusFilter === 'PURCHASED_ONLY' && !isPurchased) return;
+
+      if (isPurchased) totalPurchasedCount++; else totalZeroCount++;
+      totalShopsCount++;
+
+      rowsData.push({
+        code: rawCode,
+        name: shopName,
+        dsr: dsrName,
+        section: section,
+        isPurchased: isPurchased
+      });
+    });
+
+    const cntAll = document.getElementById('cntSkuAll');
+    const cntZero = document.getElementById('cntSkuZero');
+    const cntPur = document.getElementById('cntSkuPur');
+    const rateBadge = document.getElementById('skuBuyingRateBadge');
+
+    if (cntAll) cntAll.innerText = totalShopsCount.toLocaleString();
+    if (cntZero) cntZero.innerText = totalZeroCount.toLocaleString();
+    if (cntPur) cntPur.innerText = totalPurchasedCount.toLocaleString();
+    if (rateBadge) {
+      const rate = totalShopsCount > 0 ? ((totalPurchasedCount / totalShopsCount) * 100).toFixed(1) : '0.0';
+      rateBadge.innerText = `Buying Rate: ${rate}%`;
+    }
+
+    let rowsHtml = '';
+    rowsData.forEach(r => {
+      const statusBadge = r.isPurchased
+        ? `<span style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16, 185, 129, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Purchased</span>`
+        : `<span style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.4); padding:2px 8px; border-radius:4px; font-weight:800; font-size:10.5px;">Zero</span>`;
+
+      rowsHtml += `
+        <tr>
+          <td style="font-family:'Consolas', monospace; font-weight:700; color:#0284c7;">${r.code}</td>
+          <td style="font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
+          <td style="font-weight:700; color:#0f172a;">${r.dsr}</td>
+          <td style="color:#475569; font-size:11.5px;">${r.section}</td>
+          <td style="text-align:center;">${statusBadge}</td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rowsHtml || `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:bold;">No matching shops found.</td></tr>`;
+
+    if (tfoot) {
+      tfoot.innerHTML = `
+        <tr class="total-row">
+          <td>GRAND TOTAL</td>
+          <td>Visible Shops: ${rowsData.length.toLocaleString()}</td>
+          <td colspan="2"></td>
+          <td style="text-align:center; font-size:11px; color:#ffffff !important;">Active: ${totalPurchasedCount} | Zero: ${totalZeroCount}</td>
+        </tr>
+      `;
+    }
+
+    if (typeof attachExcelSelectionListeners === 'function') {
+      attachExcelSelectionListeners();
+    }
+  }
+};
+===END===
