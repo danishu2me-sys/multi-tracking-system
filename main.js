@@ -42,7 +42,6 @@ const HIDDEN_SKU_FILE = path.join(STORAGE_DIR, 'HIDDEN_SKU_CONFIG.json');
 function syncWithGitHub() {
   try {
     console.log("Checking for GitHub updates...");
-    // Check if git is initialized in current directory
     if (fs.existsSync(path.join(__dirname, '.git'))) {
       execSync('git pull origin main', {
         cwd: __dirname,
@@ -169,10 +168,7 @@ function createMainWindow() {
 }
 
 app.whenReady().then(() => {
-  // 1. Check for GitHub updates automatically
   syncWithGitHub();
-
-  // 2. Start main UI and Watchers
   createMainWindow();
   startFolderWatchers();
 
@@ -344,7 +340,7 @@ async function parseStockBalanceReport(filePath) {
 }
 
 // -------------------------------------------------------------
-// STRICT TODAY DISPATCH PARSER (ONLY KHI – REHMAN ENT-BR2 / 102336)
+// STRICT TODAY DISPATCH PARSER
 // -------------------------------------------------------------
 async function parseDispatchReport(filePath) {
   await waitForFileUnlock(filePath);
@@ -360,34 +356,21 @@ async function parseDispatchReport(filePath) {
 
   for (let r = 2; r <= totalRows; r++) {
     const row = sheet.getRow(r);
-    
-    // Column C (3): Distributor Code
     const distCode = (row.getCell(3).value || '').toString().trim();
-
-    // Column D (4): Distributor Name
     const rawDistName = (row.getCell(4).value || '').toString().trim();
-
-    // Normalize en-dash to hyphen and uppercase
     const cleanDistName = rawDistName.replace(/\u2013|\u2014/g, '-').replace(/\s+/g, ' ').toUpperCase();
 
-    // STRICT MATCH: Only KHI - REHMAN ENT-BR2 (Code 102336)
     const isTargetBR2 = 
       distCode === "102336" || 
       cleanDistName === "KHI - REHMAN ENT-BR2" || 
       (cleanDistName.includes("REHMAN ENT") && (cleanDistName.includes("BR2") || cleanDistName.includes("BR-2")));
 
     if (isTargetBR2) {
-      // Column J (10): Material Code
       let matCode = (row.getCell(10).value || '').toString().trim();
-
-      // Column K (11): Product Name
       const prodName = (row.getCell(11).value || '').toString().trim();
-
-      // Column I (9): Quantity in Cartons
       const rawQty = row.getCell(9).value;
       const qtyVal = typeof rawQty === 'number' ? rawQty : (parseFloat(rawQty) || 0);
 
-      // Clean material code decimals/formulas if any
       if (matCode.includes('.')) matCode = matCode.split('.')[0];
       matCode = matCode.replace(/[^0-9]/g, '');
 
@@ -1268,7 +1251,7 @@ ipcMain.handle('get-target-report-data', async () => {
 });
 
 // -------------------------------------------------------------
-// DSR CARRY-FORWARD & OUTLET LIST PARSER
+// DSR CARRY-FORWARD & OUTLET LIST PARSER (ACCURATE FOR MF OUTLET LIST DETAIL)
 // -------------------------------------------------------------
 ipcMain.handle('upload-shop-master-file', async () => {
   try {
@@ -1291,88 +1274,33 @@ ipcMain.handle('upload-shop-master-file', async () => {
     }
 
     const shopMap = new Map();
+    const sheet = workbook.worksheets[0];
+    const totalRows = sheet.rowCount;
 
-    for (const sheet of workbook.worksheets) {
-      if (sheet.rowCount < 2) continue;
+    for (let r = 2; r <= totalRows; r++) {
+      const row = sheet.getRow(r);
+      const fullPop = (row.getCell(1).value || '').toString().trim();
+      let shortPop = (row.getCell(2).value || '').toString().trim();
 
-      let colPop = 8, colName = 11, colDsr = 12, colSection = 17;
-      let headerRowIdx = -1;
-      let runningDsrName = 'Unassigned';
-
-      const maxScan = Math.min(35, sheet.rowCount);
-      for (let r = 1; r <= maxScan; r++) {
-        const rowVals = sheet.getRow(r).values;
-        if (!Array.isArray(rowVals)) continue;
-
-        for (let c = 1; c < rowVals.length; c++) {
-          const valStr = (rowVals[c] || '').toString().trim();
-          const v = valStr.toLowerCase();
-          
-          if (v.startsWith('orderer:') || v.startsWith('dsr:')) {
-            const parts = valStr.split(':');
-            if (parts.length > 1 && parts[1].trim()) {
-              runningDsrName = cleanDSRName(parts[1].trim());
-            }
-          }
-          if (v === 'pop code' || v === 'pop' || v.includes('outlet code') || v.includes('shop code')) colPop = c;
-          if (v === 'pop name' || v.includes('outlet name') || v.includes('shop name') || v === 'customer name') colName = c;
-          if (v === 'dsr' || v === 'dsr name' || v === 'orderer') colDsr = c;
-          if (v === 'section' || v.includes('section name') || v.includes('beat') || v.includes('route')) colSection = c;
-        }
-
-        if (colPop !== -1 && colName !== -1 && headerRowIdx === -1) {
-          headerRowIdx = r;
-        }
+      if (!shortPop && fullPop) {
+        shortPop = fullPop.slice(-8);
       }
 
-      if (headerRowIdx === -1) headerRowIdx = 21;
+      const shopName = (row.getCell(3).value || '').toString().trim();
+      const rawDsr = (row.getCell(4).value || '').toString().trim();
+      const dsrName = cleanDSRName(rawDsr);
+      const section = (row.getCell(5).value || '').toString().trim();
 
-      const totalRows = sheet.rowCount;
-
-      for (let r = headerRowIdx + 1; r <= totalRows; r++) {
-        const rowVals = sheet.getRow(r).values;
-        if (!rowVals || !Array.isArray(rowVals)) continue;
-
-        for (let c = 1; c < Math.min(rowVals.length, 15); c++) {
-          const cellStr = (rowVals[c] || '').toString().trim();
-          if (cellStr.toLowerCase().startsWith('orderer:') || cellStr.toLowerCase().startsWith('dsr:')) {
-            const p = cellStr.split(':');
-            if (p.length > 1 && p[1].trim()) {
-              runningDsrName = cleanDSRName(p[1].trim());
-            }
-          }
-        }
-
-        let rawPop = (rowVals[colPop] || '').toString().trim();
-        let rawName = (rowVals[colName] || '').toString().trim();
-        let rowDsr = (rowVals[colDsr] || '').toString().trim();
-        let rawSec = (rowVals[colSection] || '').toString().trim();
-
-        if (rowDsr && !rowDsr.toLowerCase().includes('orderer') && !rowDsr.toLowerCase().includes('dsr')) {
-          runningDsrName = cleanDSRName(rowDsr);
-        }
-
-        if (rawPop.startsWith('=') || isNaN(rawPop)) {
-          if (rawPop.length >= 8) rawPop = rawPop.slice(-8);
-        }
-
-        const isInvalidPop = !rawPop || rawPop.toLowerCase() === 'null' || isNaN(rawPop);
-        const isInvalidName = !rawName || rawName.toLowerCase().includes('pop name') || rawName.toLowerCase().includes('total');
-
-        if (!isInvalidPop && !isInvalidName) {
-          if (!shopMap.has(rawPop)) {
-            shopMap.set(rawPop, {
-              pop: rawPop,
-              name: rawName,
-              dsr: runningDsrName !== 'Unassigned' ? runningDsrName : (cleanDSRName(rowDsr) || 'Unassigned'),
-              rawDsr: rowDsr || runningDsrName,
-              section: rawSec || 'General'
-            });
-          }
-        }
-
-        if (r % 250 === 0) {
-          await new Promise(resolve => setImmediate(resolve));
+      if (shortPop && shopName && !shortPop.toLowerCase().includes('pop')) {
+        if (!shopMap.has(shortPop)) {
+          shopMap.set(shortPop, {
+            pop: shortPop,
+            fullPop: fullPop,
+            name: shopName,
+            dsr: dsrName || 'Unassigned',
+            rawDsr: rawDsr,
+            section: section || 'General'
+          });
         }
       }
     }
@@ -1383,7 +1311,7 @@ ipcMain.handle('upload-shop-master-file', async () => {
     return { 
       success: true, 
       count: shopList.length, 
-      message: `${shopList.length} Shops Successfully Loaded!` 
+      message: `${shopList.length} Shops Successfully Loaded with Assigned DSRs!` 
     };
   } catch (err) {
     return { success: false, message: 'Shop upload error: ' + err.message };
