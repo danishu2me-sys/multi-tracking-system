@@ -1,19 +1,20 @@
 window.ZeroBrandModule = {
   selectedDsr: 'ALL',
   selectedSection: 'ALL',
-  selectedBrand: 'NONE', // Default par koi brand auto-load nahi hoga
-  statusFilter: 'ALL', // 'ALL', 'ZERO_ONLY', 'PURCHASED_ONLY'
+  selectedBrand: 'NONE',
+  statusFilter: 'ALL',
 
   standardizePop: function(val) {
     if (!val) return "";
-    let s = String(val).trim();
+    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    s = String(s).trim();
     if (s.length > 10) s = s.slice(-8);
     const num = s.replace(/^0+/, '');
     return num ? num : s;
   },
 
   cleanDSRName: function(rawName) {
-    if (!rawName) return "Unassigned";
+    if (!rawName || rawName === 'Unassigned') return "Unassigned";
     let s = String(rawName).trim();
     if (s.includes("-")) {
       const parts = s.split("-");
@@ -58,7 +59,6 @@ window.ZeroBrandModule = {
           <input type="text" id="inputZeroBrandSearch" class="date-input-field" placeholder="🔍 Search Code / Name..." oninput="ZeroBrandModule.renderTable()" style="width:160px;" />
         </div>
 
-        <!-- Quick View Mode Buttons -->
         <div class="mode-buttons" style="background:var(--bg-main); padding:2px; border-radius:4px; border:1px solid var(--border-color);">
           <button id="btnBrandFilterAll" class="btn-mode active" onclick="ZeroBrandModule.setStatusFilter('ALL')">All (<span id="cntBrandAll">0</span>)</button>
           <button id="btnBrandFilterZero" class="btn-mode" onclick="ZeroBrandModule.setStatusFilter('ZERO_ONLY')" style="color:#ef4444;">Zero Only (<span id="cntBrandZero">0</span>)</button>
@@ -80,8 +80,8 @@ window.ZeroBrandModule = {
           <table id="zeroBrandTable">
             <thead id="zeroBrandThead">
               <tr>
-                <th style="color:#ffffff !important; width:110px;">Shop Code</th>
-                <th style="color:#ffffff !important; min-width:230px;">Shop Name</th>
+                <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+                <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
                 <th style="color:#ffffff !important; width:160px;">DSR Name</th>
                 <th style="color:#ffffff !important; width:160px;">Section / Town</th>
                 <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
@@ -132,7 +132,7 @@ window.ZeroBrandModule = {
 
     const sections = new Set();
     rawShopList.forEach(s => {
-      const dsrName = this.cleanDSRName(s.dsr);
+      let dsrName = this.cleanDSRName(s.dsr);
       if (this.selectedDsr === 'ALL' || dsrName === this.selectedDsr) {
         const sec = (s.section || '').trim();
         if (sec) sections.add(sec);
@@ -157,13 +157,19 @@ window.ZeroBrandModule = {
       return;
     }
 
-    // Dropdown populate brands from Sales Dump
     const allDumpBrands = new Set();
-    const salesDumpRecords = (cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
+    const dumpDsrByPop = new Map();
+    const salesDumpRecords = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords : [];
 
     salesDumpRecords.forEach(r => {
       const brandName = (r.brand || '').trim().toUpperCase();
       if (brandName) allDumpBrands.add(brandName);
+
+      const stdPop = this.standardizePop(r.pop);
+      const dsrFromDump = this.cleanDSRName(r.rawDsr || r.dsr);
+      if (stdPop && dsrFromDump && dsrFromDump !== 'Unassigned') {
+        dumpDsrByPop.set(stdPop, dsrFromDump);
+      }
     });
 
     const sortedBrands = Array.from(allDumpBrands).sort();
@@ -176,19 +182,25 @@ window.ZeroBrandModule = {
     const dsrSelect = document.getElementById('selectZeroBrandDSR');
     if (dsrSelect && dsrSelect.options.length <= 1) {
       const allDsrs = new Set();
-      rawShopList.forEach(s => allDsrs.add(this.cleanDSRName(s.dsr)));
+      rawShopList.forEach(s => {
+        const stdCode = this.standardizePop(s.pop);
+        let d = this.cleanDSRName(s.dsr);
+        if (d === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+          d = dumpDsrByPop.get(stdCode);
+        }
+        if (d && d !== 'Unassigned') allDsrs.add(d);
+      });
       const sortedDsrs = Array.from(allDsrs).sort();
       dsrSelect.innerHTML = `<option value="ALL">ALL DSRs</option>` + sortedDsrs.map(d => `<option value="${d}">${d}</option>`).join('');
       dsrSelect.value = this.selectedDsr;
       this.updateSectionDropdown();
     }
 
-    // AGAR USER NE BRAND SELECT NAHI KIYA TO TABLE RENDER NA KAREIN (FAST LOAD)
     if (this.selectedBrand === 'NONE') {
       thead.innerHTML = `
         <tr>
-          <th style="color:#ffffff !important; width:110px;">Shop Code</th>
-          <th style="color:#ffffff !important; min-width:230px;">Shop Name</th>
+          <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+          <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
           <th style="color:#ffffff !important; width:160px;">DSR Name</th>
           <th style="color:#ffffff !important; width:160px;">Section / Town</th>
           <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
@@ -203,7 +215,6 @@ window.ZeroBrandModule = {
       return;
     }
 
-    // 1. Target Single Brand Matrix
     const targetBrand = this.selectedBrand.toUpperCase();
     const purchaseSet = new Set();
     salesDumpRecords.forEach(r => {
@@ -219,17 +230,15 @@ window.ZeroBrandModule = {
 
     thead.innerHTML = `
       <tr>
-        <th style="color:#ffffff !important; width:110px;">Shop Code</th>
-        <th style="color:#ffffff !important; min-width:230px;">Shop / Customer Name</th>
+        <th style="color:#ffffff !important; width:100px;">Shop Code</th>
+        <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
         <th style="color:#ffffff !important; width:160px;">DSR Name</th>
         <th style="color:#ffffff !important; width:160px;">Section / Town</th>
         <th style="color:#ffffff !important; text-align:center; width:140px;">${targetBrand} Status</th>
       </tr>
     `;
 
-    // 2. Filter Shops
     const searchText = (document.getElementById('inputZeroBrandSearch')?.value || '').toLowerCase().trim();
-    const popCodeSeen = new Set();
     const rowsData = [];
 
     let totalShopsCount = 0;
@@ -237,45 +246,55 @@ window.ZeroBrandModule = {
     let totalZeroCount = 0;
 
     rawShopList.forEach(shop => {
-      const rawCode = String(shop.pop || '').trim();
-      const stdCode = this.standardizePop(rawCode);
-      const dsrName = this.cleanDSRName(shop.dsr);
-      const section = (shop.section || '').trim();
-
-      if (stdCode && !popCodeSeen.has(stdCode)) {
-        popCodeSeen.add(stdCode);
-
-        if (this.selectedDsr !== 'ALL' && dsrName !== this.selectedDsr) return;
-        if (this.selectedSection !== 'ALL' && section !== this.selectedSection) return;
-
-        if (searchText) {
-          if (!rawCode.toLowerCase().includes(searchText) &&
-              !String(shop.name || '').toLowerCase().includes(searchText) &&
-              !dsrName.toLowerCase().includes(searchText) &&
-              !section.toLowerCase().includes(searchText)) {
-            return;
-          }
-        }
-
-        const isPurchased = purchaseSet.has(stdCode) || purchaseSet.has(this.standardizePop(shop.fullPop));
-
-        if (this.statusFilter === 'ZERO_ONLY' && isPurchased) return;
-        if (this.statusFilter === 'PURCHASED_ONLY' && !isPurchased) return;
-
-        if (isPurchased) totalPurchasedCount++; else totalZeroCount++;
-        totalShopsCount++;
-
-        rowsData.push({
-          code: rawCode,
-          name: shop.name || 'Unnamed Outlet',
-          dsr: dsrName,
-          section: section,
-          isPurchased: isPurchased
-        });
+      let rawCode = '';
+      if (typeof shop.pop === 'object') {
+        rawCode = String(shop.pop?.text || shop.pop?.result || '');
+      } else {
+        rawCode = String(shop.pop || '').trim();
       }
+      if (!rawCode && shop.fullPop) {
+        rawCode = String(shop.fullPop).slice(-8);
+      }
+
+      const stdCode = this.standardizePop(rawCode);
+
+      let dsrName = this.cleanDSRName(shop.dsr);
+      if (dsrName === 'Unassigned' && dumpDsrByPop.has(stdCode)) {
+        dsrName = dumpDsrByPop.get(stdCode);
+      }
+
+      const section = (shop.section || '').trim();
+      const shopName = (shop.name || 'Unnamed Outlet').trim();
+
+      if (this.selectedDsr !== 'ALL' && dsrName !== this.selectedDsr) return;
+      if (this.selectedSection !== 'ALL' && section !== this.selectedSection) return;
+
+      if (searchText) {
+        if (!rawCode.toLowerCase().includes(searchText) &&
+            !shopName.toLowerCase().includes(searchText) &&
+            !dsrName.toLowerCase().includes(searchText) &&
+            !section.toLowerCase().includes(searchText)) {
+          return;
+        }
+      }
+
+      const isPurchased = purchaseSet.has(stdCode) || purchaseSet.has(this.standardizePop(shop.fullPop));
+
+      if (this.statusFilter === 'ZERO_ONLY' && isPurchased) return;
+      if (this.statusFilter === 'PURCHASED_ONLY' && !isPurchased) return;
+
+      if (isPurchased) totalPurchasedCount++; else totalZeroCount++;
+      totalShopsCount++;
+
+      rowsData.push({
+        code: rawCode,
+        name: shopName,
+        dsr: dsrName,
+        section: section,
+        isPurchased: isPurchased
+      });
     });
 
-    // Counters update
     const cntAll = document.getElementById('cntBrandAll');
     const cntZero = document.getElementById('cntBrandZero');
     const cntPur = document.getElementById('cntBrandPur');
@@ -289,7 +308,6 @@ window.ZeroBrandModule = {
       rateBadge.innerText = `Buying Rate: ${rate}%`;
     }
 
-    // 3. Render Rows
     let rowsHtml = '';
     rowsData.forEach(r => {
       const statusBadge = r.isPurchased
@@ -298,10 +316,10 @@ window.ZeroBrandModule = {
 
       rowsHtml += `
         <tr>
-          <td style="font-family:'Consolas', monospace; font-weight:700; color:#38bdf8;">${r.code}</td>
-          <td style="font-weight:700;">${r.name}</td>
-          <td>${r.dsr}</td>
-          <td style="color:var(--text-muted); font-size:11px;">${r.section}</td>
+          <td style="font-family:'Consolas', monospace; font-weight:700; color:#0284c7;">${r.code}</td>
+          <td style="font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
+          <td style="font-weight:700; color:#0f172a;">${r.dsr}</td>
+          <td style="color:#475569; font-size:11.5px;">${r.section}</td>
           <td style="text-align:center;">${statusBadge}</td>
         </tr>
       `;
@@ -309,7 +327,6 @@ window.ZeroBrandModule = {
 
     tbody.innerHTML = rowsHtml || `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted); font-weight:bold;">No matching shops found.</td></tr>`;
 
-    // 4. Total Row
     if (tfoot) {
       tfoot.innerHTML = `
         <tr class="total-row">
@@ -321,6 +338,8 @@ window.ZeroBrandModule = {
       `;
     }
 
-    attachExcelSelectionListeners();
+    if (typeof attachExcelSelectionListeners === 'function') {
+      attachExcelSelectionListeners();
+    }
   }
 };

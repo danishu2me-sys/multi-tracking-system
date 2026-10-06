@@ -125,9 +125,7 @@
       color: var(--text-main); padding: 2px 7px; border-radius: 4px; font-size: 10.5px; cursor: pointer; font-weight: bold; height: 26px;
     }
 
-    /* -------------------------------------------------------------
-       EXCEL-STYLE RIBBON TOOLBAR (PER-PAGE SETTINGS)
-       ------------------------------------------------------------- */
+    /* EXCEL-STYLE RIBBON TOOLBAR */
     .excel-ribbon-bar {
       background: #eef2f6;
       border-bottom: 1.5px solid #cbd5e1;
@@ -430,7 +428,6 @@
 
   <!-- EXCEL HOME RIBBON TOOLBAR -->
   <div class="excel-ribbon-bar">
-    <!-- FONT FAMILY & SIZE -->
     <div class="ribbon-group">
       <select id="ribbonFontFamily" class="ribbon-select" style="min-width:115px;" onchange="applyExcelRibbonAction('fontFamily', this.value)">
         <option value="'Calibri', 'Segoe UI', sans-serif" selected>Calibri</option>
@@ -458,7 +455,6 @@
 
     <div class="ribbon-divider"></div>
 
-    <!-- BOLD, ITALIC, UNDERLINE -->
     <div class="ribbon-group">
       <button id="ribbonBoldBtn" class="ribbon-btn" style="font-weight:900;" title="Bold" onclick="applyExcelRibbonAction('bold')"><b>B</b></button>
       <button id="ribbonItalicBtn" class="ribbon-btn" style="font-style:italic;" title="Italic" onclick="applyExcelRibbonAction('italic')"><i>I</i></button>
@@ -467,7 +463,6 @@
 
     <div class="ribbon-divider"></div>
 
-    <!-- ALIGNMENT -->
     <div class="ribbon-group">
       <button class="ribbon-btn" title="Align Left" onclick="applyExcelRibbonAction('align', 'left')">⫷</button>
       <button class="ribbon-btn" title="Align Center" onclick="applyExcelRibbonAction('align', 'center')">≡</button>
@@ -476,7 +471,6 @@
 
     <div class="ribbon-divider"></div>
 
-    <!-- COLOR PICKERS -->
     <div class="ribbon-group">
       <div class="color-picker-wrap" title="Fill Color (Background)">
         <span class="ribbon-btn" style="color:#eab308;">🪣</span>
@@ -637,7 +631,7 @@
     let timeGonePct = daysGone / totalDays;
 
     // -------------------------------------------------------------
-    // PER-PAGE FORMATTING MEMORY STORE (STRICTLY INDEPENDENT)
+    // PER-PAGE FORMATTING MEMORY STORE
     // -------------------------------------------------------------
     let pageFormatStore = JSON.parse(localStorage.getItem('appPageFormatStore') || '{}');
 
@@ -676,7 +670,6 @@
       const viewEl = viewMap[modKey];
       if (!viewEl) return;
 
-      // Apply specifically to all tables, th and td inside this page
       const allTables = viewEl.querySelectorAll('table');
       allTables.forEach(tbl => {
         tbl.style.fontFamily = cfg.fontFamily;
@@ -692,7 +685,6 @@
         });
       });
 
-      // Synchronize Ribbon Toolbar UI
       const fFamSelect = document.getElementById('ribbonFontFamily');
       const fSizeSelect = document.getElementById('ribbonFontSize');
       const bBtn = document.getElementById('ribbonBoldBtn');
@@ -719,13 +711,13 @@
         cfg.fontFamily = val;
         savePageFormat(modKey, cfg);
         applyFormattingToModule(modKey);
-        showBannerAlert(`Font family for this page set to ${val.split(',')[0]}!`, "#0284c7");
+        showBannerAlert(`Font family set to ${val.split(',')[0]}!`, "#0284c7");
       }
       else if (action === 'fontSize') {
         cfg.fontSize = parseInt(val, 10);
         savePageFormat(modKey, cfg);
         applyFormattingToModule(modKey);
-        showBannerAlert(`Font size for this page set to ${cfg.fontSize}px!`, "#0284c7");
+        showBannerAlert(`Font size set to ${cfg.fontSize}px!`, "#0284c7");
       }
       else if (action === 'fontGrow') {
         cfg.fontSize = Math.min(22, Math.max(8, cfg.fontSize + val));
@@ -912,7 +904,6 @@
         SourceFilesModule.updateStatus();
       }
 
-      // Synchronize and apply independent page formatting
       setTimeout(() => {
         applyFormattingToModule(mod);
       }, 50);
@@ -962,9 +953,10 @@
       }
     });
 
-    async function loadSavedShopData() {
+    // FORCE FLUSH SHOP DATA LOADER
+    async function loadSavedShopData(forceReload = false) {
       try {
-        if (window.shopDataMaster && window.shopDataMaster.length > 0) return;
+        if (!forceReload && window.shopDataMaster && window.shopDataMaster.length > 0) return;
         const res = await ipcRenderer.invoke('get-saved-shop-data');
         if (res && res.success && Array.isArray(res.shops)) {
           window.shopDataMaster = res.shops;
@@ -1311,27 +1303,36 @@
     }
 
     // -------------------------------------------------------------
-    // EXCEL SELECTION ENGINE (CLICK & SHIFT+CLICK RANGE)
+    // MULTI-TABLE AWARE EXCEL SELECTION ENGINE
     // -------------------------------------------------------------
     let activeAnchorRow = null;
+    let currentlyFocusedTable = null;
 
     function getActiveTableElement() {
+      if (currentlyFocusedTable && document.body.contains(currentlyFocusedTable)) {
+        return currentlyFocusedTable;
+      }
+      const activeEl = document.activeElement;
+      if (activeEl) {
+        const parentTbl = activeEl.closest('table') || activeEl.querySelector('table');
+        if (parentTbl) return parentTbl;
+      }
       const activeView = document.querySelector('.module-view.active');
-      if (!activeView) return document.getElementById('mainTable') || document.querySelector('table');
-      return activeView.querySelector('table') || document.getElementById('mainTable');
+      if (activeView) {
+        const tables = activeView.querySelectorAll('table');
+        if (tables.length > 0) return tables[tables.length - 1];
+      }
+      return document.getElementById('mainTable') || document.querySelector('table');
     }
 
-    function getActiveTableRows() {
-      const table = getActiveTableElement();
-      if (!table) return [];
-      return Array.from(table.querySelectorAll('tbody tr'));
-    }
-
-    function clearExcelSelection() {
-      document.querySelectorAll('tr.excel-selected, tr.excel-active-focus').forEach(r => {
+    function clearExcelSelection(targetTable = null) {
+      const scope = targetTable || document;
+      scope.querySelectorAll('tr.excel-selected, tr.excel-active-focus').forEach(r => {
         r.classList.remove('excel-selected', 'excel-active-focus');
       });
-      activeAnchorRow = null;
+      if (!targetTable || targetTable === currentlyFocusedTable) {
+        activeAnchorRow = null;
+      }
     }
 
     document.addEventListener('click', function(e) {
@@ -1343,6 +1344,11 @@
       const currentRow = td.closest('tr');
       const table = currentRow ? currentRow.closest('table') : null;
       if (!table || !currentRow) return;
+
+      if (currentlyFocusedTable && currentlyFocusedTable !== table) {
+        clearExcelSelection(currentlyFocusedTable);
+      }
+      currentlyFocusedTable = table;
 
       const allRows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
       const currentIndex = allRows.indexOf(currentRow);
@@ -1366,19 +1372,17 @@
         currentRow.classList.toggle('excel-selected');
         activeAnchorRow = currentRow;
       } else {
-        clearExcelSelection();
+        clearExcelSelection(table);
         currentRow.classList.add('excel-selected', 'excel-active-focus');
         activeAnchorRow = currentRow;
       }
     });
 
-    function attachExcelSelectionListeners() {}
-
     // -------------------------------------------------------------
-    // HD IMAGE CLIPBOARD ENGINE WITH DYNAMIC REPORT HEADER CARD
+    // HD IMAGE CLIPBOARD ENGINE (PROPORTIONAL FIT)
     // -------------------------------------------------------------
     async function captureAndCopyHDImage(rowsToCapture, sourceTable) {
-      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai (Heading ke sath)...", "#0284c7");
+      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai...", "#0284c7");
 
       const isLight = document.body.classList.contains('light-theme');
       const cardBg = isLight ? '#ffffff' : '#070e1b';
@@ -1391,22 +1395,42 @@
       const cellBorder = isLight ? '#cbd5e1' : '#1e2e4a';
       const baseTextColor = isLight ? '#0f172a' : '#ffffff';
 
-      const isStock = (sourceTable.id === 'stockMainTable' || sourceTable.id === 'stockMissingTable');
-      const isProd = (sourceTable.id === 'prodTable');
-      const isDsrPerf = (sourceTable.id === 'dsrPerfTable');
+      const tblId = sourceTable.id || '';
+      const isStock = (tblId === 'stockMainTable' || tblId === 'stockMissingTable');
+      const isProd = (tblId === 'prodTable');
+      const isDsrPerf = (tblId === 'perfMainTable' || tblId === 'perfDivTable' || tblId === 'dsrPerfTable');
+      const isZeroShop = (tblId === 'zeroShopTable');
+      const isZeroBrand = (tblId === 'zeroBrandTable');
+      const isZeroSku = (tblId === 'zeroSkuTable');
 
       let reportTitle = '🎯 TARGET VS ACHIEVEMENT REPORT';
       let reportSubMode = (currentMode === 'DIVISION' ? 'DSR WISE DIVISION SUMMARY (CTN ONLY)' : (currentMode === 'BRAND' ? 'BRAND CLUB SUMMARY' : 'DSR WISE DETAILED REPORT'));
 
-      if (isStock) {
+      if (isZeroShop) {
+        reportTitle = '🚫 SHOP WISE ZERO PURCHASE REPORT';
+        const dsrVal = document.getElementById('selectZeroShopDSR')?.value || 'ALL';
+        const secVal = document.getElementById('selectZeroShopSection')?.value || 'ALL';
+        reportSubMode = `ALL OUTLETS STATUS | DSR: ${dsrVal} | Section: ${secVal}`;
+      } else if (isZeroBrand) {
+        const brandVal = document.getElementById('selectZeroBrandName')?.value || 'ALL';
+        reportTitle = `🏷️ BRAND WISE ZERO PURCHASE REPORT (${brandVal.toUpperCase()})`;
+        const dsrVal = document.getElementById('selectZeroBrandDSR')?.value || 'ALL';
+        const secVal = document.getElementById('selectZeroBrandSection')?.value || 'ALL';
+        reportSubMode = `BRAND SPECIFIC ACTIVE BREAKDOWN | DSR: ${dsrVal} | Section: ${secVal}`;
+      } else if (isZeroSku) {
+        const skuVal = document.getElementById('selectZeroSkuName')?.value || 'ALL';
+        reportTitle = `📦 SKU WISE ZERO PURCHASE REPORT`;
+        const dsrVal = document.getElementById('selectZeroSkuDSR')?.value || 'ALL';
+        reportSubMode = `SKU: ${skuVal} | DSR: ${dsrVal}`;
+      } else if (isDsrPerf) {
+        reportTitle = tblId === 'perfDivTable' ? '🍩 DIVISION WISE TARGET VS ACHIEVEMENT' : '🏆 DSR PERFORMANCE & EXECUTION SUMMARY';
+        reportSubMode = 'DAILY ROUTING, TARGET & GROWTH REPORT';
+      } else if (isStock) {
         reportTitle = '📦 CURRENT STOCK & TODAY DISPATCH REPORT';
         reportSubMode = 'STOCK CLOSING BALANCE + TOTAL DISPATCH';
       } else if (isProd) {
         reportTitle = '⚡ UNIQUE PRODUCTIVITY REPORT';
         reportSubMode = `${currentMonthView} - ${currentProdTab} WISE COMPLETE ANALYSIS`;
-      } else if (isDsrPerf) {
-        reportTitle = '👤 DSR PERFORMANCE REPORT';
-        reportSubMode = 'BOOKING VS EXECUTION & ROUTING';
       }
 
       let dateTag = `Date: ${new Date().toLocaleDateString('en-GB')}`;
@@ -1414,14 +1438,14 @@
         const dFrom = (currentMonthView === 'CM') ? (document.getElementById('cmFromDate')?.value || cmSelectedFrom) : (document.getElementById('lmFromDate')?.value || lmSelectedFrom);
         const dTo = (currentMonthView === 'CM') ? (document.getElementById('cmToDate')?.value || cmSelectedTo) : (document.getElementById('lmToDate')?.value || lmSelectedTo);
         if (dFrom && dTo) dateTag = `Range: ${dFrom} to ${dTo}`;
-      } else {
-        const hFrom = document.getElementById('historyFromDate')?.value;
-        const hTo = document.getElementById('historyToDate')?.value;
-        if (hFrom && hTo) dateTag = `Range: ${hFrom} to ${hTo}`;
+      } else if (isDsrPerf) {
+        const pStart = document.getElementById('perfStartDate')?.value || '';
+        const pEnd = document.getElementById('perfEndDate')?.value || '';
+        if (pStart && pEnd) dateTag = `Range: ${pStart} to ${pEnd}`;
       }
 
       const selDist = isStock ? 'KHI – REHMAN ENT-BR2' : (document.getElementById('selectDist')?.value || 'KHI – REHMAN ENT-BR2');
-      const selDsr = isProd ? (document.getElementById('selectDSRFilterProd')?.value || 'ALL') : (document.getElementById('selectDSR')?.value || 'ALL');
+      const naturalWidth = Math.max(760, Math.min(1350, sourceTable.scrollWidth || sourceTable.offsetWidth || 950));
 
       const captureBox = document.createElement('div');
       captureBox.style.cssText = `
@@ -1429,11 +1453,10 @@
         left: -99999px;
         top: 0px;
         background: ${cardBg};
-        padding: 14px;
+        padding: 16px;
         border: 2px solid #0284c7;
         border-radius: 8px;
-        width: max-content;
-        min-width: 820px;
+        width: ${naturalWidth + 32}px;
         box-sizing: border-box;
       `;
 
@@ -1445,23 +1468,23 @@
         background: ${headerBoxBg};
         border: 1.5px solid ${headerBoxBorder};
         border-radius: 6px;
-        padding: 9px 14px;
-        margin-bottom: 10px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
       `;
       headerDiv.innerHTML = `
         <div>
           <div style="font-size: 14.5px; font-weight: 900; color: ${titleColor}; letter-spacing: 0.4px; text-transform: uppercase;">
             ${reportTitle}
           </div>
-          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 2px;">
-            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist} ${selDsr !== 'ALL' ? `&nbsp;|&nbsp; <b>DSR:</b> ${selDsr}` : ''}
+          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 3px;">
+            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist}
           </div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7;">
+          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7; display: inline-block;">
             📅 ${dateTag}
           </div>
-          <div style="font-size: 9px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
+          <div style="font-size: 9.5px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
         </div>
       `;
       captureBox.appendChild(headerDiv);
@@ -1478,60 +1501,61 @@
       const origThead = sourceTable.querySelector('thead');
       if (origThead) {
         const theadClone = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        const ths = Array.from(origThead.querySelectorAll('th')).filter(th => th.style.display !== 'none');
-        
-        const startIndex = isStock && ths.length > 2 && ths[0].innerText.toLowerCase().includes('brand') ? 1 : 0;
-        const defaultThBg = isStock ? '#2980b9' : (isLight ? '#1e3a5f' : '#132b4f');
-
-        for (let i = startIndex; i < ths.length; i++) {
-          const thClone = ths[i].cloneNode(true);
-          thClone.style.cssText = `
-            background: ${defaultThBg} !important;
-            color: #ffffff !important;
-            padding: 6px 10px;
-            font-weight: 800;
-            border: 1px solid rgba(255,255,255,0.25);
-            text-align: ${thClone.classList.contains('num') ? 'right' : 'left'};
-            white-space: nowrap;
-          `;
-          headerRow.appendChild(thClone);
-        }
-        theadClone.appendChild(headerRow);
+        Array.from(origThead.querySelectorAll('tr')).forEach(origTr => {
+          const trClone = document.createElement('tr');
+          Array.from(origTr.querySelectorAll('th')).forEach(th => {
+            if (th.style.display === 'none') return;
+            const thClone = th.cloneNode(true);
+            const isNum = th.classList.contains('num');
+            thClone.style.cssText = `
+              background: #1e3a5f !important;
+              color: #ffffff !important;
+              padding: 6px 8px;
+              font-weight: 800;
+              border: 1px solid rgba(255,255,255,0.25);
+              text-align: ${isNum ? 'right' : 'left'};
+              white-space: nowrap;
+              font-size: 10.5px;
+            `;
+            trClone.appendChild(thClone);
+          });
+          theadClone.appendChild(trClone);
+        });
         clonedTable.appendChild(theadClone);
       }
 
       const tbodyClone = document.createElement('tbody');
       rowsToCapture.forEach((r, rIdx) => {
         const trClone = document.createElement('tr');
-        const tds = Array.from(r.querySelectorAll('td')).filter(td => td.style.display !== 'none');
-        const startIndex = isStock && tds.length > 2 && sourceTable.querySelector('th')?.innerText.toLowerCase().includes('brand') ? 1 : 0;
+        const isSubtotal = r.classList.contains('subtotal-row') || r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row');
+        const isGrandTotal = r.classList.contains('grandtotal-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
 
-        const isTotalRow = r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
         let rowBg = (rIdx % 2 === 0) ? (isLight ? '#ffffff' : '#0b1526') : (isLight ? '#f8fafc' : '#091222');
-        if (r.classList.contains('brand-total-row')) rowBg = '#fff3cd';
-        if (r.classList.contains('cat-total-row')) rowBg = '#e2efda';
-        if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) rowBg = '#1e3a5f';
+        if (isSubtotal) rowBg = isLight ? '#dbeafe' : '#1e3a5f';
+        if (isGrandTotal) rowBg = '#091322';
 
-        for (let i = startIndex; i < tds.length; i++) {
-          const tdClone = tds[i].cloneNode(true);
-          const isNum = tdClone.classList.contains('num');
+        Array.from(r.querySelectorAll('td')).forEach((td, cIdx) => {
+          if (td.style.display === 'none') return;
+          const tdClone = td.cloneNode(true);
+          const isNum = td.classList.contains('num');
+
           let textClr = baseTextColor;
-          if (isTotalRow && !r.classList.contains('stock-grand-total') && !r.classList.contains('total-row')) textClr = '#000000';
-          if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) textClr = '#ffffff';
+          if (isSubtotal) textClr = isLight ? '#1e3a5f' : '#ffffff';
+          if (isGrandTotal) textClr = '#fbbf24';
 
           tdClone.style.cssText = `
             background: ${rowBg} !important;
             color: ${textClr} !important;
-            padding: 5px 8px;
+            padding: 5px 7px;
             border: 1px solid ${cellBorder};
-            font-weight: ${isTotalRow ? '800' : (i === startIndex ? '700' : '600')};
+            font-weight: ${(isSubtotal || isGrandTotal) ? '900' : (cIdx === 0 ? '700' : '600')};
             text-align: ${isNum ? 'right' : 'left'};
             font-family: ${isNum ? "'Consolas', monospace" : "inherit"};
             white-space: nowrap;
+            font-size: ${isGrandTotal ? '12px' : '10.5px'};
           `;
           trClone.appendChild(tdClone);
-        }
+        });
         tbodyClone.appendChild(trClone);
       });
       clonedTable.appendChild(tbodyClone);
@@ -1539,21 +1563,25 @@
       captureBox.appendChild(clonedTable);
       document.body.appendChild(captureBox);
 
-      const canvas = await html2canvas(captureBox, {
-        backgroundColor: cardBg,
-        scale: 2.5,
-        logging: false,
-        useCORS: true
-      });
+      try {
+        const canvas = await html2canvas(captureBox, {
+          backgroundColor: cardBg,
+          scale: 2,
+          logging: false,
+          useCORS: true
+        });
 
-      document.body.removeChild(captureBox);
-
-      const dataUrl = canvas.toDataURL('image/png', 1.0);
-      const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
-      if (res && res.success) {
-        showBannerAlert(`🎉 HD Report Card with Heading Copied to Clipboard!`, "#10b981");
-      } else {
-        alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
+        if (res && res.success) {
+          showBannerAlert(`🎉 HD Report Card Copied to Clipboard!`, "#10b981");
+        } else {
+          alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
+        }
+      } catch (err) {
+        console.error("Capture Error:", err);
+      } finally {
+        document.body.removeChild(captureBox);
       }
     }
 
@@ -1593,7 +1621,7 @@
       if (e.key === 'ArrowDown') {
         const table = getActiveTableElement();
         if (!table) return;
-        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
+        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
         if (!rows.length) return;
 
         let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
@@ -1602,7 +1630,7 @@
         if (focusedIdx < rows.length - 1) {
           e.preventDefault();
           const nextIdx = focusedIdx + 1;
-          if (e.shiftKey && activeAnchorRow) {
+          if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
             const anchorIdx = rows.indexOf(activeAnchorRow);
             const min = Math.min(anchorIdx, nextIdx);
             const max = Math.max(anchorIdx, nextIdx);
@@ -1613,7 +1641,7 @@
             rows[nextIdx].classList.add('excel-active-focus');
             rows[nextIdx].scrollIntoView({ block: 'nearest' });
           } else {
-            clearExcelSelection();
+            clearExcelSelection(table);
             rows[nextIdx].classList.add('excel-selected', 'excel-active-focus');
             activeAnchorRow = rows[nextIdx];
             rows[nextIdx].scrollIntoView({ block: 'nearest' });
@@ -1625,7 +1653,7 @@
       if (e.key === 'ArrowUp') {
         const table = getActiveTableElement();
         if (!table) return;
-        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
+        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
         if (!rows.length) return;
 
         let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
@@ -1633,7 +1661,7 @@
 
         e.preventDefault();
         const prevIdx = focusedIdx - 1;
-        if (e.shiftKey && activeAnchorRow) {
+        if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
           const anchorIdx = rows.indexOf(activeAnchorRow);
           const min = Math.min(anchorIdx, prevIdx);
           const max = Math.max(anchorIdx, prevIdx);
@@ -1644,7 +1672,7 @@
           rows[prevIdx].classList.add('excel-active-focus');
           rows[prevIdx].scrollIntoView({ block: 'nearest' });
         } else {
-          clearExcelSelection();
+          clearExcelSelection(table);
           rows[prevIdx].classList.add('excel-selected', 'excel-active-focus');
           activeAnchorRow = rows[prevIdx];
           rows[prevIdx].scrollIntoView({ block: 'nearest' });
@@ -1652,7 +1680,6 @@
       }
     });
 
-    // Dynamic Full Table Image Capture
     async function copyTableAsImage(tableId) {
       let targetTable = document.getElementById(tableId);
       if (!targetTable) targetTable = getActiveTableElement();
@@ -1770,7 +1797,6 @@
           DashboardModule.update();
         }
 
-        // Apply Independent Formatting for the initial page
         applyFormattingToModule('DASHBOARD');
       } catch (err) {
         console.error("DOM Init Error:", err);

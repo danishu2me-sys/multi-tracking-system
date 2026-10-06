@@ -2,24 +2,41 @@ window.SourceFilesModule = {
   renderHTML: function() {
     return `
       <style>
-        .source-files-container {
+        .source-hub-container {
+          padding: 10px 14px;
           display: flex;
           flex-direction: column;
-          gap: 14px;
+          gap: 12px;
           width: 100%;
-          min-height: 100%;
-          padding-bottom: 50px;
+          box-sizing: border-box;
+          overflow-y: auto;
+          height: 100%;
         }
 
-        .source-hero-card {
-          background: linear-gradient(135deg, #09152a 0%, #0d2547 100%);
-          border: 1.5px solid #0284c7;
-          border-radius: 8px;
-          padding: 14px 18px;
+        .source-banner {
+          background: #0f1c33;
+          border: 1.5px solid #1e3a5f;
+          border-radius: 6px;
+          padding: 10px 16px;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .source-banner-title {
+          font-size: 13.5px;
+          font-weight: 800;
+          color: #38bdf8;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .source-banner-sub {
+          font-size: 11px;
+          color: var(--text-muted);
+          margin-top: 2px;
         }
 
         .source-grid {
@@ -30,360 +47,393 @@ window.SourceFilesModule = {
 
         .source-card {
           background: var(--bg-card);
-          border-radius: 8px;
-          padding: 16px;
-          border: 1.5px solid var(--border-color);
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          padding: 14px;
           display: flex;
           flex-direction: column;
           gap: 10px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-          position: relative;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .source-card:hover {
+          transform: translateY(-2px);
+          border-color: #0284c7;
         }
 
         .source-card-header {
           display: flex;
           align-items: center;
           gap: 10px;
-          border-bottom: 1px solid var(--border-color);
-          padding-bottom: 8px;
         }
 
         .source-card-icon {
           font-size: 24px;
-          padding: 6px 10px;
-          background: var(--bg-panel);
-          border-radius: 6px;
-          border: 1px solid var(--border-color);
+          line-height: 1;
         }
 
         .source-card-title {
-          font-size: 13px;
+          font-size: 12.5px;
           font-weight: 800;
-          color: #38bdf8;
+          color: #0284c7;
         }
 
         .source-card-desc {
           font-size: 10.5px;
           color: var(--text-muted);
-          min-height: 28px;
+          line-height: 1.35;
         }
 
-        .source-status-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: var(--bg-panel);
-          padding: 8px 10px;
-          border-radius: 5px;
-          border: 1px solid var(--border-color);
+        .source-status-badge {
           font-size: 11px;
+          font-weight: 800;
+          font-family: 'Consolas', monospace;
+          padding: 3px 8px;
+          border-radius: 4px;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          width: fit-content;
         }
 
-        .badge-status {
-          padding: 2px 7px;
-          border-radius: 3px;
-          font-size: 10px;
-          font-weight: 800;
+        .status-loaded {
+          background: rgba(16, 185, 129, 0.15);
+          color: #10b981;
+          border: 1px solid rgba(16, 185, 129, 0.4);
         }
-        .badge-active { background: #dcfce7; color: #15803d; }
-        .badge-empty { background: #fee2e2; color: #b91c1c; }
+
+        .status-empty {
+          background: rgba(239, 68, 68, 0.15);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.4);
+        }
 
         .btn-source-upload {
           background: #0284c7;
-          color: #fff;
-          border: none;
-          padding: 9px 14px;
-          border-radius: 5px;
+          color: #ffffff;
+          border: 1px solid #38bdf8;
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-size: 11px;
           font-weight: 800;
-          font-size: 11.5px;
           cursor: pointer;
           transition: 0.2s;
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 6px;
+          margin-top: auto;
         }
+
         .btn-source-upload:hover {
           background: #0369a1;
-          box-shadow: 0 0 10px rgba(2, 132, 199, 0.4);
+          box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
         }
       </style>
 
-      <div class="source-files-container">
-        <!-- TOP BANNER -->
-        <div class="source-hero-card">
+      <div class="source-hub-container">
+        <div class="source-banner">
           <div>
-            <h2 style="font-size:16px; font-weight:900; color:#38bdf8;">📁 Master Data & Source Files Hub</h2>
-            <p style="font-size:11px; color:var(--text-muted); margin-top:2px;">Tamam primary aur secondary databases ka real-time sync status yahan manage karein.</p>
+            <div class="source-banner-title">📁 Master Data & Source Files Hub</div>
+            <div class="source-banner-sub">Tamam primary aur secondary databases ka real-time sync status yahan manage karein.</div>
           </div>
-          <button class="btn-act btn-all" onclick="SourceFilesModule.refreshAllStatus()">🔄 Refresh Status</button>
+          <button class="btn-source-upload" style="background:#0f766e; border-color:#14b8a6;" onclick="SourceFilesModule.updateStatus()">🔄 Refresh Status</button>
         </div>
 
-        <!-- 6 SOURCE CARDS -->
         <div class="source-grid">
-          
-          <!-- 1. Monthly Target File -->
+          <!-- CARD 1: MONTHLY TARGETS -->
           <div class="source-card">
             <div class="source-card-header">
               <span class="source-card-icon">🎯</span>
               <div>
                 <div class="source-card-title">Monthly Target Sheet</div>
-                <div style="font-size:10px; color:var(--text-subtle);">Target VS Achievement Brand Wise</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">Target VS Achievement Brand Wise</div>
               </div>
             </div>
             <div class="source-card-desc">Monthly Target file jo DSR aur Brand level achievements track karti hai.</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusTarget" class="badge-status badge-empty">Checking...</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusTargetSheet" class="source-status-badge status-empty">Not Loaded</span>
             </div>
             <button class="btn-source-upload" onclick="SourceFilesModule.uploadTargetFile()">📤 Upload Target File</button>
           </div>
 
-          <!-- 2. Current Month (CM) Sales Dump -->
+          <!-- CARD 2: CM SALES DUMP -->
           <div class="source-card">
             <div class="source-card-header">
               <span class="source-card-icon">⚡</span>
               <div>
                 <div class="source-card-title">CM Sales Dump (Delivered)</div>
-                <div style="font-size:10px; color:var(--text-subtle);">Current Month Data (DSS / Manual)</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">Current Month Data (DSS / Manual)</div>
               </div>
             </div>
             <div class="source-card-desc">Chalu maheene ka live delivery dump jo productivity aur gaps nikalta hai.</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusCM" class="badge-status badge-empty">Checking...</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusCmDump" class="source-status-badge status-empty">Not Loaded</span>
             </div>
-            <button class="btn-source-upload" style="background:#059669;" onclick="SourceFilesModule.uploadDumpFile('CM')">📤 Upload CM Dump</button>
+            <button class="btn-source-upload" style="background:#059669; border-color:#34d399;" onclick="SourceFilesModule.uploadCmDump()">📤 Upload CM Dump</button>
           </div>
 
-          <!-- 3. Last Month (LM) Sales Dump -->
+          <!-- CARD 3: LM SALES DUMP -->
           <div class="source-card">
             <div class="source-card-header">
-              <span class="source-card-icon">📅</span>
+              <span class="source-card-icon">🗓️</span>
               <div>
                 <div class="source-card-title">LM Sales Dump (Delivered)</div>
-                <div style="font-size:10px; color:var(--text-subtle);">Last Month Comparison Base</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">Last Month Comparison Base</div>
               </div>
             </div>
             <div class="source-card-desc">Pichle maheene ka sales dump jo month-on-month comparison ke liye zaroori hai.</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusLM" class="badge-status badge-empty">Checking...</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusLmDump" class="source-status-badge status-empty">Not Loaded</span>
             </div>
-            <button class="btn-source-upload" style="background:#d97706;" onclick="SourceFilesModule.uploadDumpFile('LM')">📤 Upload LM Dump</button>
+            <button class="btn-source-upload" style="background:#d97706; border-color:#f59e0b;" onclick="SourceFilesModule.uploadLmDump()">📤 Upload LM Dump</button>
           </div>
 
-          <!-- 4. Outlet List / Shop Master -->
+          <!-- CARD 4: SHOP MASTER / BEAT LIST -->
           <div class="source-card">
             <div class="source-card-header">
               <span class="source-card-icon">🏪</span>
               <div>
                 <div class="source-card-title">Shop Master / Beat List</div>
-                <div style="font-size:10px; color:var(--text-subtle);">MF Outlet List Detail</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">MF Outlet List Detail</div>
               </div>
             </div>
             <div class="source-card-desc">DSR-wise sections aur dukanon ki master list (Zero Purchase Reports ke liye).</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusShopMaster" class="badge-status badge-empty">Checking...</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusShopMaster" class="source-status-badge status-empty">Not Loaded</span>
             </div>
-            <button id="btnUploadShopMasterCard" class="btn-source-upload" onclick="SourceFilesModule.uploadShopMasterFile()">📤 Upload Shop Master</button>
+            <button class="btn-source-upload" onclick="SourceFilesModule.uploadShopMaster()">📤 Upload Shop Master</button>
           </div>
 
-          <!-- 5. Current Stock Balance (SnD) -->
+          <!-- CARD 5: STOCK BALANCE REPORT -->
           <div class="source-card">
             <div class="source-card-header">
               <span class="source-card-icon">📦</span>
               <div>
                 <div class="source-card-title">Current Stock Balance</div>
-                <div style="font-size:10px; color:var(--text-subtle);">MF SKU And Div Wise Stock</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">MF SKU And Div Wise Stock</div>
               </div>
             </div>
             <div class="source-card-desc">Warehouse aur distributor ka live stock balance (CTN aur BOX units mein).</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusStock" class="badge-status badge-empty">Checking...</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusStockBalance" class="source-status-badge status-empty">Not Loaded</span>
             </div>
-            <button class="btn-source-upload" style="background:#2563eb;" onclick="SourceFilesModule.uploadStockBalanceFile()">📤 Upload Stock File</button>
+            <button class="btn-source-upload" style="background:#2563eb; border-color:#60a5fa;" onclick="SourceFilesModule.uploadStockBalance()">📤 Upload Stock File</button>
           </div>
 
-          <!-- 6. Total Dispatch (Today) -->
+          <!-- CARD 6: TODAY DISPATCH REPORT -->
           <div class="source-card">
             <div class="source-card-header">
               <span class="source-card-icon">🚚</span>
               <div>
                 <div class="source-card-title">Today's Dispatch</div>
-                <div style="font-size:10px; color:var(--text-subtle);">TODAY_DISPATCH Sheet</div>
+                <div style="font-size:9.5px; color:var(--text-muted);">TODAY_DISPATCH Sheet</div>
               </div>
             </div>
-            <div class="source-card-desc">Distributor 'KHI – REHMAN ENT-BR2' ka daily factory dispatch data.</div>
-            <div class="source-status-row">
-              <span>Status:</span>
-              <span id="srcStatusDispatch" class="badge-status badge-empty">Checking...</span>
+            <div class="source-card-desc">Distributor 'KHI - REHMAN ENT-BR2' ka daily factory dispatch data.</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:10.5px; color:var(--text-muted);">Status:</span>
+              <span id="statusDispatch" class="source-status-badge status-empty">Not Loaded</span>
             </div>
-            <button class="btn-source-upload" style="background:#4f46e5;" onclick="SourceFilesModule.uploadDispatchFile()">📤 Upload Dispatch File</button>
+            <button class="btn-source-upload" style="background:#7c3aed; border-color:#a78bfa;" onclick="SourceFilesModule.uploadDispatch()">📤 Upload Dispatch File</button>
           </div>
-
         </div>
       </div>
     `;
   },
 
-  uploadTargetFile: async function() {
-    showBannerAlert("⏳ Opening Target File Selector...", "#0284c7");
-    const { ipcRenderer } = require('electron');
-    const res = await ipcRenderer.invoke('upload-monthly-target-file');
-    if (res && res.success) {
-      showBannerAlert(`🎉 Target File Loaded (${res.totalRecords} Records)!`, "#10b981");
-      if (typeof loadSavedData === 'function') await loadSavedData();
-      this.updateStatus();
-    } else if (res && res.message) {
-      alert(res.message);
-    }
-  },
-
-  uploadDumpFile: async function(type) {
-    showBannerAlert(`⏳ Opening ${type} Dump Selector...`, "#0284c7");
-    const { ipcRenderer } = require('electron');
-    const res = await ipcRenderer.invoke('upload-sales-dump-tagged', type);
-    if (res && res.success) {
-      showBannerAlert(`🎉 ${res.message}`, "#10b981");
-      if (typeof loadBothDumps === 'function') await loadBothDumps();
-      this.updateStatus();
-    } else if (res && res.message) {
-      alert(res.message);
-    }
-  },
-
-  uploadShopMasterFile: async function() {
-    const btn = document.getElementById('btnUploadShopMasterCard');
-    const smEl = document.getElementById('srcStatusShopMaster');
-    
-    try {
-      if (btn) {
-        btn.disabled = true;
-        btn.innerText = "⏳ Processing (Please Wait)...";
-        btn.style.opacity = "0.7";
-      }
-      showBannerAlert("⏳ Reading Shop Master File... Please wait", "#0284c7");
-
-      const { ipcRenderer } = require('electron');
-      const res = await ipcRenderer.invoke('upload-shop-master-file');
-
-      if (res && res.success) {
-        if (smEl) {
-          smEl.className = 'badge-status badge-active';
-          smEl.innerText = `Loaded (${res.count} Shops)`;
-        }
-        showBannerAlert(`🎉 ${res.message}`, "#10b981");
-      } else if (res && res.message) {
-        alert(res.message);
-      }
-    } catch (err) {
-      alert("Upload failed: " + err.message);
-    } finally {
-      if (btn) {
-        btn.disabled = false;
-        btn.innerText = "📤 Upload Shop Master";
-        btn.style.opacity = "1";
-      }
-    }
-  },
-
-  uploadStockBalanceFile: async function() {
-    showBannerAlert("⏳ Opening Stock File Selector...", "#0284c7");
-    const { ipcRenderer } = require('electron');
-    const res = await ipcRenderer.invoke('upload-stock-balance-file');
-    if (res && res.success) {
-      showBannerAlert(`🎉 ${res.message}`, "#10b981");
-      this.updateStatus();
-    } else if (res && res.message) {
-      alert(res.message);
-    }
-  },
-
-  uploadDispatchFile: async function() {
-    showBannerAlert("⏳ Opening Dispatch File Selector...", "#0284c7");
-    const { ipcRenderer } = require('electron');
-    const res = await ipcRenderer.invoke('upload-total-dispatch-file');
-    if (res && res.success) {
-      showBannerAlert(`🎉 ${res.message}`, "#10b981");
-      this.updateStatus();
-    } else if (res && res.message) {
-      alert(res.message);
-    }
-  },
-
-  refreshAllStatus: async function() {
-    showBannerAlert("⏳ Refreshing status...", "#0284c7");
-    if (typeof loadBothDumps === 'function') await loadBothDumps();
-    if (typeof loadSavedData === 'function') await loadSavedData();
-    await this.updateStatus();
-    showBannerAlert("✅ Status Refreshed!", "#10b981");
-  },
-
   updateStatus: async function() {
-    const { ipcRenderer } = require('electron');
-
-    // 1. Target
-    const tEl = document.getElementById('srcStatusTarget');
-    if (tEl) {
-      try {
-        const res = await ipcRenderer.invoke('get-target-report-data');
-        const cnt = (res && res.success && res.data) ? res.data.length : (typeof allRecords !== 'undefined' ? allRecords.length : 0);
-        tEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-        tEl.innerText = cnt > 0 ? `Active (${cnt} Targets)` : 'Not Loaded';
-      } catch(e) {}
-    }
-
-    // 2. CM Dump
-    const cmEl = document.getElementById('srcStatusCM');
-    if (cmEl) {
-      const cnt = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords && cmDump.deliveredRecords.length) || 0;
-      cmEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-      cmEl.innerText = cnt > 0 ? `Loaded (${cnt} Rows)` : 'Not Loaded';
-    }
-
-    // 3. LM Dump
-    const lmEl = document.getElementById('srcStatusLM');
-    if (lmEl) {
-      const cnt = (typeof lmDump !== 'undefined' && lmDump && lmDump.deliveredRecords && lmDump.deliveredRecords.length) || 0;
-      lmEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-      lmEl.innerText = cnt > 0 ? `Loaded (${cnt} Rows)` : 'Not Loaded';
-    }
-
-    // 4. Shop Master (Lightweight check via count handler)
-    const smEl = document.getElementById('srcStatusShopMaster');
-    if (smEl) {
-      try {
-        const sRes = await ipcRenderer.invoke('get-saved-shop-count');
-        const cnt = (sRes && sRes.success) ? sRes.count : 0;
-        smEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-        smEl.innerText = cnt > 0 ? `Loaded (${cnt} Shops)` : 'Not Loaded';
-      } catch(e) {
-        smEl.className = 'badge-status badge-empty';
-        smEl.innerText = 'Not Loaded';
+    // 1. Target Status
+    const elTarget = document.getElementById('statusTargetSheet');
+    if (elTarget) {
+      const cnt = (typeof allRecords !== 'undefined' && allRecords) ? allRecords.length : 0;
+      if (cnt > 0) {
+        elTarget.className = 'source-status-badge status-loaded';
+        elTarget.innerText = `Active (${cnt} Targets)`;
+      } else {
+        elTarget.className = 'source-status-badge status-empty';
+        elTarget.innerText = 'Not Loaded';
       }
     }
 
-    // 5. Stock & Dispatch
+    // 2. CM Dump Status
+    const elCm = document.getElementById('statusCmDump');
+    if (elCm) {
+      const cnt = (typeof cmDump !== 'undefined' && cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords.length : 0;
+      if (cnt > 0) {
+        elCm.className = 'source-status-badge status-loaded';
+        elCm.innerText = `Loaded (${cnt} Rows)`;
+      } else {
+        elCm.className = 'source-status-badge status-empty';
+        elCm.innerText = 'Not Loaded';
+      }
+    }
+
+    // 3. LM Dump Status
+    const elLm = document.getElementById('statusLmDump');
+    if (elLm) {
+      const cnt = (typeof lmDump !== 'undefined' && lmDump && lmDump.deliveredRecords) ? lmDump.deliveredRecords.length : 0;
+      if (cnt > 0) {
+        elLm.className = 'source-status-badge status-loaded';
+        elLm.innerText = `Loaded (${cnt} Rows)`;
+      } else {
+        elLm.className = 'source-status-badge status-empty';
+        elLm.innerText = 'Not Loaded';
+      }
+    }
+
+    // 4. Shop Master Status (Direct live read from backend store)
+    const elShop = document.getElementById('statusShopMaster');
+    if (elShop) {
+      let count = 0;
+      try {
+        const res = await ipcRenderer.invoke('get-saved-shop-count');
+        if (res && res.success) count = res.count || 0;
+      } catch(e) {}
+
+      if (count === 0 && window.shopDataMaster) {
+        count = window.shopDataMaster.length;
+      }
+
+      if (count > 0) {
+        elShop.className = 'source-status-badge status-loaded';
+        elShop.innerText = `Loaded (${count} Shops)`;
+      } else {
+        elShop.className = 'source-status-badge status-empty';
+        elShop.innerText = 'Not Loaded';
+      }
+    }
+
+    // 5. Stock & Dispatch Status
     try {
-      const stkRes = await ipcRenderer.invoke('get-stock-report-data');
-      if (stkRes && stkRes.success) {
-        const stkEl = document.getElementById('srcStatusStock');
-        if (stkEl) {
-          const cnt = (stkRes.stockData && stkRes.stockData.length) || 0;
-          stkEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-          stkEl.innerText = cnt > 0 ? `Loaded (${cnt} Items)` : 'Not Loaded';
+      const sRes = await ipcRenderer.invoke('get-stock-report-data');
+      if (sRes && sRes.success) {
+        const elStock = document.getElementById('statusStockBalance');
+        if (elStock) {
+          const sCount = sRes.stockData ? sRes.stockData.length : 0;
+          if (sCount > 0) {
+            elStock.className = 'source-status-badge status-loaded';
+            elStock.innerText = `Loaded (${sCount} Items)`;
+          } else {
+            elStock.className = 'source-status-badge status-empty';
+            elStock.innerText = 'Not Loaded';
+          }
         }
 
-        const dispEl = document.getElementById('srcStatusDispatch');
-        if (dispEl) {
-          const cnt = (stkRes.dispatchData && stkRes.dispatchData.length) || 0;
-          dispEl.className = cnt > 0 ? 'badge-status badge-active' : 'badge-status badge-empty';
-          dispEl.innerText = cnt > 0 ? `Loaded (${cnt} Entries)` : 'Not Loaded';
+        const elDisp = document.getElementById('statusDispatch');
+        if (elDisp) {
+          const dCount = sRes.dispatchData ? sRes.dispatchData.length : 0;
+          if (dCount > 0) {
+            elDisp.className = 'source-status-badge status-loaded';
+            elDisp.innerText = `Loaded (${dCount} Entries)`;
+          } else {
+            elDisp.className = 'source-status-badge status-empty';
+            elDisp.innerText = 'Not Loaded';
+          }
         }
       }
     } catch(e) {}
+  },
+
+  // LIVE UPLOAD HANDLER FOR SHOP MASTER
+  uploadShopMaster: async function() {
+    try {
+      showBannerAlert("⏳ Shop Master file upload aur parse ho rahi hai...", "#0284c7");
+      const res = await ipcRenderer.invoke('upload-shop-master-file');
+
+      if (res && res.success) {
+        showBannerAlert(`🎉 ${res.count} Shops Successfully Uploaded!`, "#10b981");
+
+        // 1. Force flush memory cache and fetch fresh shops
+        await loadSavedShopData(true);
+
+        // 2. Update Source Files status badge
+        await this.updateStatus();
+
+        // 3. Live refresh all Zero Purchase tables
+        if (window.ZeroShopModule && typeof ZeroShopModule.renderTable === 'function') {
+          ZeroShopModule.renderTable();
+        }
+        if (window.ZeroBrandModule && typeof ZeroBrandModule.renderTable === 'function') {
+          ZeroBrandModule.renderTable();
+        }
+        if (window.ZeroSkuModule && typeof ZeroSkuModule.renderTable === 'function') {
+          ZeroSkuModule.renderTable();
+        }
+      } else if (res && res.message) {
+        alert("Upload Error: " + res.message);
+      }
+    } catch(err) {
+      alert("Error: " + err.message);
+    }
+  },
+
+  uploadTargetFile: async function() {
+    try {
+      const res = await ipcRenderer.invoke('upload-monthly-target-file');
+      if (res && res.success) {
+        showBannerAlert(`🎯 Target file loaded (${res.totalRecords} records)!`, "#10b981");
+        await loadSavedData();
+        this.updateStatus();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch(e) { alert(e.message); }
+  },
+
+  uploadCmDump: async function() {
+    try {
+      const res = await ipcRenderer.invoke('upload-sales-dump-tagged', 'CM');
+      if (res && res.success) {
+        showBannerAlert(`⚡ CM Dump Updated!`, "#10b981");
+        await loadBothDumps();
+        this.updateStatus();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch(e) { alert(e.message); }
+  },
+
+  uploadLmDump: async function() {
+    try {
+      const res = await ipcRenderer.invoke('upload-sales-dump-tagged', 'LM');
+      if (res && res.success) {
+        showBannerAlert(`🗓️ LM Dump Updated!`, "#10b981");
+        await loadBothDumps();
+        this.updateStatus();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch(e) { alert(e.message); }
+  },
+
+  uploadStockBalance: async function() {
+    try {
+      const res = await ipcRenderer.invoke('upload-stock-balance-file');
+      if (res && res.success) {
+        showBannerAlert(`📦 Stock Balance Updated!`, "#10b981");
+        this.updateStatus();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch(e) { alert(e.message); }
+  },
+
+  uploadDispatch: async function() {
+    try {
+      const res = await ipcRenderer.invoke('upload-total-dispatch-file');
+      if (res && res.success) {
+        showBannerAlert(`🚚 Dispatch Data Updated!`, "#10b981");
+        this.updateStatus();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch(e) { alert(e.message); }
   }
 };
