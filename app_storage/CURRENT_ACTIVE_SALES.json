@@ -1,0 +1,2437 @@
+[
+  {
+    "key": "ARSHAD IQBAL|BESTO|BESTO HR RS.20",
+    "ctn": 0.499999,
+    "bill": 2
+  },
+  {
+    "key": "ARSHAD IQBAL|BESTO|BESTO SP RS.10",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|BESTO|BESTO SP RS.10",
+    "ctn": 0.111111,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.999996,
+    "bill": 12
+  },
+  {
+    "key": "MOHSIN QURESHI|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.166664,
+    "bill": 7
+  },
+  {
+    "key": "M QASIM CHISHTI|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 2.666658,
+    "bill": 18
+  },
+  {
+    "key": "M.DANISH|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 2.499992,
+    "bill": 18
+  },
+  {
+    "key": "NOMAN BARI KHAN|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 2.333329,
+    "bill": 11
+  },
+  {
+    "key": "ZIA-UL-HAQ|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.416663,
+    "bill": 11
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 7,
+    "bill": 4
+  },
+  {
+    "key": "MSR WAQAR AHMED|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.666662,
+    "bill": 11
+  },
+  {
+    "key": "ARSHAD IQBAL|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.08333,
+    "bill": 8
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 3.5,
+    "bill": 4
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CAFE|CAFÉ HR PILE RS.20",
+    "ctn": 1.749999,
+    "bill": 4
+  },
+  {
+    "key": "ZIA-UL-HAQ|CAFE|CAFE JHR RS.30",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|CAFE|CAFE JHR RS.30",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|CAFE|CAFE JHR RS.30",
+    "ctn": 0.583331,
+    "bill": 5
+  },
+  {
+    "key": "MOHSIN QURESHI|CAFE|CAFE JHR RS.30",
+    "ctn": 0.416666,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|CAFE|CAFE JHR RS.30",
+    "ctn": 0.416666,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|CAFE|CAFE JHR RS.30",
+    "ctn": 0.583332,
+    "bill": 3
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CAFE|CAFE JHR RS.30",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|CAFE|CAFE JR RS.40",
+    "ctn": 1.583331,
+    "bill": 6
+  },
+  {
+    "key": "NOMAN BARI KHAN|CAFE|CAFE JR RS.40",
+    "ctn": 0.666665,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|CAFE|CAFE JR RS.40",
+    "ctn": 1.66666,
+    "bill": 12
+  },
+  {
+    "key": "MOHSIN QURESHI|CAFE|CAFE JR RS.40",
+    "ctn": 1.249996,
+    "bill": 9
+  },
+  {
+    "key": "MSR WAQAR AHMED|CAFE|CAFE JR RS.40",
+    "ctn": 0.499998,
+    "bill": 5
+  },
+  {
+    "key": "M.DANISH|CAFE|CAFE JR RS.40",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|CAFE|CAFE JR RS.40",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CAFE|CAFE JR RS.40",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CAFE|CAFE JR RS.40",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CAFE|CAFE JR RS.40",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|CAFE|CAFE SP RS.10",
+    "ctn": 11,
+    "bill": 7
+  },
+  {
+    "key": "ARSHAD IQBAL|CAFE|CAFE SP RS.10",
+    "ctn": 3.666666,
+    "bill": 12
+  },
+  {
+    "key": "M QASIM CHISHTI|CAFE|CAFE SP RS.10",
+    "ctn": 1.8055539999999999,
+    "bill": 8
+  },
+  {
+    "key": "NOMAN BARI KHAN|CAFE|CAFE SP RS.10",
+    "ctn": 2.527777,
+    "bill": 11
+  },
+  {
+    "key": "MSR WAQAR AHMED|CAFE|CAFE SP RS.10",
+    "ctn": 3.611111,
+    "bill": 13
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CAFE|CAFE SP RS.10",
+    "ctn": 4.666666,
+    "bill": 4
+  },
+  {
+    "key": "FARHAN BAIG|CAFE|CAFE SP RS.10",
+    "ctn": 3.333333,
+    "bill": 12
+  },
+  {
+    "key": "MOHSIN QURESHI|CAFE|CAFE SP RS.10",
+    "ctn": 1,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|CAFE|CAFE SP RS.10",
+    "ctn": 3.166665,
+    "bill": 15
+  },
+  {
+    "key": "M.DANISH|CAFE|CAFE SP RS.10",
+    "ctn": 5.75,
+    "bill": 21
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CAFE|CAFE SP RS.10",
+    "ctn": 2,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CHASKA CANDY RS. 5|CHASKA IMLI RS.5 JAR",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.466663,
+    "bill": 11
+  },
+  {
+    "key": "M.DANISH|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 1.566663,
+    "bill": 17
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.299998,
+    "bill": 4
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 7.5,
+    "bill": 7
+  },
+  {
+    "key": "NOMAN BARI KHAN|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 1.099997,
+    "bill": 10
+  },
+  {
+    "key": "MSR WAQAR AHMED|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.499996,
+    "bill": 8
+  },
+  {
+    "key": "ARSHAD IQBAL|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.466665,
+    "bill": 6
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 3.833333,
+    "bill": 4
+  },
+  {
+    "key": "M QASIM CHISHTI|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.233331,
+    "bill": 4
+  },
+  {
+    "key": "FARHAN BAIG|RS:2 CANDY|CHASKA MANGO BOX RS. 2",
+    "ctn": 0.833329,
+    "bill": 10
+  },
+  {
+    "key": "MOHSIN QURESHI|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 1.166662,
+    "bill": 12
+  },
+  {
+    "key": "ARSHAD IQBAL|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 0.499998,
+    "bill": 6
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "M QASIM CHISHTI|RS:2 CANDY|CHASKA MANGO JAR RS. 2",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CREAMERS|CREAMERS BANANA RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|CREAMERS|CREAMERS BANANA RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|CREAMERS|CREAMERS BANANA RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREAMERS|CREAMERS BANANA RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREAMERS|CREAMERS BANANA RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.099999,
+    "bill": 3
+  },
+  {
+    "key": "MOHSIN QURESHI|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.066666,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREAMERS|CREAMERS MANGO RS.2 POUCH",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREAMERS|CREAMERS STRW RS.2 JAR",
+    "ctn": 0.583331,
+    "bill": 7
+  },
+  {
+    "key": "FARHAN BAIG|CREAMERS|CREAMERS STRW RS.2 JAR",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREAMERS|CREAMERS STRW RS.2 JAR",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 4,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.799998,
+    "bill": 8
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.266665,
+    "bill": 6
+  },
+  {
+    "key": "M QASIM CHISHTI|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.166665,
+    "bill": 4
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.266664,
+    "bill": 6
+  },
+  {
+    "key": "ARSHAD IQBAL|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.099999,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 1.399995,
+    "bill": 15
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 1.2,
+    "bill": 2
+  },
+  {
+    "key": "MOHSIN QURESHI|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.133332,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|CREAMERS|CREAMERS STRW RS.2 POUCH",
+    "ctn": 0.199999,
+    "bill": 4
+  },
+  {
+    "key": "M QASIM CHISHTI|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.499998,
+    "bill": 5
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|CREAMERS|CREAMERS STRW RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.749998,
+    "bill": 6
+  },
+  {
+    "key": "M QASIM CHISHTI|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "M.DANISH|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREMO|CREMO CHOCOLATE HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|CREMO|CREMO CHOCOLATE JR RS.40",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|CREMO|CREMO CHOCOLATE SP RS.10",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREMO|CREMO CHOCOLATE SP RS.10",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREMO|CREMO CHOCOLATE SP RS.10",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREMO|CREMO CHOCOLATE SP RS.10",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|CREMO|CREMO STRAW JR RS.40",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREMO|CREMO STRAW JR RS.40",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|CREMO|CREMO STRAW JR RS.40",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.583333,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|CREMO|CREMO STRW HR RS.20",
+    "ctn": 0.416665,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|CREMO|CREMO STRW SP RS.10",
+    "ctn": 0.749997,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|CREMO|CREMO STRW SP RS.10",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|CREMO|CREMO STRW SP RS.10",
+    "ctn": 0.916665,
+    "bill": 6
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|CREMO|CREMO STRW SP RS.10",
+    "ctn": 1.25,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|CREMO|CREMO STRW SP RS.10",
+    "ctn": 2.499996,
+    "bill": 11
+  },
+  {
+    "key": "NOMAN BARI KHAN|CREMO|CREMO STRW SP RS.10",
+    "ctn": 0.416665,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|CREMO|CREMO STRW SP RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FREBBLES|FREBBLES S&G BOX RS.20",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FREBBLES|FREBBLES S&G BOX RS.20",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|FREBBLES|FREBBLES S&G BOX RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|FREBBLES|FREBBLES S&G BOX RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FREBBLES|FREBBLES S&G BOX RS.20",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.277777,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.11111,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.111111,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MOHSIN QURESHI|FREBBLES|FREBBLES W&C BOX RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FREBBLES|FREBBLES W&C TRAY RS.50",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|FROOTO CANDY - RE. 1|FROOTO AMROOD BAG RE.1",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY - RE. 1|FROOTO AMROOD BAG RE.1",
+    "ctn": 0.133333,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY - RE. 1|FROOTO AMROOD BAG RE.1",
+    "ctn": 0.1,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.225,
+    "bill": 6
+  },
+  {
+    "key": "ARSHAD IQBAL|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.45,
+    "bill": 9
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.175,
+    "bill": 3
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FROOTO CANDY - RE. 1|FROOTO AMROOD BOX RE.1",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.749997,
+    "bill": 8
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 1.083329,
+    "bill": 11
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 1.416666,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 1.083329,
+    "bill": 13
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.416665,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FROOTO CANDY RS. 5|FROOTO AMROOD RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY - RE. 1|FROOTO LYCHEE BAG RE.1",
+    "ctn": 0.049999,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|FROOTO LYCHEE BOX RE.1",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY - RE. 1|FROOTO MANGO BAG RE.1",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|FROOTO MANGO BOX RE.1",
+    "ctn": 0.15,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO MANGO BOX RE.1",
+    "ctn": 0.175,
+    "bill": 5
+  },
+  {
+    "key": "ARSHAD IQBAL|FROOTO CANDY - RE. 1|FROOTO MANGO BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY - RE. 1|FROOTO MANGO BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY RS. 5|FROOTO MANGO RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY RS. 5|FROOTO MANGO RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY RS. 5|FROOTO MANGO RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY RS. 5|FROOTO MANGO RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO ORANGE BAG RE.1",
+    "ctn": 0.05,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|FROOTO ORANGE BOX RE.1",
+    "ctn": 0.125,
+    "bill": 3
+  },
+  {
+    "key": "ARSHAD IQBAL|FROOTO CANDY - RE. 1|FROOTO ORANGE BOX RE.1",
+    "ctn": 0.4,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO ORANGE BOX RE.1",
+    "ctn": 0.2,
+    "bill": 6
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY - RE. 1|FROOTO ORANGE BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FROOTO CANDY - RE. 1|FROOTO ORANGE BOX RE.1",
+    "ctn": 0.125,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|FROOTO CANDY - RS. 2|FROOTO ORANGE BOX RS. 2",
+    "ctn": 0.1,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RS. 2|FROOTO ORANGE BOX RS. 2",
+    "ctn": 0.066666,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY RS. 5|FROOTO ORANGE RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO PEACH BAG RE.1",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|FROOTO PEACH BOX RE.1",
+    "ctn": 0.175,
+    "bill": 5
+  },
+  {
+    "key": "ARSHAD IQBAL|FROOTO CANDY - RE. 1|FROOTO PEACH BOX RE.1",
+    "ctn": 0.375,
+    "bill": 7
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FROOTO CANDY - RE. 1|FROOTO PEACH BOX RE.1",
+    "ctn": 0.125,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY - RE. 1|FROOTO PEACH BOX RE.1",
+    "ctn": 0.075,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|FROOTO PEACH BOX RE.1",
+    "ctn": 0.125,
+    "bill": 3
+  },
+  {
+    "key": "M.DANISH|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.666664,
+    "bill": 8
+  },
+  {
+    "key": "M QASIM CHISHTI|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.416665,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FROOTO CANDY RS. 5|FROOTO PEACH RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.75,
+    "bill": 2
+  },
+  {
+    "key": "ARSHAD IQBAL|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.833331,
+    "bill": 8
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.499998,
+    "bill": 4
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.333333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA B-CURRANT JAR RS 5",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.766661,
+    "bill": 15
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.433329,
+    "bill": 9
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 2.066666,
+    "bill": 4
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.499996,
+    "bill": 8
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.566661,
+    "bill": 11
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 1.866658,
+    "bill": 24
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.633329,
+    "bill": 9
+  },
+  {
+    "key": "ARSHAD IQBAL|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.766662,
+    "bill": 11
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.733328,
+    "bill": 13
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 5.666666,
+    "bill": 6
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA BLACKCURRANT BOX",
+    "ctn": 0.233333,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA BLUEBERRY RS.5 JAR",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA BLUEBERRY RS.5 JAR",
+    "ctn": 0.416665,
+    "bill": 5
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA BLUEBERRY RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA BLUEBERRY RS.5 JAR",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA BLUEBERRY RS.5 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.399996,
+    "bill": 9
+  },
+  {
+    "key": "ARSHAD IQBAL|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.833328,
+    "bill": 12
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.066666,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.399996,
+    "bill": 8
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.766665,
+    "bill": 4
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.2,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 2.999998,
+    "bill": 6
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.066666,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.133332,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA G.APPLE BOX",
+    "ctn": 0.099999,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.299997,
+    "bill": 7
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 3.166665,
+    "bill": 6
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.799995,
+    "bill": 12
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.33333,
+    "bill": 7
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.799998,
+    "bill": 4
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.099999,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.399997,
+    "bill": 6
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.066666,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA LYCHEE BOX",
+    "ctn": 0.2,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.166665,
+    "bill": 4
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.399998,
+    "bill": 6
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.199998,
+    "bill": 5
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.099999,
+    "bill": 2
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.499999,
+    "bill": 2
+  },
+  {
+    "key": "ARSHAD IQBAL|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.433329,
+    "bill": 8
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA MANGO BOX",
+    "ctn": 0.2,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.199998,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.399996,
+    "bill": 8
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.199998,
+    "bill": 5
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 1.166665,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.366663,
+    "bill": 9
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.066666,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.099999,
+    "bill": 2
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA ORANGE BOX",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.83333,
+    "bill": 8
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 1.25,
+    "bill": 2
+  },
+  {
+    "key": "ARSHAD IQBAL|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA STRAW JAR RS 5",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA STRAWBERRY JAR",
+    "ctn": 0.83333,
+    "bill": 10
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA STRAWBERRY JAR",
+    "ctn": 0.749997,
+    "bill": 8
+  },
+  {
+    "key": "MSR WAQAR AHMED|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.499997,
+    "bill": 9
+  },
+  {
+    "key": "FARHAN BAIG|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.63333,
+    "bill": 10
+  },
+  {
+    "key": "MOHSIN QURESHI|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.2,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.599994,
+    "bill": 13
+  },
+  {
+    "key": "M QASIM CHISHTI|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.433329,
+    "bill": 9
+  },
+  {
+    "key": "M.DANISH|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.233332,
+    "bill": 3
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.466662,
+    "bill": 10
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|FRUIT GALA|FRUIT GALA STRW BOX",
+    "ctn": 0.333331,
+    "bill": 6
+  },
+  {
+    "key": "ARSHAD IQBAL|A1|MAYFAIR A1 HR RS.20",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|A1|MAYFAIR A1 HR RS.20",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|A1|MAYFAIR A1 HR RS.20",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|A1|MAYFAIR A1 HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|A1|MAYFAIR A1 HR RS.20",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|A1|MAYFAIR A1 SP RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|A1|MAYFAIR A1 SP RS.10",
+    "ctn": 0.277775,
+    "bill": 5
+  },
+  {
+    "key": "ARSHAD IQBAL|A1|MAYFAIR A1 SP RS.10",
+    "ctn": 0.277777,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|A1|MAYFAIR A1 SP RS.10",
+    "ctn": 0.222221,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|A1|MAYFAIR A1 SP RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.20",
+    "ctn": 0.333331,
+    "bill": 4
+  },
+  {
+    "key": "FARHAN BAIG|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.20",
+    "ctn": 0.388887,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.20",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 1.499998,
+    "bill": 7
+  },
+  {
+    "key": "ARSHAD IQBAL|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "MOHSIN QURESHI|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MAYFAIR BLISS|MAYFAIR BLISS (CHUNK) RS.40",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.833331,
+    "bill": 5
+  },
+  {
+    "key": "ARSHAD IQBAL|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.499999,
+    "bill": 3
+  },
+  {
+    "key": "ZIA-UL-HAQ|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 1.499994,
+    "bill": 14
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|MAYFAIR BUBBLE|MAYFAIR BUBBLE RS.5 BOX",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.100",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.100",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.100",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.100",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 2.749999,
+    "bill": 5
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 4.833332,
+    "bill": 7
+  },
+  {
+    "key": "FARHAN BAIG|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 0.583332,
+    "bill": 4
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 1.583331,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 2.999997,
+    "bill": 9
+  },
+  {
+    "key": "M.DANISH|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 0.583332,
+    "bill": 4
+  },
+  {
+    "key": "ARSHAD IQBAL|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MAYFAIR DELIGHT|MAYFAIR DELIGHT (CHOCO)RS.50",
+    "ctn": 0.333333,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS BAG",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 2.499995,
+    "bill": 13
+  },
+  {
+    "key": "ZIA-UL-HAQ|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 2.999993,
+    "bill": 18
+  },
+  {
+    "key": "FARHAN BAIG|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 0.666664,
+    "bill": 5
+  },
+  {
+    "key": "M.DANISH|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 2.083328,
+    "bill": 14
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 1.166663,
+    "bill": 9
+  },
+  {
+    "key": "M QASIM CHISHTI|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 0.333332,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 1.249997,
+    "bill": 8
+  },
+  {
+    "key": "ARSHAD IQBAL|MAYFAIR ECLAIRS|MAYFAIR ECLAIRS POUCH",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "M QASIM CHISHTI|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.666665,
+    "bill": 6
+  },
+  {
+    "key": "MOHSIN QURESHI|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "M.DANISH|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.499999,
+    "bill": 3
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|HEARTS|MAYFAIR HEARTS RS. 50",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.916664,
+    "bill": 5
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.666665,
+    "bill": 5
+  },
+  {
+    "key": "NOMAN BARI KHAN|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 1.166663,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.416665,
+    "bill": 4
+  },
+  {
+    "key": "MOHSIN QURESHI|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 1.083331,
+    "bill": 5
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 2.5,
+    "bill": 3
+  },
+  {
+    "key": "M QASIM CHISHTI|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|HEARTS|MAYFAIR HEARTS RS.10",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|HEARTS|MAYFAIR HEARTS RS.20",
+    "ctn": 0.416666,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|HEARTS|MAYFAIR HEARTS RS.20",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|HEARTS|MAYFAIR HEARTS RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|HEARTS|MAYFAIR HEARTS RS.20",
+    "ctn": 0.583332,
+    "bill": 3
+  },
+  {
+    "key": "M.DANISH|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "M QASIM CHISHTI|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "ARSHAD IQBAL|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.499998,
+    "bill": 4
+  },
+  {
+    "key": "MOHSIN QURESHI|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|MILKO|MILKO TOFFEE RS.5 POUCH",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|FROOTO CANDY - RE. 1|RAGING SOURS BOX RE. 1",
+    "ctn": 1.125,
+    "bill": 12
+  },
+  {
+    "key": "MSR WAQAR AHMED|FROOTO CANDY - RE. 1|RAGING SOURS BOX RE. 1",
+    "ctn": 0.425,
+    "bill": 6
+  },
+  {
+    "key": "ARSHAD IQBAL|FROOTO CANDY - RE. 1|RAGING SOURS BOX RE. 1",
+    "ctn": 0.4,
+    "bill": 5
+  },
+  {
+    "key": "NOMAN BARI KHAN|FROOTO CANDY - RE. 1|RAGING SOURS BOX RE. 1",
+    "ctn": 0.05,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|RS:2 CANDY|RAGING SOURS RS.2 BOX",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|RS:2 CANDY|RAGING SOURS RS.2 BOX",
+    "ctn": 0.033333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|RS:2 CANDY|RAGING SOURS RS.2 BOX",
+    "ctn": 0.1,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|RS:2 CANDY|RAGING SOURS RS.2 BOX",
+    "ctn": 0.066666,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CHOCO DELIGHT HR RS20",
+    "ctn": 0.416665,
+    "bill": 3
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CHOCO DELIGHT HR RS20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CHOCO DELIGHT HR RS20",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CHOCO DELIGHT HR RS20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CHOCO DELIGHT HR RS20",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CHOCO DELIGHT JR RS40",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CHOCO DELIGHT JR RS40",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CHOCO DELIGHT JR RS40",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CHOCO DELIGHT JR RS40",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|SPECIAL|SPECIAL CHOCO DELIGHT JR RS40",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 1.166663,
+    "bill": 8
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 1.666665,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.999997,
+    "bill": 7
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.749999,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.666665,
+    "bill": 4
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.749998,
+    "bill": 7
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CHOCOLATE HR RS.20",
+    "ctn": 0.333333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.416666,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.416665,
+    "bill": 4
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.583331,
+    "bill": 4
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.499998,
+    "bill": 5
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CHOCOLATE JR RS.40",
+    "ctn": 0.499998,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 2.249994,
+    "bill": 16
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 0.999998,
+    "bill": 5
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 2.499994,
+    "bill": 15
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 1.666664,
+    "bill": 7
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 1.999996,
+    "bill": 9
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 1.666661,
+    "bill": 12
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 2,
+    "bill": 2
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 1,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 1.666664,
+    "bill": 6
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 0.916664,
+    "bill": 6
+  },
+  {
+    "key": "MOHSIN QURESHI|SPECIAL|SPECIAL CLASSIC HR RS.20",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.583331,
+    "bill": 4
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.5,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.333333,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CLASSIC JHR RS.30",
+    "ctn": 0.666666,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.249999,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.916665,
+    "bill": 4
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.249999,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.999997,
+    "bill": 7
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.333333,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.583331,
+    "bill": 5
+  },
+  {
+    "key": "M QASIM CHISHTI|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.916663,
+    "bill": 6
+  },
+  {
+    "key": "MOHSIN QURESHI|SPECIAL|SPECIAL CLASSIC JR RS.40",
+    "ctn": 0.333332,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 1.75,
+    "bill": 6
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 3.75,
+    "bill": 13
+  },
+  {
+    "key": "M.DANISH|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 2.25,
+    "bill": 9
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 2.5,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 2.75,
+    "bill": 11
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 2.25,
+    "bill": 6
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 0.5,
+    "bill": 2
+  },
+  {
+    "key": "MOHSIN QURESHI|SPECIAL|SPECIAL CLASSIC SP RS. 10",
+    "ctn": 1.25,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.166665,
+    "bill": 3
+  },
+  {
+    "key": "FARHAN BAIG|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 3,
+    "bill": 3
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 3,
+    "bill": 3
+  },
+  {
+    "key": "NOMAN BARI KHAN|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.555555,
+    "bill": 2
+  },
+  {
+    "key": "ARSHAD IQBAL|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.222221,
+    "bill": 3
+  },
+  {
+    "key": "MSR WAQAR AHMED|SPECIAL|SPECIAL CLASSIC SP RS.10",
+    "ctn": 0.222222,
+    "bill": 2
+  },
+  {
+    "key": "MSR WAQAR AHMED|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.05,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.05,
+    "bill": 2
+  },
+  {
+    "key": "M QASIM CHISHTI|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|TIGER|TIGER BIG BUBBLE RS.2 BOX",
+    "ctn": 0.025,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|TIGER|TIGER BIG BUBBLE RS.2 JAR",
+    "ctn": 0.583331,
+    "bill": 6
+  },
+  {
+    "key": "ZIA-UL-HAQ|TIGER|TIGER BIG BUBBLE RS.2 JAR",
+    "ctn": 0.416665,
+    "bill": 5
+  },
+  {
+    "key": "FARHAN BAIG|TIGER|TIGER BIG BUBBLE RS.2 JAR",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|TIGER|TIGER BIG BUBBLE RS.2 JAR",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|TIGER|TIGER BUBBLE RE.1 BOX",
+    "ctn": 0.111111,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|TIGER|TIGER BUBBLE RE.1 BOX",
+    "ctn": 0.444444,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.277776,
+    "bill": 4
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.11111,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.11111,
+    "bill": 2
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.222222,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.277777,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.11111,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "NOMAN BARI KHAN|WOBBLY|WOBBLY AMROOD RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.499996,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.222222,
+    "bill": 1
+  },
+  {
+    "key": "M.DANISH|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.055555,
+    "bill": 1
+  },
+  {
+    "key": "ARSHAD IQBAL|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.166666,
+    "bill": 2
+  },
+  {
+    "key": "NOMAN BARI KHAN|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.166666,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|WOBBLY|WOBBLY PEACH RS.10",
+    "ctn": 0.11111,
+    "bill": 2
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.277776,
+    "bill": 4
+  },
+  {
+    "key": "M.DANISH|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.999996,
+    "bill": 12
+  },
+  {
+    "key": "ARSHAD IQBAL|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.222222,
+    "bill": 2
+  },
+  {
+    "key": "FARHAN BAIG|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.277775,
+    "bill": 5
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.555552,
+    "bill": 8
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.611107,
+    "bill": 8
+  },
+  {
+    "key": "NOMAN BARI KHAN|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.388888,
+    "bill": 3
+  },
+  {
+    "key": "SHAMS TABRREEZ-WS|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.555555,
+    "bill": 1
+  },
+  {
+    "key": "MSR FAIZAN UL HASSAN-WS|WOBBLY|WOBBLY STRW RS.10",
+    "ctn": 0.277777,
+    "bill": 1
+  },
+  {
+    "key": "MOHSIN QURESHI|WOW|WOW C-TELA RS.50 POUCH",
+    "ctn": 0.125,
+    "bill": 1
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOW|WOW C-TELA SP RS.10",
+    "ctn": 0.25,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOW|WOW C-TELA SP RS.10",
+    "ctn": 0.333332,
+    "bill": 2
+  },
+  {
+    "key": "M.DANISH|WOW|WOW C-TELA SP RS.10",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.45833,
+    "bill": 7
+  },
+  {
+    "key": "M.DANISH|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.624993,
+    "bill": 12
+  },
+  {
+    "key": "FARHAN BAIG|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.291666,
+    "bill": 3
+  },
+  {
+    "key": "ARSHAD IQBAL|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.374997,
+    "bill": 6
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.624994,
+    "bill": 11
+  },
+  {
+    "key": "NOMAN BARI KHAN|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.208332,
+    "bill": 3
+  },
+  {
+    "key": "MOHSIN QURESHI|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.041666,
+    "bill": 1
+  },
+  {
+    "key": "MSR SAJJAD HUSSAIN|WOW|WOW C-TELA TP 48 PCS",
+    "ctn": 0.124998,
+    "bill": 3
+  },
+  {
+    "key": "M.DANISH|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.624996,
+    "bill": 8
+  },
+  {
+    "key": "MSR WAQAR AHMED|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.416664,
+    "bill": 6
+  },
+  {
+    "key": "NOMAN BARI KHAN|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.124999,
+    "bill": 2
+  },
+  {
+    "key": "ZIA-UL-HAQ|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.499996,
+    "bill": 8
+  },
+  {
+    "key": "ARSHAD IQBAL|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.083333,
+    "bill": 1
+  },
+  {
+    "key": "FARHAN BAIG|WOW|WOW STRAWBELLA TP 48 PCS",
+    "ctn": 0.083333,
+    "bill": 1
+  }
+]

@@ -1,0 +1,6 @@
+@echo off
+title Launching Mayfair Distribution App...
+cd /d "%~dp0"
+echo Starting Multi-Tracking Desktop App...
+call npm start
+pause

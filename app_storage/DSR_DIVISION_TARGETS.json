@@ -1,0 +1,79 @@
+{
+  "OB10-ZIA-UL-HAQ-MERGE-T/W-(A)": {
+    "totalShops": 250,
+    "bakTgt": 100,
+    "bisTgt": 110,
+    "confTgt": 110,
+    "totalTgt": 320
+  },
+  "OB11-NOMAN BARI KHAN-MERGE-T/W-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB14-ARSHAD IQBAL-Merge-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB25-SHAMS TABRREEZ-WS-(G)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB07-MOHSIN QURESHI-Merge-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB08-FARHAN BAIG-MERGE-T/W-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB08-MSR SAJJAD HUSSAIN-MERGE-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB14-MSR WAQAR AHMED-Merge-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB09-M QASIM CHISHTI-Merge-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB09-M.DANISH-Merge-(A)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  },
+  "OB25-MSR FAIZAN UL HASSAN-WS-(G)": {
+    "totalShops": 250,
+    "bakTgt": 0,
+    "bisTgt": 0,
+    "confTgt": 0,
+    "totalTgt": 0
+  }
+}

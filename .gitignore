@@ -1,0 +1,5 @@
+node_modules/ 
+node_modules/  app_storage/  dist/  *.xlsx 
+dist/  node_modules/  *.exe  *.asar  app_storage/ 
+node_modules/  dist/  *.exe  *.asar  app_storage/ 
+node_modules/  dist/  app_storage/ 

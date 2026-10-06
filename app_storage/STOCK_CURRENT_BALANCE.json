@@ -1,0 +1,954 @@
+[
+  {
+    "brand": "BAKED CROISSANT",
+    "sku": "364",
+    "name": "MAYFAIR BAKED CROISSANT RS.50(1X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "HEARTS",
+    "sku": "362",
+    "name": "MAYFAIR BAKED HEARTS RS.10 (1X24X12)",
+    "ctn": 2,
+    "box": 10
+  },
+  {
+    "brand": "HEARTS",
+    "sku": "363",
+    "name": "MAYFAIR BAKED HEARTS RS.20 (2X12X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "HEARTS",
+    "sku": "403",
+    "name": "MAYFAIR HEARTS RS. 50 (6X12X12)",
+    "ctn": 1,
+    "box": 10
+  },
+  {
+    "brand": "HEARTS",
+    "sku": "183",
+    "name": "MAYFAIR HEARTS RS.10(1X24X12)",
+    "ctn": 35,
+    "box": 9
+  },
+  {
+    "brand": "HEARTS",
+    "sku": "342",
+    "name": "MAYFAIR HEARTS RS.20 (2X12X12)",
+    "ctn": 35,
+    "box": 6
+  },
+  {
+    "brand": "MAYFAIR DELIGHT",
+    "sku": "420",
+    "name": "MAYFAIR DELIGHT (CHOCO)RS.100(1X5X12)",
+    "ctn": 23,
+    "box": 10
+  },
+  {
+    "brand": "MAYFAIR DELIGHT",
+    "sku": "404",
+    "name": "MAYFAIR DELIGHT (CHOCO)RS.50(1X6X12)",
+    "ctn": 36,
+    "box": 4
+  },
+  {
+    "brand": "MAYFAIR DELIGHT",
+    "sku": "419",
+    "name": "MAYFAIR DELIGHT (CINNAMON) Rs.50 (1X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "MAYFAIR DELIGHT",
+    "sku": "329",
+    "name": "MAYFAIR DELIGHT Rs.50 (1X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "A1",
+    "sku": "132",
+    "name": "MAYFAIR A1 HR Rs.20 (6X12X12)",
+    "ctn": 5,
+    "box": 6
+  },
+  {
+    "brand": "A1",
+    "sku": "327",
+    "name": "MAYFAIR A1 HR Rs.20 (8X12X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "A1",
+    "sku": "133",
+    "name": "MAYFAIR A1 JHR Rs.30 (9X8X12)",
+    "ctn": 3,
+    "box": 0
+  },
+  {
+    "brand": "A1",
+    "sku": "335",
+    "name": "MAYFAIR A1 JR Rs.40 (12X6+2SPX12)",
+    "ctn": 8,
+    "box": 4
+  },
+  {
+    "brand": "A1",
+    "sku": "308",
+    "name": "MAYFAIR A1 SP Rs.10 (4X24X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "A1",
+    "sku": "395",
+    "name": "MAYFAIR A1 SP RS.10(4X24X18)",
+    "ctn": 8,
+    "box": 12
+  },
+  {
+    "brand": "BESTO",
+    "sku": "382",
+    "name": "BESTO HR RS.20 (6X12X12)",
+    "ctn": 7,
+    "box": 0
+  },
+  {
+    "brand": "BESTO",
+    "sku": "334",
+    "name": "BESTO JR Rs.40 (12X6+2SPX12)",
+    "ctn": 6,
+    "box": 0
+  },
+  {
+    "brand": "BESTO",
+    "sku": "328",
+    "name": "BESTO SP Rs.10 (4X24X18)",
+    "ctn": 5,
+    "box": 14
+  },
+  {
+    "brand": "BESTO",
+    "sku": "381",
+    "name": "BESTO SP RS.10(4X24X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CAFE",
+    "sku": "164",
+    "name": "CAFÉ HR PILE RS.20 (8X12X12)",
+    "ctn": 90,
+    "box": 11
+  },
+  {
+    "brand": "CAFE",
+    "sku": "134",
+    "name": "CAFE JHR RS.30 (10x8x12)",
+    "ctn": 27,
+    "box": 9
+  },
+  {
+    "brand": "CAFE",
+    "sku": "372",
+    "name": "CAFE JR RS.40 (12X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CAFE",
+    "sku": "367",
+    "name": "CAFÉ JR RS.40 (13X6+1SPX12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CAFE",
+    "sku": "338",
+    "name": "CAFE JR Rs.40 (13X6+2SPX12)",
+    "ctn": 49,
+    "box": 4
+  },
+  {
+    "brand": "CAFE",
+    "sku": "287",
+    "name": "CAFE SP RS.10 (4X24X18)",
+    "ctn": 141,
+    "box": 6
+  },
+  {
+    "brand": "CAFE",
+    "sku": "165",
+    "name": "CAFÉ SP RS.10 4X(72+3)X4",
+    "ctn": 0,
+    "box": 2
+  },
+  {
+    "brand": "CAFE",
+    "sku": "397",
+    "name": "CAFE SP RS.10(4X72+2X4)",
+    "ctn": 95,
+    "box": 2
+  },
+  {
+    "brand": "CREMO",
+    "sku": "331",
+    "name": "CREMO CHOC HR Rs.20 (4X12X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CREMO",
+    "sku": "330",
+    "name": "CREMO CHOC SP Rs.10 (2X24X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CREMO",
+    "sku": "401",
+    "name": "CREMO CHOCOLATE HR RS.20(2X12X12)",
+    "ctn": 9,
+    "box": 1
+  },
+  {
+    "brand": "CREMO",
+    "sku": "402",
+    "name": "CREMO CHOCOLATE JR RS.40(4X6X12)",
+    "ctn": 14,
+    "box": 3
+  },
+  {
+    "brand": "CREMO",
+    "sku": "400",
+    "name": "CREMO CHOCOLATE SP RS.10(1X24X12)",
+    "ctn": 2,
+    "box": 10
+  },
+  {
+    "brand": "CREMO",
+    "sku": "360",
+    "name": "CREMO STRAW JR RS.40 (8X6+2SPX12)",
+    "ctn": 4,
+    "box": 8
+  },
+  {
+    "brand": "CREMO",
+    "sku": "326",
+    "name": "CREMO STRW HR Rs.20(4X12+1SPX12)",
+    "ctn": 3,
+    "box": 1
+  },
+  {
+    "brand": "CREMO",
+    "sku": "311",
+    "name": "CREMO STRW SP Rs.10 (2X24+1X12)",
+    "ctn": 5,
+    "box": 4
+  },
+  {
+    "brand": "MAYFAIR BLISS",
+    "sku": "421",
+    "name": "MAYFAIR BLISS (CHUNK) RS.20(4X16X18)",
+    "ctn": 0,
+    "box": 15
+  },
+  {
+    "brand": "MAYFAIR BLISS",
+    "sku": "422",
+    "name": "MAYFAIR BLISS (CHUNK) RS.40(8X8X18)",
+    "ctn": 60,
+    "box": 0
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "392",
+    "name": "SPECIAL CHOCO DELIGHT HR RS20(4X12X12)",
+    "ctn": 14,
+    "box": 10
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "393",
+    "name": "SPECIAL CHOCO DELIGHT JR RS40(9X6X12)",
+    "ctn": 19,
+    "box": 10
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "391",
+    "name": "SPECIAL CHOCO DELIGHT SP RS10(2X24X12)",
+    "ctn": 0,
+    "box": 6
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "384",
+    "name": "SPECIAL CHOCOLATE HR RS.20(4X12X12)",
+    "ctn": 20,
+    "box": 3
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "354",
+    "name": "SPECIAL CHOCOLATE HR RS.20(6X12X12)",
+    "ctn": 10,
+    "box": 3
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "371",
+    "name": "SPECIAL CHOCOLATE JR RS.40(11X6X12)",
+    "ctn": 22,
+    "box": 6
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "355",
+    "name": "SPECIAL CHOCOLATE JR RS.40(12X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "160",
+    "name": "SPECIAL CLASSIC HR RS.20(8X12X12)",
+    "ctn": 81,
+    "box": 3
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "171",
+    "name": "SPECIAL CLASSIC JHR RS.30 (10X8X12)",
+    "ctn": 27,
+    "box": 7
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "370",
+    "name": "SPECIAL CLASSIC JR RS.40 (12X6X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "333",
+    "name": "SPECIAL CLASSIC JR Rs.40 (13X6+2SPX12)",
+    "ctn": 36,
+    "box": 4
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "396",
+    "name": "SPECIAL CLASSIC SP RS. 10 (4X72+2X4)",
+    "ctn": 104,
+    "box": 0
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "286",
+    "name": "SPECIAL CLASSIC SP RS.10 (4X24X18)",
+    "ctn": 99,
+    "box": 12
+  },
+  {
+    "brand": "SPECIAL",
+    "sku": "167",
+    "name": "SPECIAL CLASSIC SP RS.10 (4X72+3X4)",
+    "ctn": 0,
+    "box": 1
+  },
+  {
+    "brand": "WOW",
+    "sku": "369",
+    "name": "WOW C-TELA RS.50 POUCH (24X48)",
+    "ctn": 1,
+    "box": 31
+  },
+  {
+    "brand": "WOW",
+    "sku": "379",
+    "name": "WOW C-TELA SP RS.10 (6X24X12)",
+    "ctn": 4,
+    "box": 4
+  },
+  {
+    "brand": "WOW",
+    "sku": "356",
+    "name": "WOW C-TELA TP 48 PCS (3X48X24)",
+    "ctn": 9,
+    "box": 17
+  },
+  {
+    "brand": "WOW",
+    "sku": "357",
+    "name": "WOW STRAWBELLA TP 48 PCS (3X48X24)",
+    "ctn": 12,
+    "box": 6
+  },
+  {
+    "brand": "CHASKA CANDY RS. 5",
+    "sku": "394",
+    "name": "CHASKA IMLI RS.5 JAR (50X12)",
+    "ctn": 25,
+    "box": 7
+  },
+  {
+    "brand": "CHASKA CANDY RS. 5",
+    "sku": "359",
+    "name": "CHASKA MANGO JAR RS. 5 (50X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "320",
+    "name": "CREAMERS BANANA RS.2 POUCH (100X30)",
+    "ctn": 4,
+    "box": 12
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "300",
+    "name": "CREAMERS MANGO RS.2 POUCH (100X30)",
+    "ctn": 8,
+    "box": 10
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "376",
+    "name": "CREAMERS STRAWBERRY POUCH (20X30)",
+    "ctn": 0,
+    "box": 12
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "240",
+    "name": "CREAMERS STRW RS.2 JAR (250X12)",
+    "ctn": 0,
+    "box": 2
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "232",
+    "name": "CREAMERS STRW RS.2 POUCH (100X30)",
+    "ctn": 20,
+    "box": 16
+  },
+  {
+    "brand": "CREAMERS",
+    "sku": "380",
+    "name": "CREAMERS STRW RS.5 JAR (50X12)",
+    "ctn": 23,
+    "box": 5
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "414",
+    "name": "FREBBLES S&G BOX RS.10 (24X18)",
+    "ctn": 0,
+    "box": 13
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "415",
+    "name": "FREBBLES S&G BOX RS.20 (18X18)",
+    "ctn": 1,
+    "box": 13
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "416",
+    "name": "FREBBLES S&G TRAY RS.50 (10X12)",
+    "ctn": 0,
+    "box": 9
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "411",
+    "name": "FREBBLES W&C BOX RS.10 (24X18)",
+    "ctn": 0,
+    "box": 4
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "412",
+    "name": "FREBBLES W&C BOX RS.20 (18X18)",
+    "ctn": 2,
+    "box": 8
+  },
+  {
+    "brand": "FREBBLES",
+    "sku": "413",
+    "name": "FREBBLES W&C TRAY RS.50 (10X12)",
+    "ctn": 11,
+    "box": 4
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "203",
+    "name": "FROOTO AMROOD BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "241",
+    "name": "FROOTO AMROOD BOX RE.1(150X40)",
+    "ctn": 6,
+    "box": 13
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "406",
+    "name": "FROOTO COCONUT BAG RE.1(150X40)",
+    "ctn": 1,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "208",
+    "name": "FROOTO COCONUT BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "247",
+    "name": "FROOTO COCONUT BOX RE.1(150X40)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "407",
+    "name": "FROOTO LYCHEE BAG RE.1(150X40)",
+    "ctn": 0,
+    "box": 8
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "206",
+    "name": "FROOTO LYCHEE BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "244",
+    "name": "FROOTO LYCHEE BOX RE.1(150X40)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "209",
+    "name": "FROOTO MANGO BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 5
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "248",
+    "name": "FROOTO MANGO BOX RE.1(150X40)",
+    "ctn": 5,
+    "box": 11
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "409",
+    "name": "FROOTO ORANGE BAG RE.1(150X40)",
+    "ctn": 3,
+    "box": 32
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "204",
+    "name": "FROOTO ORANGE BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "242",
+    "name": "FROOTO ORANGE BOX RE.1(150X40)",
+    "ctn": 1,
+    "box": 4
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "410",
+    "name": "FROOTO PEACH BAG RE.1(150X40)",
+    "ctn": 6,
+    "box": 33
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "205",
+    "name": "FROOTO PEACH BAG RE.1(60X60)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "243",
+    "name": "FROOTO PEACH BOX RE.1(150X40)",
+    "ctn": 2,
+    "box": 39
+  },
+  {
+    "brand": "FROOTO CANDY - RE. 1",
+    "sku": "249",
+    "name": "RAGING SOURS BOX RE. 1 (150X40)",
+    "ctn": 6,
+    "box": 6
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "343",
+    "name": "FROOTO AMROOD BOX RS. 2 (100X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "347",
+    "name": "FROOTO AMROOD JAR RS. 2 (250X12)",
+    "ctn": 0,
+    "box": 3
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "350",
+    "name": "FROOTO MANGO JAR RS. 2 (250X12)",
+    "ctn": 0,
+    "box": 4
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "344",
+    "name": "FROOTO ORANGE BOX RS. 2 (100X30)",
+    "ctn": 3,
+    "box": 24
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "348",
+    "name": "FROOTO ORANGE JAR RS. 2 (250X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "345",
+    "name": "FROOTO PEACH BOX RS. 2 (100X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY - RS. 2",
+    "sku": "349",
+    "name": "FROOTO PEACH JAR RS. 2 (250X12)",
+    "ctn": 0,
+    "box": 7
+  },
+  {
+    "brand": "FROOTO CANDY RS. 5",
+    "sku": "387",
+    "name": "FROOTO AMROOD RS.5 JAR (50X12)",
+    "ctn": 7,
+    "box": 5
+  },
+  {
+    "brand": "FROOTO CANDY RS. 5",
+    "sku": "389",
+    "name": "FROOTO MANGO RS.5 JAR (50X12)",
+    "ctn": 16,
+    "box": 0
+  },
+  {
+    "brand": "FROOTO CANDY RS. 5",
+    "sku": "390",
+    "name": "FROOTO ORANGE RS.5 JAR (50X12)",
+    "ctn": 20,
+    "box": 1
+  },
+  {
+    "brand": "FROOTO CANDY RS. 5",
+    "sku": "388",
+    "name": "FROOTO PEACH RS.5 JAR (50X12)",
+    "ctn": 15,
+    "box": 10
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "377",
+    "name": "FRUIT GALA ASSORTED POUCH (20X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "351",
+    "name": "FRUIT GALA B-CURRANT JAR RS 5 (50X12)",
+    "ctn": 24,
+    "box": 2
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "263",
+    "name": "FRUIT GALA BLACKCURRANT BOX (100X30)",
+    "ctn": 7,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "250",
+    "name": "FRUIT GALA BLACKCURRANT JAR (250X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "265",
+    "name": "FRUIT GALA BLUEBERRY BOX (100X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "252",
+    "name": "FRUIT GALA BLUEBERRY JAR (250X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "386",
+    "name": "FRUIT GALA BLUEBERRY RS.5 JAR(50X12)",
+    "ctn": 22,
+    "box": 4
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "266",
+    "name": "FRUIT GALA G.APPLE BOX (100X30)",
+    "ctn": 12,
+    "box": 17
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "253",
+    "name": "FRUIT GALA G.APPLE JAR (250X12)",
+    "ctn": 0,
+    "box": 1
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "255",
+    "name": "FRUIT GALA LYCHEE  JAR (250X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "268",
+    "name": "FRUIT GALA LYCHEE BOX (100X30)",
+    "ctn": 9,
+    "box": 11
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "269",
+    "name": "FRUIT GALA MANGO BOX (100X30)",
+    "ctn": 32,
+    "box": 21
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "256",
+    "name": "FRUIT GALA MANGO JAR (250X12)",
+    "ctn": 0,
+    "box": 5
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "267",
+    "name": "FRUIT GALA ORANGE BOX (100X30)",
+    "ctn": 25,
+    "box": 19
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "254",
+    "name": "FRUIT GALA ORANGE JAR (250X12)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "352",
+    "name": "FRUIT GALA STRAW JAR RS 5 (50X12)",
+    "ctn": 7,
+    "box": 7
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "251",
+    "name": "FRUIT GALA STRAWBERRY JAR (250X12)",
+    "ctn": 1,
+    "box": 4
+  },
+  {
+    "brand": "FRUIT GALA",
+    "sku": "264",
+    "name": "FRUIT GALA STRW BOX (100X30)",
+    "ctn": 38,
+    "box": 22
+  },
+  {
+    "brand": "MAYFAIR BUBBLE",
+    "sku": "361",
+    "name": "MAYFAIR BUBBLE RS.5 BOX (50X12)",
+    "ctn": 27,
+    "box": 10
+  },
+  {
+    "brand": "MAYFAIR ECLAIRS",
+    "sku": "341",
+    "name": "MAYFAIR ECLAIRS BAG (45X24)",
+    "ctn": 7,
+    "box": 19
+  },
+  {
+    "brand": "MAYFAIR ECLAIRS",
+    "sku": "374",
+    "name": "MAYFAIR ECLAIRS POUCH (16X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "MAYFAIR ECLAIRS",
+    "sku": "162",
+    "name": "MAYFAIR ECLAIRS POUCH (90X12)",
+    "ctn": 35,
+    "box": 4
+  },
+  {
+    "brand": "MILKO",
+    "sku": "324",
+    "name": "MILKO TOFFEE RS.5 POUCH (90X12)",
+    "ctn": 8,
+    "box": 7
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "294",
+    "name": "CHASKA AMROOD BOX (100X30)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "293",
+    "name": "CHASKA AMROOD JAR (250X12)",
+    "ctn": 1,
+    "box": 0
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "257",
+    "name": "CHASKA MANGO BOX RS. 2 (100X30)",
+    "ctn": 87,
+    "box": 15
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "238",
+    "name": "CHASKA MANGO JAR RS. 2 (250X12)",
+    "ctn": 2,
+    "box": 2
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "295",
+    "name": "CHASKA ORANGE JAR (250X12)",
+    "ctn": 0,
+    "box": 4
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "365",
+    "name": "RAGING SOURS RS.2 BOX (100X30)",
+    "ctn": 5,
+    "box": 14
+  },
+  {
+    "brand": "RS:2 Candy",
+    "sku": "366",
+    "name": "RAGING SOURS RS.2 JAR (250X12) 2.6G",
+    "ctn": 4,
+    "box": 8
+  },
+  {
+    "brand": "TIGER",
+    "sku": "220",
+    "name": "TIGER BIG BUBBLE RS.2 BOX (75X40)",
+    "ctn": 0,
+    "box": 0
+  },
+  {
+    "brand": "TIGER",
+    "sku": "398",
+    "name": "TIGER BIG BUBBLE RS.2 BOX (85X40)",
+    "ctn": 8,
+    "box": 29
+  },
+  {
+    "brand": "TIGER",
+    "sku": "222",
+    "name": "TIGER BIG BUBBLE RS.2 JAR (250X12)",
+    "ctn": 6,
+    "box": 3
+  },
+  {
+    "brand": "TIGER",
+    "sku": "340",
+    "name": "TIGER BUBBLE RE.1 BOX (175X27)",
+    "ctn": 0,
+    "box": 12
+  },
+  {
+    "brand": "TIGER",
+    "sku": "399",
+    "name": "TIGER BUBBLE RE.1 BOX (200X27)",
+    "ctn": 7,
+    "box": 2
+  },
+  {
+    "brand": "WOBBLY",
+    "sku": "275",
+    "name": "WOBBLY AMROOD RS.10 (24X18)",
+    "ctn": 23,
+    "box": 4
+  },
+  {
+    "brand": "WOBBLY",
+    "sku": "276",
+    "name": "WOBBLY PEACH RS.10 (24X18)",
+    "ctn": 27,
+    "box": 8
+  },
+  {
+    "brand": "WOBBLY",
+    "sku": "277",
+    "name": "WOBBLY STRW RS.10 (24X18)",
+    "ctn": 24,
+    "box": 1
+  }
+]

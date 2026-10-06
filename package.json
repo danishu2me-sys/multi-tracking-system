@@ -1,0 +1,52 @@
+{
+  "name": "multi-tracking-system",
+  "version": "1.0.0",
+  "description": "Multi Tracking System Powered by Danish Rais",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "author": "Danish Rais",
+  "license": "ISC",
+  "build": {
+    "appId": "com.danishrais.multitrackingsystem",
+    "productName": "Multi Tracking System",
+    "directories": {
+      "output": "dist"
+    },
+    "forceCodeSigning": false,
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Multi Tracking System"
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1"
+  }
+}

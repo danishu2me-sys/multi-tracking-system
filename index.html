@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MULTI TRACKING SYSTEM - POWERED BY DANISH RAIS</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #050b14;
+      --bg-panel: #0b1526;
+      --bg-card: #0f1c33;
+      --bg-row-alt: #091222;
+      --bg-row-hover: #142442;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --border-color: #1e2e4a;
+      --table-header-bg: #132b4f;
+      --table-header-text: #ffffff;
+      --total-row-bg: #1e3a5f;
+      --total-row-text: #ffffff;
+      --input-bg: #070e1c;
+      --input-border: #0284c7;
+
+      --metric-prod: #10b981;
+      --metric-pct: #38bdf8;
+      --metric-lpc: #f472b6;
+      --metric-drop: #f59e0b;
+    }
+
+    body.light-theme {
+      --bg-main: #f1f5f9;
+      --bg-panel: #ffffff;
+      --bg-card: #ffffff;
+      --bg-row-alt: #f8fafc;
+      --bg-row-hover: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-subtle: #64748b;
+      --border-color: #cbd5e1;
+      --table-header-bg: #1e3a5f;
+      --table-header-text: #ffffff;
+      --total-row-bg: #1e3a5f;
+      --total-row-text: #ffffff;
+      --input-bg: #ffffff;
+      --input-border: #0284c7;
+
+      --metric-prod: #059669;
+      --metric-pct: #0284c7;
+      --metric-lpc: #db2777;
+      --metric-drop: #d97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Calibri', 'Segoe UI', sans-serif; transition: background 0.15s ease, color 0.15s ease; }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 12px; }
+
+    /* Top Navigation Bar */
+    .top-header {
+      background: var(--bg-panel); color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center; padding: 0 12px;
+      height: 38px; flex-shrink: 0; position: relative;
+      z-index: 999999 !important; white-space: nowrap;
+    }
+
+    .top-nav-group { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+    .nav-tab-btn, .dropdown-btn {
+      padding: 4px 10px; font-size: 11px; font-weight: 800; border-radius: 4px;
+      border: 1px solid var(--border-color); cursor: pointer; transition: 0.2s;
+      color: var(--text-main); background: var(--bg-card); display: inline-flex; align-items: center; gap: 5px;
+      height: 28px;
+    }
+    .nav-tab-btn:hover, .dropdown-btn:hover { background: rgba(2, 132, 199, 0.2); border-color: #0284c7; }
+    .nav-tab-btn.active, .dropdown-btn.active {
+      background: #0284c7; color: #ffffff; border-color: #38bdf8;
+      box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
+    }
+
+    .dropdown { position: relative; display: inline-block; padding-bottom: 6px; margin-bottom: -6px; z-index: 999999 !important; }
+    .dropdown-content {
+      display: none; position: absolute; top: calc(100% - 2px); left: 0; min-width: 250px;
+      background: var(--bg-panel); border: 1.5px solid #0284c7; border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8); z-index: 9999999 !important;
+    }
+    .dropdown:hover .dropdown-content { display: block; }
+
+    .dropdown-content button, .dropdown-submenu-btn {
+      width: 100%; text-align: left; padding: 9px 12px; background: transparent;
+      color: var(--text-main); border: none; font-size: 11px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: 0.15s;
+    }
+    .dropdown-content button:hover, .dropdown-submenu-btn:hover {
+      background: rgba(2, 132, 199, 0.25); color: #38bdf8;
+    }
+
+    .dropdown-submenu { position: relative; width: 100%; }
+    .dropdown-submenu-content {
+      display: none; position: absolute; top: 0; left: 100%; min-width: 230px;
+      background: var(--bg-panel); border: 1.5px solid #0284c7; border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7); z-index: 10000000; margin-left: 2px;
+    }
+    .dropdown-submenu:hover .dropdown-submenu-content { display: block; }
+    .dropdown-submenu-content button {
+      width: 100%; text-align: left; padding: 9px 12px; background: transparent;
+      color: var(--text-main); border: none; font-size: 11px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.15s;
+    }
+    .dropdown-submenu-content button:hover {
+      background: rgba(2, 132, 199, 0.25); color: #38bdf8;
+    }
+
+    .portal-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .portal-status-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; box-shadow: 0 0 6px #10b981; margin-right: 2px;
+    }
+    .btn-portal {
+      padding: 3px 9px; border-radius: 4px; font-size: 10.5px; font-weight: bold;
+      border: none; cursor: pointer; color: #fff; background: #0284c7; transition: 0.2s; height: 26px;
+    }
+    .header-utils { display: flex; align-items: center; gap: 3px; }
+    .btn-util {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      color: var(--text-main); padding: 2px 7px; border-radius: 4px; font-size: 10.5px; cursor: pointer; font-weight: bold; height: 26px;
+    }
+
+    /* -------------------------------------------------------------
+       EXCEL-STYLE RIBBON TOOLBAR (PER-PAGE SETTINGS)
+       ------------------------------------------------------------- */
+    .excel-ribbon-bar {
+      background: #eef2f6;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding: 3px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 38px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    body:not(.light-theme) .excel-ribbon-bar {
+      background: #091322;
+      border-bottom-color: #1a2c47;
+    }
+
+    .ribbon-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+    }
+    .ribbon-divider {
+      width: 1px;
+      height: 24px;
+      background: #cbd5e1;
+      margin: 0 4px;
+    }
+    body:not(.light-theme) .ribbon-divider {
+      background: #1e2e4a;
+    }
+
+    .ribbon-select {
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      height: 24px;
+      outline: none;
+    }
+    body:not(.light-theme) .ribbon-select {
+      background: #070e1c;
+      color: #f8fafc;
+      border-color: #1e3a5f;
+    }
+
+    .ribbon-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      width: 26px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--text-main);
+      transition: 0.15s;
+    }
+    .ribbon-btn:hover {
+      background: rgba(2, 132, 199, 0.15);
+      border-color: #0284c7;
+    }
+    .ribbon-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
+    .color-picker-wrap {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+    }
+    .color-picker-wrap input[type="color"] {
+      position: absolute;
+      opacity: 0;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    /* Main Workspace */
+    .main-workspace {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      padding: 6px 12px; width: 100%; height: calc(100vh - 78px);
+    }
+    
+    .module-view { flex: 1; display: none; flex-direction: column; overflow: hidden; width: 100%; height: 100%; }
+    .module-view.active { display: flex; }
+
+    #moduleDashboardView.module-view.active,
+    #moduleDsrPerfView.module-view.active,
+    #moduleStockView.module-view.active,
+    #moduleAiBrainView.module-view.active,
+    #moduleSourceView.module-view.active {
+      display: block !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      height: 100% !important;
+    }
+
+    /* Common Card & Form Styles */
+    .control-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+    .time-gone-card {
+      display: flex; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 5px; overflow: hidden;
+    }
+    .tg-col {
+      padding: 3px 8px; text-align: center; border-right: 1px solid var(--border-color); min-width: 65px;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .tg-col:last-child {
+      border-right: none; background: #1e3a5f !important; color: #ffffff !important;
+    }
+    .tg-label { font-size: 9px; font-weight: bold; color: var(--text-subtle); margin-bottom: 1px; }
+    .tg-val { font-size: 11.5px; font-weight: bold; color: var(--text-main); }
+    .tg-col:last-child .tg-val { color: #ffffff !important; font-weight: 800; font-size: 12px; }
+
+    .tg-input {
+      width: 38px; background: var(--input-bg); border: 1px solid var(--border-color);
+      color: var(--text-main); font-weight: bold; font-size: 11px; text-align: center;
+      border-radius: 3px; outline: none; padding: 1px 0; margin: 0 auto;
+    }
+
+    .view-mode-container {
+      background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 5px;
+      padding: 3px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    }
+    .view-mode-title { font-size: 8.5px; font-weight: 800; color: #f39c12; letter-spacing: 0.5px; margin-bottom: 3px; text-align: center; width: 100%; }
+    .mode-buttons { display: flex; gap: 5px; align-items: center; justify-content: center; }
+    .btn-mode { padding: 4px 12px; font-size: 11px; font-weight: bold; border-radius: 3px; cursor: pointer; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); transition: 0.2s; }
+    .btn-mode.active { background: #f39c12; color: #070d18; border-color: #f39c12; font-weight: 800; }
+
+    .action-buttons { display: flex; gap: 5px; align-items: center; margin-left: auto; flex-wrap: wrap; }
+    .btn-act { padding: 5px 11px; font-size: 11px; font-weight: bold; border-radius: 4px; border: none; cursor: pointer; color: #ffffff !important; transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-all { background: #0284c7; }
+    .btn-custom { background: #d97706; }
+    .btn-save-date { background: #059669; }
+    .btn-copy-text { background: #2563eb; }
+
+    .history-bar, .filter-bar-compact { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 5px 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-group { display: flex; align-items: center; gap: 6px; }
+    .filter-label { font-size: 10.5px; font-weight: 800; color: #0284c7; text-transform: uppercase; }
+    .custom-select, .date-input-field { background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; font-size: 11px; outline: none; font-weight: 600; }
+
+    /* REPORT TABLES */
+    .table-chart-container { display: flex; width: 100%; flex: 1; overflow: hidden; margin-top: 2px; }
+    .table-wrapper {
+      width: 100%; overflow: auto; background: var(--bg-panel); border-radius: 6px; border: 1px solid var(--border-color);
+      height: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: text;
+    }
+    
+    .table-wrapper table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .table-wrapper th {
+      background: var(--table-header-bg) !important; color: #ffffff !important;
+      padding: 8px 10px; text-align: left; vertical-align: middle; position: sticky; top: 0; z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 800; letter-spacing: 0.3px; white-space: nowrap;
+    }
+    .table-wrapper th.num { text-align: right !important; }
+    .table-wrapper td { padding: 6px 10px; border: 1px solid var(--border-color); color: var(--text-main); white-space: nowrap; vertical-align: middle; }
+    .table-wrapper tr:nth-child(even) { background: var(--bg-row-alt); }
+    .table-wrapper tr:hover { background: var(--bg-row-hover); }
+
+    .table-wrapper th:first-child {
+      position: sticky; left: 0; z-index: 25;
+      background: var(--table-header-bg) !important; color: #ffffff !important; border-right: 2px solid #38bdf8 !important;
+    }
+    .table-wrapper td:first-child {
+      position: sticky; left: 0; z-index: 8;
+      background: var(--bg-panel) !important; border-right: 2px solid #38bdf8 !important; color: var(--text-main) !important; font-weight: 700;
+    }
+    .table-wrapper tr:nth-child(even) td:first-child { background: var(--bg-row-alt) !important; }
+    .table-wrapper tr:hover td:first-child { background: var(--bg-row-hover) !important; }
+
+    .table-wrapper tfoot tr td:first-child {
+      position: sticky; left: 0; z-index: 26;
+      background: var(--total-row-bg) !important; border-right: 2px solid #38bdf8 !important; color: #ffffff !important; font-weight: 800;
+    }
+
+    /* Active Highlight States */
+    tr.excel-selected, .table-wrapper tr.excel-selected {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+    }
+    tr.excel-selected td, .table-wrapper tr.excel-selected td {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      border-color: #38bdf8 !important;
+    }
+    tr.excel-active-focus {
+      outline: 2px solid #f59e0b !important;
+    }
+
+    .table-wrapper .num { text-align: right !important; font-family: 'Consolas', monospace; color: var(--text-main); }
+    .table-wrapper .total-row {
+      background: var(--total-row-bg) !important; color: var(--total-row-text) !important; font-weight: bold;
+      position: sticky; bottom: 0; border-top: 2px solid #38bdf8; z-index: 15;
+    }
+    .table-wrapper .total-row td { color: var(--total-row-text) !important; font-weight: bold; }
+
+    .cell-dsr-name { font-weight: 700; color: var(--text-main) !important; font-size: 11.5px; text-align: left; }
+    .cf-green { color: #10b981 !important; font-weight: bold; }
+    .cf-red { color: #ef4444 !important; font-weight: bold; }
+
+    .live-alert-banner {
+      display: none; background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+      color: #ffffff; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: bold; text-align: center; margin-bottom: 6px;
+    }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 99999;
+    }
+    .modal-box {
+      background: var(--bg-panel); border: 2px solid #0284c7; border-radius: 8px;
+      width: 620px; max-width: 92vw; padding: 18px; display: flex; flex-direction: column; max-height: 88vh; color: var(--text-main);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-input {
+      width: 100%; background: var(--bg-card); border: 1px solid var(--border-color);
+      color: var(--text-main); padding: 7px 10px; border-radius: 4px; font-size: 12px; outline: none;
+    }
+    .sku-picker-list {
+      flex: 1; overflow-y: auto; background: var(--bg-main); border: 1px solid var(--border-color);
+      border-radius: 6px; padding: 8px; margin: 10px 0; max-height: 340px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .sku-picker-item {
+      display: flex !important; align-items: center; gap: 10px; padding: 5px 10px;
+      border-radius: 4px; font-size: 12px; cursor: pointer; background: var(--bg-card);
+      border: 1px solid transparent; width: 100%; box-sizing: border-box;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <div class="top-header">
+    <div class="top-nav-group">
+      <button id="navBtnDash" class="nav-tab-btn active" onclick="switchMainModule('DASHBOARD')">
+        📈 Dashboard
+      </button>
+
+      <div class="dropdown">
+        <button id="navBtnReports" class="dropdown-btn">
+          📊 Sales Reports ▾
+        </button>
+        <div class="dropdown-content">
+          <button onclick="switchMainModule('TARGET')">🎯 Target vs Achievement</button>
+          <button onclick="switchMainModule('PRODUCTIVITY')">⚡ Unique Productivity (CM vs LM)</button>
+          <button onclick="switchMainModule('STOCK_REPORT')">📦 Stock Report & Dispatch</button>
+          
+          <div class="dropdown-submenu">
+            <div class="dropdown-submenu-btn">
+              <span>🚫 Zero Purchase Reports</span>
+              <span style="font-size:10px;">▶</span>
+            </div>
+            <div class="dropdown-submenu-content">
+              <button onclick="switchMainModule('ZERO_SHOP')">🏪 Shop Wise Zero Purchase</button>
+              <button onclick="switchMainModule('ZERO_BRAND')">🏷️ Brand Wise Zero Purchase</button>
+              <button onclick="switchMainModule('ZERO_SKU')">📦 SKU Wise Zero Purchase</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="navBtnSource" class="nav-tab-btn" onclick="switchMainModule('SOURCE')">
+        📁 Source Files
+      </button>
+
+      <button id="navBtnDsrPerf" class="nav-tab-btn" onclick="switchMainModule('DSR_PERFORMANCE')">
+        DSR Performance
+      </button>
+
+      <button id="navBtnAiBrain" class="nav-tab-btn" style="background:#091426; border-color:#0284c7; color:#38bdf8;" onclick="switchMainModule('AI_BRAIN')">
+        🧠 AI Brain Analyzer
+      </button>
+    </div>
+
+    <div class="portal-actions">
+      <button id="themeToggleBtn" class="btn-util" onclick="toggleTheme()">☀️ Light Mode</button>
+      
+      <button class="btn-util" style="background:#0284c7; border-color:#38bdf8; color:#fff;" onclick="openSettingsModal()" title="SnD & DSS Login Credentials">
+        ⚙️ Settings
+      </button>
+
+      <span class="portal-status-dot"></span>
+      <button class="btn-portal" onclick="openSnDWindow()">🌐 SnD Portal</button>
+      <button class="btn-portal" style="background:#b91c1c; border:1px solid #ef4444;" onclick="openDSSWindow()">🏢 DSS Portal</button>
+    </div>
+  </div>
+
+  <!-- EXCEL HOME RIBBON TOOLBAR -->
+  <div class="excel-ribbon-bar">
+    <!-- FONT FAMILY & SIZE -->
+    <div class="ribbon-group">
+      <select id="ribbonFontFamily" class="ribbon-select" style="min-width:115px;" onchange="applyExcelRibbonAction('fontFamily', this.value)">
+        <option value="'Calibri', 'Segoe UI', sans-serif" selected>Calibri</option>
+        <option value="'Aptos', sans-serif">Aptos</option>
+        <option value="'Segoe UI', sans-serif">Segoe UI</option>
+        <option value="'Arial', sans-serif">Arial</option>
+        <option value="'Consolas', monospace">Consolas</option>
+        <option value="'Tahoma', sans-serif">Tahoma</option>
+      </select>
+
+      <select id="ribbonFontSize" class="ribbon-select" style="min-width:48px;" onchange="applyExcelRibbonAction('fontSize', this.value)">
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12" selected>12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="16">16</option>
+        <option value="18">18</option>
+      </select>
+
+      <button class="ribbon-btn" title="Increase Font Size (A^)" onclick="applyExcelRibbonAction('fontGrow', 1)">A<sup>▲</sup></button>
+      <button class="ribbon-btn" title="Decrease Font Size (Av)" onclick="applyExcelRibbonAction('fontGrow', -1)">A<sup>▼</sup></button>
+    </div>
+
+    <div class="ribbon-divider"></div>
+
+    <!-- BOLD, ITALIC, UNDERLINE -->
+    <div class="ribbon-group">
+      <button id="ribbonBoldBtn" class="ribbon-btn" style="font-weight:900;" title="Bold" onclick="applyExcelRibbonAction('bold')"><b>B</b></button>
+      <button id="ribbonItalicBtn" class="ribbon-btn" style="font-style:italic;" title="Italic" onclick="applyExcelRibbonAction('italic')"><i>I</i></button>
+      <button id="ribbonUnderlineBtn" class="ribbon-btn" style="text-decoration:underline;" title="Underline" onclick="applyExcelRibbonAction('underline')"><u>U</u></button>
+    </div>
+
+    <div class="ribbon-divider"></div>
+
+    <!-- ALIGNMENT -->
+    <div class="ribbon-group">
+      <button class="ribbon-btn" title="Align Left" onclick="applyExcelRibbonAction('align', 'left')">⫷</button>
+      <button class="ribbon-btn" title="Align Center" onclick="applyExcelRibbonAction('align', 'center')">≡</button>
+      <button class="ribbon-btn" title="Align Right" onclick="applyExcelRibbonAction('align', 'right')">⫸</button>
+    </div>
+
+    <div class="ribbon-divider"></div>
+
+    <!-- COLOR PICKERS -->
+    <div class="ribbon-group">
+      <div class="color-picker-wrap" title="Fill Color (Background)">
+        <span class="ribbon-btn" style="color:#eab308;">🪣</span>
+        <input type="color" onchange="applyExcelRibbonAction('bgColor', this.value)" />
+      </div>
+
+      <div class="color-picker-wrap" title="Font Color">
+        <span class="ribbon-btn" style="color:#ef4444; text-decoration:underline; font-weight:900;">A</span>
+        <input type="color" onchange="applyExcelRibbonAction('textColor', this.value)" />
+      </div>
+
+      <button class="ribbon-btn" title="Reset Formatting on this page" style="color:#64748b; font-size:11px;" onclick="applyExcelRibbonAction('reset')">✕</button>
+    </div>
+  </div>
+
+  <!-- Main Workspace -->
+  <div class="main-workspace">
+    <div id="moduleDashboardView" class="module-view active"></div>
+    <div id="moduleTargetView" class="module-view"></div>
+    <div id="moduleProdView" class="module-view"></div>
+    <div id="moduleStockView" class="module-view"></div>
+    <div id="moduleZeroShopView" class="module-view"></div>
+    <div id="moduleZeroBrandView" class="module-view"></div>
+    <div id="moduleZeroSkuView" class="module-view"></div>
+    <div id="moduleSourceView" class="module-view"></div>
+    <div id="moduleDsrPerfView" class="module-view"></div>
+    <div id="moduleAiBrainView" class="module-view"></div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal-box" style="width:500px;">
+      <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+        ⚙ System Portals Login Credentials
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">SnD Pro aur DSS Portal ke credentials save karein:</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+          <div style="font-size:11.5px; font-weight:800; color:#38bdf8; margin-bottom:6px;">🌐 SnD Pro Credentials</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
+            <div><label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Distributor ID:</label><input type="text" id="settingSndDist" class="modal-input" placeholder="102336" /></div>
+            <div><label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">User ID:</label><input type="text" id="settingSndUser" class="modal-input" placeholder="kpo" /></div>
+            <div><label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Password:</label><input type="password" id="settingSndPass" class="modal-input" placeholder="kpo321" /></div>
+          </div>
+        </div>
+        <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid #ef4444;">
+          <div style="font-size:11.5px; font-weight:800; color:#ef4444; margin-bottom:6px;">🏢 DSS Portal (Sales Dump) Credentials</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div><label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">User ID:</label><input type="text" id="settingDssUser" class="modal-input" placeholder="asmkhib" /></div>
+            <div><label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Password:</label><input type="password" id="settingDssPass" class="modal-input" placeholder="DSS Password" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeSettingsModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">Cancel</button>
+        <button onclick="saveAllSettingsCredentials()" style="background:#059669; color:#fff; border:none; padding:6px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">💾 Save Credentials</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="saveDateModal" class="modal-overlay">
+    <div class="modal-box" style="width:400px;">
+      <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:8px;">💾 Save Final Report by Date</div>
+      <p style="font-size:11.5px; color:var(--text-muted); margin-bottom:10px;">Select date to save snapshot in history database:</p>
+      <input type="date" id="saveReportDatePicker" class="modal-input" style="margin-bottom:12px;" />
+      <div class="modal-actions">
+        <button onclick="closeSaveDateModal()" style="background:#475569; color:#fff; border:none; padding:5px 12px; border-radius:4px; cursor:pointer;">Cancel</button>
+        <button onclick="confirmSaveReportDate()" style="background:#059669; color:#fff; border:none; padding:5px 14px; border-radius:4px; font-weight:bold; cursor:pointer;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="customBrandModal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+        🏷️ Custom Brand Builder
+      </div>
+      <input type="text" id="customBrandName" class="modal-input" placeholder="Brand Name" style="margin-bottom:8px;" />
+      <div style="display:flex; gap:6px; align-items:center;">
+        <input type="text" id="skuSearchInput" class="modal-input" oninput="filterModalSKUs()" placeholder="🔍 Search SKU..." style="flex:1;" />
+        <button onclick="toggleSelectAllModal(true)" style="background:var(--bg-card); color:#38bdf8; border:1px solid var(--border-color); padding:5px 9px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:bold;">Select All</button>
+        <button onclick="toggleSelectAllModal(false)" style="background:var(--bg-card); color:var(--text-muted); border:1px solid var(--border-color); padding:5px 9px; border-radius:4px; font-size:11px; cursor:pointer;">Clear</button>
+      </div>
+      <div id="modalSkuList" class="sku-picker-list"></div>
+      <div id="selectedSkuCountBadge" style="font-size:11.5px; font-weight:bold; color:#0284c7;">0 SKUs Selected</div>
+      <div id="customBrandsPills" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; max-height:60px; overflow-y:auto;"></div>
+      <div class="modal-actions">
+        <button onclick="closeCustomBrandModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">Cancel</button>
+        <button onclick="saveCustomBrand()" style="background:#059669; color:#fff; border:none; padding:6px 14px; border-radius:4px; font-weight:bold; cursor:pointer;">Save Brand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE SCRIPTS -->
+  <script src="modules/dashboard.js"></script>
+  <script src="modules/dsrPerformance.js"></script>
+  <script src="modules/stockReport.js"></script>
+  <script src="modules/aiBrainAnalyzer.js"></script>
+  <script src="modules/targetReport.js"></script>
+  <script src="modules/productivityReport.js"></script>
+  <script src="modules/zeroShopWise.js"></script>
+  <script src="modules/zeroBrandWise.js"></script>
+  <script src="modules/zeroSkuWise.js"></script>
+  <script src="modules/sourceFiles.js"></script>
+
+  <!-- CONTROLLER -->
+  <script>
+    const { ipcRenderer, clipboard } = require('electron');
+
+    let currentActiveModuleKey = 'DASHBOARD';
+    let allRecords = [];
+    let liveCachedRecords = [];
+    window.LIVE_CURRENT_SNAPSHOT = [];
+    let currentMode = localStorage.getItem('savedTargetViewMode') || 'DSR';
+    let currentMonthView = 'LM';
+    let currentProdTab = 'DSR';
+    
+    let lmDump = null;
+    let cmDump = null;
+    window.shopDataMaster = [];
+
+    let lmSelectedFrom = '';
+    let lmSelectedTo = '';
+    let cmSelectedFrom = '';
+    let cmSelectedTo = '';
+
+    const PRESET_UNIVERSE = {
+      'OB07-MOHSIN QURESHI-Merge-(A)': 277,
+      'OB08-FARHAN BAIG-MERGE-T/W-(A)': 235,
+      'OB08-MSR SAJJAD HUSSAIN-MERGE-(A)': 214,
+      'OB09-M QASIM CHISHTI-Merge-(A)': 217,
+      'OB09-M.DANISH-Merge-(A)': 263,
+      'OB10-ZIA-UL-HAQ-MERGE-T/W-(A)': 242,
+      'OB11-NOMAN BARI KHAN-MERGE-T/W-(A)': 216,
+      'OB14-ARSHAD IQBAL-Merge-(A)': 295,
+      'OB14-MSR WAQAR AHMED-Merge-(A)': 287,
+      'OB25-MSR FAIZAN UL HASSAN-WS-(G)': 76,
+      'OB25-SHAMS TABRREEZ-WS-(G)': 72
+    };
+
+    let manualUniverseMap = JSON.parse(localStorage.getItem('savedManualUniverseMap') || '{}');
+
+    let activeArea = 'ALL';
+    let activeDist = 'ALL';
+    let activeBrand = 'ALL';
+    let activeDSR = 'ALL';
+    let customBrandsMap = {};
+    let selectedCustomSKUs = new Set();
+
+    let prodTotalDays = parseInt(localStorage.getItem('savedProdTotalDays') || '26', 10);
+    let prodDaysGone = parseInt(localStorage.getItem('savedProdDaysGone') || '3', 10);
+    let prodDaysLeft = Math.max(1, prodTotalDays - prodDaysGone);
+    let prodTimeGonePct = prodDaysGone / prodTotalDays;
+
+    let totalDays = parseInt(localStorage.getItem('savedTotalDays') || '26', 10);
+    let daysGone = parseInt(localStorage.getItem('savedDaysGone') || '3', 10);
+    let daysLeft = Math.max(1, totalDays - daysGone);
+    let timeGonePct = daysGone / totalDays;
+
+    // -------------------------------------------------------------
+    // PER-PAGE FORMATTING MEMORY STORE (STRICTLY INDEPENDENT)
+    // -------------------------------------------------------------
+    let pageFormatStore = JSON.parse(localStorage.getItem('appPageFormatStore') || '{}');
+
+    function getPageFormat(modKey) {
+      if (!pageFormatStore[modKey]) {
+        pageFormatStore[modKey] = {
+          fontFamily: "'Calibri', 'Segoe UI', sans-serif",
+          fontSize: (modKey === 'STOCK_REPORT' ? 11 : 12),
+          bold: false,
+          italic: false,
+          underline: false,
+          align: 'left'
+        };
+      }
+      return pageFormatStore[modKey];
+    }
+
+    function savePageFormat(modKey, formatObj) {
+      pageFormatStore[modKey] = formatObj;
+      localStorage.setItem('appPageFormatStore', JSON.stringify(pageFormatStore));
+    }
+
+    function applyFormattingToModule(modKey) {
+      const cfg = getPageFormat(modKey);
+      const viewMap = {
+        'DASHBOARD': document.getElementById('moduleDashboardView'),
+        'TARGET': document.getElementById('moduleTargetView'),
+        'PRODUCTIVITY': document.getElementById('moduleProdView'),
+        'STOCK_REPORT': document.getElementById('moduleStockView'),
+        'ZERO_SHOP': document.getElementById('moduleZeroShopView'),
+        'ZERO_BRAND': document.getElementById('moduleZeroBrandView'),
+        'ZERO_SKU': document.getElementById('moduleZeroSkuView'),
+        'DSR_PERFORMANCE': document.getElementById('moduleDsrPerfView')
+      };
+
+      const viewEl = viewMap[modKey];
+      if (!viewEl) return;
+
+      // Apply specifically to all tables, th and td inside this page
+      const allTables = viewEl.querySelectorAll('table');
+      allTables.forEach(tbl => {
+        tbl.style.fontFamily = cfg.fontFamily;
+        tbl.style.fontSize = cfg.fontSize + 'px';
+
+        tbl.querySelectorAll('th, td').forEach(cell => {
+          cell.style.fontFamily = cfg.fontFamily;
+          cell.style.fontSize = cfg.fontSize + 'px';
+          if (cfg.bold) cell.style.fontWeight = '900';
+          if (cfg.italic) cell.style.fontStyle = 'italic';
+          if (cfg.underline) cell.style.textDecoration = 'underline';
+          if (cfg.align && !cell.classList.contains('num')) cell.style.textAlign = cfg.align;
+        });
+      });
+
+      // Synchronize Ribbon Toolbar UI
+      const fFamSelect = document.getElementById('ribbonFontFamily');
+      const fSizeSelect = document.getElementById('ribbonFontSize');
+      const bBtn = document.getElementById('ribbonBoldBtn');
+      const iBtn = document.getElementById('ribbonItalicBtn');
+      const uBtn = document.getElementById('ribbonUnderlineBtn');
+
+      if (fFamSelect) fFamSelect.value = cfg.fontFamily;
+      if (fSizeSelect) fSizeSelect.value = String(cfg.fontSize);
+      if (bBtn) bBtn.classList.toggle('active', !!cfg.bold);
+      if (iBtn) iBtn.classList.toggle('active', !!cfg.italic);
+      if (uBtn) uBtn.classList.toggle('active', !!cfg.underline);
+    }
+
+    function applyExcelRibbonAction(action, val) {
+      const modKey = currentActiveModuleKey;
+      const cfg = getPageFormat(modKey);
+      const viewEl = document.querySelector('.module-view.active');
+      if (!viewEl) return;
+
+      const selectedRows = Array.from(viewEl.querySelectorAll('tbody tr.excel-selected'));
+      const targetRows = selectedRows.length > 0 ? selectedRows : Array.from(viewEl.querySelectorAll('tbody tr'));
+
+      if (action === 'fontFamily') {
+        cfg.fontFamily = val;
+        savePageFormat(modKey, cfg);
+        applyFormattingToModule(modKey);
+        showBannerAlert(`Font family for this page set to ${val.split(',')[0]}!`, "#0284c7");
+      }
+      else if (action === 'fontSize') {
+        cfg.fontSize = parseInt(val, 10);
+        savePageFormat(modKey, cfg);
+        applyFormattingToModule(modKey);
+        showBannerAlert(`Font size for this page set to ${cfg.fontSize}px!`, "#0284c7");
+      }
+      else if (action === 'fontGrow') {
+        cfg.fontSize = Math.min(22, Math.max(8, cfg.fontSize + val));
+        savePageFormat(modKey, cfg);
+        applyFormattingToModule(modKey);
+        showBannerAlert(`Font size: ${cfg.fontSize}px`, "#0284c7");
+      }
+      else if (action === 'bold') {
+        if (selectedRows.length > 0) {
+          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.fontWeight = '900'));
+        } else {
+          cfg.bold = !cfg.bold;
+          savePageFormat(modKey, cfg);
+          applyFormattingToModule(modKey);
+        }
+      }
+      else if (action === 'italic') {
+        if (selectedRows.length > 0) {
+          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.fontStyle = 'italic'));
+        } else {
+          cfg.italic = !cfg.italic;
+          savePageFormat(modKey, cfg);
+          applyFormattingToModule(modKey);
+        }
+      }
+      else if (action === 'underline') {
+        if (selectedRows.length > 0) {
+          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.textDecoration = 'underline'));
+        } else {
+          cfg.underline = !cfg.underline;
+          savePageFormat(modKey, cfg);
+          applyFormattingToModule(modKey);
+        }
+      }
+      else if (action === 'align') {
+        if (selectedRows.length > 0) {
+          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.textAlign = val));
+        } else {
+          cfg.align = val;
+          savePageFormat(modKey, cfg);
+          applyFormattingToModule(modKey);
+        }
+        showBannerAlert(`Aligned: ${val.toUpperCase()}`, "#0284c7");
+      }
+      else if (action === 'bgColor') {
+        targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.backgroundColor = val));
+        showBannerAlert("Fill color applied!", "#0284c7");
+      }
+      else if (action === 'textColor') {
+        targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.color = val));
+        showBannerAlert("Font color applied!", "#0284c7");
+      }
+      else if (action === 'reset') {
+        cfg.fontFamily = "'Calibri', 'Segoe UI', sans-serif";
+        cfg.fontSize = (modKey === 'STOCK_REPORT' ? 11 : 12);
+        cfg.bold = false;
+        cfg.italic = false;
+        cfg.underline = false;
+        cfg.align = 'left';
+        savePageFormat(modKey, cfg);
+        
+        viewEl.querySelectorAll('td, th').forEach(c => {
+          c.style.backgroundColor = '';
+          c.style.color = '';
+          c.style.fontWeight = '';
+          c.style.fontStyle = '';
+          c.style.textDecoration = '';
+          c.style.textAlign = '';
+        });
+        applyFormattingToModule(modKey);
+        showBannerAlert("Page formatting reset!", "#64748b");
+      }
+    }
+
+    function startLiveClock() {
+      function update() {
+        const d = new Date();
+        const timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = d.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const year = d.getFullYear();
+        const tEl = document.getElementById('dashLiveTime');
+        const dEl = document.getElementById('dashLiveDate');
+        if (tEl) tEl.innerText = timeStr;
+        if (dEl) dEl.innerText = `${day}-${month}-${year}`;
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    let isLightMode = localStorage.getItem('appTheme') === 'light';
+    function applyTheme() {
+      document.body.classList.toggle('light-theme', isLightMode);
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) btn.innerText = isLightMode ? '🌙 Dark Mode' : '☀️ Light Mode';
+      localStorage.setItem('appTheme', isLightMode ? 'light' : 'dark');
+      if (window.ProductivityModule && typeof ProductivityModule.renderTable === 'function') ProductivityModule.renderTable();
+      if (window.DashboardModule && typeof DashboardModule.update === 'function') DashboardModule.update();
+      if (window.DsrPerformanceModule && typeof DsrPerformanceModule.renderTable === 'function') DsrPerformanceModule.renderTable();
+      if (window.StockReportModule && typeof StockReportModule.renderTable === 'function') StockReportModule.renderTable();
+      applyFormattingToModule(currentActiveModuleKey);
+    }
+    function toggleTheme() {
+      isLightMode = !isLightMode;
+      applyTheme();
+    }
+
+    function cleanDSRName(rawName) {
+      let cleaned = (rawName || '').toString().trim();
+      if (!cleaned) return '';
+      const dashPos = cleaned.indexOf('-');
+      if (dashPos > -1 && dashPos < cleaned.length - 1) cleaned = cleaned.substring(dashPos + 1).trim();
+      const mergePos = cleaned.toUpperCase().indexOf('-MERGE');
+      if (mergePos > -1) cleaned = cleaned.substring(0, mergePos).trim();
+      const parenPos = cleaned.indexOf('(');
+      if (parenPos > -1) cleaned = cleaned.substring(0, parenPos).trim();
+      if (cleaned.endsWith('-')) cleaned = cleaned.substring(0, cleaned.length - 1).trim();
+      return cleaned;
+    }
+
+    function getFilteredRecords() {
+      if (!allRecords || allRecords.length === 0) return [];
+      return allRecords.filter(r => {
+        const matchArea = (activeArea === 'ALL' || r.area === activeArea);
+        const matchDist = (activeDist === 'ALL' || r.distributor === activeDist);
+        let matchBrand = true;
+        if (activeBrand !== 'ALL') {
+          if (activeBrand.startsWith('CUSTOM:')) {
+            const cName = activeBrand.replace('CUSTOM:', '');
+            const skus = customBrandsMap[cName] || [];
+            matchBrand = skus.includes(r.sku);
+          } else {
+            matchBrand = (r.brand === activeBrand);
+          }
+        }
+        const matchDSR = (activeDSR === 'ALL' || r.dsrName === activeDSR);
+        return matchArea && matchDist && matchBrand && matchDSR;
+      });
+    }
+
+    function switchMainModule(mod) {
+      currentActiveModuleKey = mod;
+
+      document.getElementById('navBtnDash')?.classList.toggle('active', mod === 'DASHBOARD');
+      document.getElementById('navBtnReports')?.classList.toggle('active', ['TARGET', 'PRODUCTIVITY', 'STOCK_REPORT', 'ZERO_SHOP', 'ZERO_BRAND', 'ZERO_SKU'].includes(mod));
+      document.getElementById('navBtnSource')?.classList.toggle('active', mod === 'SOURCE');
+      document.getElementById('navBtnDsrPerf')?.classList.toggle('active', mod === 'DSR_PERFORMANCE');
+      document.getElementById('navBtnAiBrain')?.classList.toggle('active', mod === 'AI_BRAIN');
+
+      document.getElementById('moduleDashboardView')?.classList.toggle('active', mod === 'DASHBOARD');
+      document.getElementById('moduleDsrPerfView')?.classList.toggle('active', mod === 'DSR_PERFORMANCE');
+      document.getElementById('moduleStockView')?.classList.toggle('active', mod === 'STOCK_REPORT');
+      document.getElementById('moduleAiBrainView')?.classList.toggle('active', mod === 'AI_BRAIN');
+      document.getElementById('moduleTargetView')?.classList.toggle('active', mod === 'TARGET');
+      document.getElementById('moduleProdView')?.classList.toggle('active', mod === 'PRODUCTIVITY');
+      document.getElementById('moduleZeroShopView')?.classList.toggle('active', mod === 'ZERO_SHOP');
+      document.getElementById('moduleZeroBrandView')?.classList.toggle('active', mod === 'ZERO_BRAND');
+      document.getElementById('moduleZeroSkuView')?.classList.toggle('active', mod === 'ZERO_SKU');
+      document.getElementById('moduleSourceView')?.classList.toggle('active', mod === 'SOURCE');
+
+      clearExcelSelection();
+
+      if (mod === 'DASHBOARD' && window.DashboardModule) {
+        DashboardModule.update();
+      } else if (mod === 'DSR_PERFORMANCE' && window.DsrPerformanceModule) {
+        DsrPerformanceModule.renderTable();
+      } else if (mod === 'STOCK_REPORT' && window.StockReportModule) {
+        StockReportModule.renderTable();
+      } else if (mod === 'AI_BRAIN' && window.AiBrainModule) {
+        AiBrainModule.runDeepAnalysis();
+      } else if (mod === 'PRODUCTIVITY' && window.ProductivityModule) {
+        populateProdFilters();
+        ProductivityModule.renderTable();
+      } else if (mod === 'TARGET' && window.TargetModule) {
+        populateDropdowns();
+        TargetModule.renderTable();
+      } else if (mod === 'ZERO_SHOP' && window.ZeroShopModule) {
+        loadSavedShopData().then(() => ZeroShopModule.renderTable());
+      } else if (mod === 'ZERO_BRAND' && window.ZeroBrandModule) {
+        ZeroBrandModule.renderTable();
+      } else if (mod === 'ZERO_SKU' && window.ZeroSkuModule) {
+        ZeroSkuModule.renderTable();
+      } else if (mod === 'SOURCE' && window.SourceFilesModule) {
+        SourceFilesModule.updateStatus();
+      }
+
+      // Synchronize and apply independent page formatting
+      setTimeout(() => {
+        applyFormattingToModule(mod);
+      }, 50);
+    }
+
+    // Auto Listeners for downloads & merges
+    ipcRenderer.on('auto-merge-completed', (ev, payload) => {
+      showBannerAlert("🎉 SnD Sales Data Auto-Merged Successfully!", "#10b981");
+      if (payload && payload.data) {
+        allRecords = payload.data;
+        liveCachedRecords = JSON.parse(JSON.stringify(payload.data));
+        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(payload.data));
+        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+        populateDropdowns();
+        if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
+          if (window.TargetModule) TargetModule.renderTable();
+        }
+        applyFormattingToModule(currentActiveModuleKey);
+      }
+    });
+
+    ipcRenderer.on('stock-balance-updated', () => {
+      showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
+      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+        StockReportModule.renderTable();
+        applyFormattingToModule('STOCK_REPORT');
+      }
+    });
+
+    ipcRenderer.on('dispatch-data-updated', () => {
+      showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
+      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+        StockReportModule.renderTable();
+        applyFormattingToModule('STOCK_REPORT');
+      }
+    });
+
+    ipcRenderer.on('dump-auto-updated', (ev, data) => {
+      showBannerAlert(`🎉 ${data.dumpType} Sales Dump Auto-Updated!`, "#10b981");
+      loadBothDumps();
+      if (window.SourceFilesModule) SourceFilesModule.updateStatus();
+      if (window.DashboardModule) DashboardModule.update();
+      if (document.getElementById('moduleProdView')?.classList.contains('active')) {
+        populateProdFilters();
+        if (window.ProductivityModule) ProductivityModule.renderTable();
+        applyFormattingToModule('PRODUCTIVITY');
+      }
+    });
+
+    async function loadSavedShopData() {
+      try {
+        if (window.shopDataMaster && window.shopDataMaster.length > 0) return;
+        const res = await ipcRenderer.invoke('get-saved-shop-data');
+        if (res && res.success && Array.isArray(res.shops)) {
+          window.shopDataMaster = res.shops;
+        }
+      } catch (e) {
+        console.error("Shop load error:", e);
+      }
+    }
+
+    function switchMonthView(mode) {
+      currentMonthView = mode;
+      if (window.ProductivityModule) ProductivityModule.renderTable();
+      applyFormattingToModule('PRODUCTIVITY');
+    }
+
+    function switchProductivitySubTab(tab) {
+      currentProdTab = tab;
+      if (window.ProductivityModule) ProductivityModule.renderTable();
+      applyFormattingToModule('PRODUCTIVITY');
+    }
+
+    function onBarDateFilterChange(type, val) {
+      if (type === 'from') lmSelectedFrom = val;
+      if (type === 'to') lmSelectedTo = val;
+      if (window.ProductivityModule) ProductivityModule.renderTable();
+      applyFormattingToModule('PRODUCTIVITY');
+    }
+
+    function onCmRangeDateChange(type, val) {
+      if (type === 'from') cmSelectedFrom = val;
+      if (type === 'to') cmSelectedTo = val;
+      if (window.ProductivityModule) ProductivityModule.renderTable();
+      applyFormattingToModule('PRODUCTIVITY');
+    }
+
+    function onAdjustProdTimeGone() {
+      const td = parseInt(document.getElementById('prodTotalDays')?.value, 10);
+      const dp = parseInt(document.getElementById('prodDaysPassed')?.value, 10);
+      if (!isNaN(td) && td > 0) prodTotalDays = td;
+      if (!isNaN(dp) && dp >= 0) prodDaysGone = dp;
+      prodDaysLeft = Math.max(1, prodTotalDays - prodDaysGone);
+      prodTimeGonePct = prodTotalDays > 0 ? (prodDaysGone / prodTotalDays) : 0;
+
+      localStorage.setItem('savedProdTotalDays', prodTotalDays);
+      localStorage.setItem('savedProdDaysGone', prodDaysGone);
+
+      const dl = document.getElementById('prodDaysLeft');
+      const tg = document.getElementById('prodTimeGonePct');
+      if (dl) dl.innerText = prodDaysLeft;
+      if (tg) tg.innerText = (prodTimeGonePct * 100).toFixed(1) + '%';
+      if (window.ProductivityModule) ProductivityModule.renderTable();
+      applyFormattingToModule('PRODUCTIVITY');
+    }
+
+    function copyProductivitySummary() {
+      const tbl = document.getElementById('prodTable');
+      if (!tbl) return;
+      let txt = '';
+      tbl.querySelectorAll('tr').forEach(r => {
+        txt += Array.from(r.querySelectorAll('th, td')).map(c => c.innerText.trim()).join('\t') + '\n';
+      });
+      try {
+        clipboard.writeText(txt);
+        showBannerAlert("📋 Productivity report copied to clipboard!", "#10b981");
+      } catch(e) {}
+    }
+
+    function getActiveDumpRecords() {
+      const targetDump = currentMonthView === 'CM' ? cmDump : lmDump;
+      if (!targetDump || !targetDump.deliveredRecords) return [];
+      const activeDSR = document.getElementById('selectDSRFilterProd')?.value || 'ALL';
+      const activeBrand = document.getElementById('selectBrandFilterProd')?.value || 'ALL';
+      const fDate = (currentMonthView === 'CM') ? (document.getElementById('cmFromDate')?.value || cmSelectedFrom) : (document.getElementById('lmFromDate')?.value || lmSelectedFrom);
+      const tDate = (currentMonthView === 'CM') ? (document.getElementById('cmToDate')?.value || cmSelectedTo) : (document.getElementById('lmToDate')?.value || lmSelectedTo);
+
+      return targetDump.deliveredRecords.filter(r => {
+        const dName = r.rawDsr || r.dsr;
+        const matchDSR = (activeDSR === 'ALL' || dName === activeDSR);
+        const matchBrand = (activeBrand === 'ALL' || r.brand === activeBrand);
+        let matchDate = true;
+        if (fDate && r.date && r.date < fDate) matchDate = false;
+        if (tDate && r.date && r.date > tDate) matchDate = false;
+        return matchDSR && matchBrand && matchDate;
+      });
+    }
+
+    function getActiveUniverse() {
+      const activeDSR = document.getElementById('selectDSRFilterProd')?.value || 'ALL';
+      if (activeDSR !== 'ALL') {
+        return manualUniverseMap[activeDSR] !== undefined ? manualUniverseMap[activeDSR] : (PRESET_UNIVERSE[activeDSR] || 0);
+      }
+      let sum = 0;
+      Object.keys(PRESET_UNIVERSE).forEach(k => {
+        sum += (manualUniverseMap[k] !== undefined ? manualUniverseMap[k] : PRESET_UNIVERSE[k]);
+      });
+      return sum;
+    }
+
+    function populateProdFilters() {
+      const activeDump = (cmDump ? cmDump.deliveredRecords : []) || (lmDump ? lmDump.deliveredRecords : []) || [];
+      
+      const rawDsrs = [...new Set(activeDump.map(r => r.rawDsr || r.dsr))].filter(Boolean).sort();
+      const dsrSelect = document.getElementById('selectDSRFilterProd');
+      if (dsrSelect) {
+        dsrSelect.innerHTML = `<option value="ALL" selected>ALL DSRs</option>` + rawDsrs.map(d => `<option value="${d}">${d}</option>`).join('');
+        dsrSelect.value = 'ALL';
+      }
+
+      const rawBrands = [...new Set(activeDump.map(r => r.brand))].filter(Boolean).sort();
+      const brandSelect = document.getElementById('selectBrandFilterProd');
+      if (brandSelect) {
+        brandSelect.innerHTML = `<option value="ALL" selected>ALL BRANDS</option>` + rawBrands.map(b => `<option value="${b}">${b}</option>`).join('');
+        brandSelect.value = 'ALL';
+      }
+    }
+
+    // Bridges for Target Module
+    window.applyHistoryDateRange = function() {
+      if (window.TargetModule && typeof TargetModule.applyHistoryDateRange === 'function') {
+        TargetModule.applyHistoryDateRange();
+        applyFormattingToModule('TARGET');
+      }
+    };
+
+    window.revertToLiveView = function() {
+      if (window.TargetModule && typeof TargetModule.revertToLiveView === 'function') {
+        TargetModule.revertToLiveView();
+        applyFormattingToModule('TARGET');
+      }
+    };
+
+    function switchMode(m) {
+      if (window.TargetModule && typeof TargetModule.switchMode === 'function') {
+        TargetModule.switchMode(m);
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function onAdjustTimeGone() {
+      if (window.TargetModule && typeof TargetModule.onAdjustTimeGone === 'function') {
+        TargetModule.onAdjustTimeGone();
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function showAllData() {
+      if (window.TargetModule && typeof TargetModule.showAllData === 'function') {
+        TargetModule.showAllData();
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function copyReportText() {
+      if (window.TargetModule && typeof TargetModule.copyReportText === 'function') {
+        TargetModule.copyReportText();
+      }
+    }
+
+    function updateReportLive() {
+      if (window.TargetModule && typeof TargetModule.updateReportLive === 'function') {
+        TargetModule.updateReportLive();
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function onDropdownFilterChange(type, val) {
+      if (window.TargetModule && typeof TargetModule.onDropdownFilterChange === 'function') {
+        TargetModule.onDropdownFilterChange(type, val);
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function openSaveDateModal() { document.getElementById('saveDateModal').style.display = 'flex'; }
+    function closeSaveDateModal() { document.getElementById('saveDateModal').style.display = 'none'; }
+
+    async function confirmSaveReportDate() {
+      const dPicker = document.getElementById('saveReportDatePicker');
+      const selectedDate = dPicker ? dPicker.value : '';
+      if (!selectedDate) return alert("Pehle date select karein!");
+
+      const recordsToSave = (typeof allRecords !== 'undefined' && allRecords.length > 0) ? allRecords : [];
+      if (recordsToSave.length === 0) return alert("Save karne ke liye table me data mojood nahi hai!");
+
+      showBannerAlert(`⏳ ${selectedDate} ke liye snapshot save ho raha hai...`, "#0284c7");
+      const res = await ipcRenderer.invoke('save-daily-sales-history', {
+        dateKey: selectedDate,
+        records: recordsToSave
+      });
+
+      if (res && res.success) {
+        closeSaveDateModal();
+        showBannerAlert(`✅ Report successfully save ho gayi (${selectedDate})!`, "#10b981");
+      } else {
+        alert("Error: " + (res ? res.message : 'Save nahi ho saki'));
+      }
+    }
+
+    function openCustomBrandModal() {
+      selectedCustomSKUs.clear();
+      document.getElementById('customBrandName').value = '';
+      document.getElementById('skuSearchInput').value = '';
+      renderModalSKUList();
+      renderCustomBrandPills();
+      document.getElementById('customBrandModal').style.display = 'flex';
+    }
+
+    function closeCustomBrandModal() { document.getElementById('customBrandModal').style.display = 'none'; }
+
+    function renderModalSKUList() {
+      const container = document.getElementById('modalSkuList');
+      if (!container) return;
+      const uniqueSKUs = new Map();
+      allRecords.forEach(r => { if (r.sku) uniqueSKUs.set(r.sku, r.brand); });
+      let html = '';
+      uniqueSKUs.forEach((brand, sku) => {
+        const isChecked = selectedCustomSKUs.has(sku) ? 'checked' : '';
+        html += `
+          <label class="sku-picker-item">
+            <input type="checkbox" value="${sku}" ${isChecked} onchange="toggleCustomSkuItem('${sku.replace(/'/g, "\\'")}', this.checked)" />
+            <span><b style="color:#38bdf8;">[${brand}]</b> ${sku}</span>
+          </label>
+        `;
+      });
+      container.innerHTML = html || '<div style="text-align:center; padding:15px; color:var(--text-muted);">Koi SKUs available nahi hain.</div>';
+      updateSelectedSkuCountBadge();
+    }
+
+    function toggleCustomSkuItem(sku, isChecked) {
+      if (isChecked) selectedCustomSKUs.add(sku); else selectedCustomSKUs.delete(sku);
+      updateSelectedSkuCountBadge();
+    }
+
+    function toggleSelectAllModal(select) {
+      const chks = document.querySelectorAll('#modalSkuList input[type="checkbox"]');
+      chks.forEach(c => {
+        c.checked = select;
+        if (select) selectedCustomSKUs.add(c.value); else selectedCustomSKUs.delete(c.value);
+      });
+      updateSelectedSkuCountBadge();
+    }
+
+    function updateSelectedSkuCountBadge() {
+      const b = document.getElementById('selectedSkuCountBadge');
+      if (b) b.innerText = `${selectedCustomSKUs.size} SKUs Selected`;
+    }
+
+    function filterModalSKUs() {
+      const q = (document.getElementById('skuSearchInput').value || '').toLowerCase();
+      const items = document.querySelectorAll('#modalSkuList .sku-picker-item');
+      items.forEach(it => { it.style.display = it.innerText.toLowerCase().includes(q) ? 'flex' : 'none'; });
+    }
+
+    async function saveCustomBrand() {
+      const bName = document.getElementById('customBrandName').value.trim();
+      if (!bName) return alert("Pehle Brand ka naam enter karein!");
+      if (selectedCustomSKUs.size === 0) return alert("Kam az kam ek SKU select karein!");
+      customBrandsMap[bName] = Array.from(selectedCustomSKUs);
+      await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+      closeCustomBrandModal();
+      populateDropdowns();
+      showBannerAlert(`🎉 Custom Brand '${bName}' save ho gaya!`, "#10b981");
+    }
+
+    function renderCustomBrandPills() {
+      const container = document.getElementById('customBrandsPills');
+      if (!container) return;
+      let html = '';
+      Object.keys(customBrandsMap).forEach(bName => {
+        html += `
+          <span style="background:var(--bg-panel); border:1px solid #0284c7; padding:2px 8px; border-radius:4px; font-size:11px; display:inline-flex; align-items:center; gap:5px;">
+            🏷️ ${bName} (${customBrandsMap[bName].length})
+            <span style="cursor:pointer; color:#ef4444; font-weight:bold;" onclick="deleteCustomBrandByName('${bName}')">✕</span>
+          </span>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    async function deleteCustomBrandByName(bName) {
+      if (confirm(`Custom brand '${bName}' delete karna hai?`)) {
+        delete customBrandsMap[bName];
+        await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+        renderCustomBrandPills();
+        populateDropdowns();
+        showBannerAlert(`🗑️ Custom Brand '${bName}' delete ho gaya!`, "#dc2626");
+      }
+    }
+
+    async function deleteActiveCustomBrand() {
+      if (activeBrand.startsWith('CUSTOM:')) {
+        const bName = activeBrand.replace('CUSTOM:', '');
+        deleteCustomBrandByName(bName);
+        activeBrand = 'ALL';
+        populateDropdowns();
+        if (window.TargetModule) TargetModule.renderTable();
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    async function loadSavedData() {
+      const cRes = await ipcRenderer.invoke('get-custom-brands');
+      if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
+      
+      const res = await ipcRenderer.invoke('get-target-report-data');
+      if (res && res.success && res.data && res.data.length > 0) {
+        allRecords = res.data;
+        liveCachedRecords = JSON.parse(JSON.stringify(res.data));
+        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(res.data));
+        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+        populateDropdowns();
+        if (window.TargetModule) TargetModule.renderTable();
+        applyFormattingToModule('TARGET');
+      }
+    }
+
+    function populateDropdowns() {
+      const areaEl = document.getElementById('selectArea');
+      const distEl = document.getElementById('selectDist');
+      const brandEl = document.getElementById('selectBrand');
+      const dsrEl = document.getElementById('selectDSR');
+      if (!areaEl || !distEl || !brandEl || !dsrEl) return;
+
+      const areas = ['ALL', ...new Set(allRecords.map(r => r.area))];
+      areaEl.innerHTML = areas.map(a => `<option value="${a}" ${a === activeArea ? 'selected':''}>${a === 'ALL' ? 'ALL AREAS' : a}</option>`).join('');
+
+      const dists = ['ALL', ...new Set(allRecords.filter(r => activeArea === 'ALL' || r.area === activeArea).map(r => r.distributor))];
+      distEl.innerHTML = dists.map(d => `<option value="${d}" ${d === activeDist ? 'selected':''}>${d === 'ALL' ? 'ALL DISTRIBUTORS' : d}</option>`).join('');
+
+      const standardBrands = [...new Set(allRecords.map(r => r.brand))].sort();
+      const customBrandKeys = Object.keys(customBrandsMap);
+      let bHtml = `<option value="ALL" ${activeBrand === 'ALL' ? 'selected':''}>ALL BRANDS</option>`;
+      if (customBrandKeys.length > 0) {
+        bHtml += `<optgroup label="⭐ CUSTOM BRANDS">`;
+        customBrandKeys.forEach(cb => { bHtml += `<option value="CUSTOM:${cb}" ${activeBrand === 'CUSTOM:' + cb ? 'selected':''}>🏷 ${cb}</option>`; });
+        bHtml += `</optgroup>`;
+      }
+      bHtml += `<optgroup label="STANDARD BRANDS">`;
+      standardBrands.forEach(b => { bHtml += `<option value="${b}" ${activeBrand === b ? 'selected':''}>${b}</option>`; });
+      bHtml += `</optgroup>`;
+      brandEl.innerHTML = bHtml;
+
+      const dsrs = ['ALL', ...new Set(allRecords.filter(r => (activeArea === 'ALL' || r.area === activeArea) && (activeDist === 'ALL' || r.distributor === activeDist)).map(r => r.dsrName))];
+      dsrEl.innerHTML = dsrs.map(ds => `<option value="${ds}" ${ds === activeDSR ? 'selected':''}>${ds === 'ALL' ? 'ALL DSRs' : ds}</option>`).join('');
+    }
+
+    // -------------------------------------------------------------
+    // EXCEL SELECTION ENGINE (CLICK & SHIFT+CLICK RANGE)
+    // -------------------------------------------------------------
+    let activeAnchorRow = null;
+
+    function getActiveTableElement() {
+      const activeView = document.querySelector('.module-view.active');
+      if (!activeView) return document.getElementById('mainTable') || document.querySelector('table');
+      return activeView.querySelector('table') || document.getElementById('mainTable');
+    }
+
+    function getActiveTableRows() {
+      const table = getActiveTableElement();
+      if (!table) return [];
+      return Array.from(table.querySelectorAll('tbody tr'));
+    }
+
+    function clearExcelSelection() {
+      document.querySelectorAll('tr.excel-selected, tr.excel-active-focus').forEach(r => {
+        r.classList.remove('excel-selected', 'excel-active-focus');
+      });
+      activeAnchorRow = null;
+    }
+
+    document.addEventListener('click', function(e) {
+      if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      const td = e.target.closest('tbody td');
+      if (!td) return;
+
+      const currentRow = td.closest('tr');
+      const table = currentRow ? currentRow.closest('table') : null;
+      if (!table || !currentRow) return;
+
+      const allRows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+      const currentIndex = allRows.indexOf(currentRow);
+
+      if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
+        const anchorIndex = allRows.indexOf(activeAnchorRow);
+        const min = Math.min(anchorIndex, currentIndex);
+        const max = Math.max(anchorIndex, currentIndex);
+
+        allRows.forEach((r, idx) => {
+          if (idx >= min && idx <= max) {
+            r.classList.add('excel-selected');
+          } else {
+            r.classList.remove('excel-selected');
+          }
+          r.classList.remove('excel-active-focus');
+        });
+
+        currentRow.classList.add('excel-active-focus');
+      } else if (e.ctrlKey || e.metaKey) {
+        currentRow.classList.toggle('excel-selected');
+        activeAnchorRow = currentRow;
+      } else {
+        clearExcelSelection();
+        currentRow.classList.add('excel-selected', 'excel-active-focus');
+        activeAnchorRow = currentRow;
+      }
+    });
+
+    function attachExcelSelectionListeners() {}
+
+    // -------------------------------------------------------------
+    // HD IMAGE CLIPBOARD ENGINE WITH DYNAMIC REPORT HEADER CARD
+    // -------------------------------------------------------------
+    async function captureAndCopyHDImage(rowsToCapture, sourceTable) {
+      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai (Heading ke sath)...", "#0284c7");
+
+      const isLight = document.body.classList.contains('light-theme');
+      const cardBg = isLight ? '#ffffff' : '#070e1b';
+      const headerBoxBg = isLight ? '#f1f5f9' : '#0f1c33';
+      const headerBoxBorder = isLight ? '#cbd5e1' : '#1e3a5f';
+      const titleColor = isLight ? '#0369a1' : '#38bdf8';
+      const subTextColor = isLight ? '#475569' : '#94a3b8';
+      const dateBadgeBg = isLight ? '#e2e8f0' : '#132b4f';
+      const dateBadgeColor = isLight ? '#b45309' : '#f59e0b';
+      const cellBorder = isLight ? '#cbd5e1' : '#1e2e4a';
+      const baseTextColor = isLight ? '#0f172a' : '#ffffff';
+
+      const isStock = (sourceTable.id === 'stockMainTable' || sourceTable.id === 'stockMissingTable');
+      const isProd = (sourceTable.id === 'prodTable');
+      const isDsrPerf = (sourceTable.id === 'dsrPerfTable');
+
+      let reportTitle = '🎯 TARGET VS ACHIEVEMENT REPORT';
+      let reportSubMode = (currentMode === 'DIVISION' ? 'DSR WISE DIVISION SUMMARY (CTN ONLY)' : (currentMode === 'BRAND' ? 'BRAND CLUB SUMMARY' : 'DSR WISE DETAILED REPORT'));
+
+      if (isStock) {
+        reportTitle = '📦 CURRENT STOCK & TODAY DISPATCH REPORT';
+        reportSubMode = 'STOCK CLOSING BALANCE + TOTAL DISPATCH';
+      } else if (isProd) {
+        reportTitle = '⚡ UNIQUE PRODUCTIVITY REPORT';
+        reportSubMode = `${currentMonthView} - ${currentProdTab} WISE COMPLETE ANALYSIS`;
+      } else if (isDsrPerf) {
+        reportTitle = '👤 DSR PERFORMANCE REPORT';
+        reportSubMode = 'BOOKING VS EXECUTION & ROUTING';
+      }
+
+      let dateTag = `Date: ${new Date().toLocaleDateString('en-GB')}`;
+      if (isProd) {
+        const dFrom = (currentMonthView === 'CM') ? (document.getElementById('cmFromDate')?.value || cmSelectedFrom) : (document.getElementById('lmFromDate')?.value || lmSelectedFrom);
+        const dTo = (currentMonthView === 'CM') ? (document.getElementById('cmToDate')?.value || cmSelectedTo) : (document.getElementById('lmToDate')?.value || lmSelectedTo);
+        if (dFrom && dTo) dateTag = `Range: ${dFrom} to ${dTo}`;
+      } else {
+        const hFrom = document.getElementById('historyFromDate')?.value;
+        const hTo = document.getElementById('historyToDate')?.value;
+        if (hFrom && hTo) dateTag = `Range: ${hFrom} to ${hTo}`;
+      }
+
+      const selDist = isStock ? 'KHI – REHMAN ENT-BR2' : (document.getElementById('selectDist')?.value || 'KHI – REHMAN ENT-BR2');
+      const selDsr = isProd ? (document.getElementById('selectDSRFilterProd')?.value || 'ALL') : (document.getElementById('selectDSR')?.value || 'ALL');
+
+      const captureBox = document.createElement('div');
+      captureBox.style.cssText = `
+        position: fixed;
+        left: -99999px;
+        top: 0px;
+        background: ${cardBg};
+        padding: 14px;
+        border: 2px solid #0284c7;
+        border-radius: 8px;
+        width: max-content;
+        min-width: 820px;
+        box-sizing: border-box;
+      `;
+
+      const headerDiv = document.createElement('div');
+      headerDiv.style.cssText = `
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: ${headerBoxBg};
+        border: 1.5px solid ${headerBoxBorder};
+        border-radius: 6px;
+        padding: 9px 14px;
+        margin-bottom: 10px;
+      `;
+      headerDiv.innerHTML = `
+        <div>
+          <div style="font-size: 14.5px; font-weight: 900; color: ${titleColor}; letter-spacing: 0.4px; text-transform: uppercase;">
+            ${reportTitle}
+          </div>
+          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 2px;">
+            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist} ${selDsr !== 'ALL' ? `&nbsp;|&nbsp; <b>DSR:</b> ${selDsr}` : ''}
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7;">
+            📅 ${dateTag}
+          </div>
+          <div style="font-size: 9px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
+        </div>
+      `;
+      captureBox.appendChild(headerDiv);
+
+      const clonedTable = document.createElement('table');
+      clonedTable.style.cssText = `
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        background: ${cardBg};
+        color: ${baseTextColor};
+      `;
+
+      const origThead = sourceTable.querySelector('thead');
+      if (origThead) {
+        const theadClone = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const ths = Array.from(origThead.querySelectorAll('th')).filter(th => th.style.display !== 'none');
+        
+        const startIndex = isStock && ths.length > 2 && ths[0].innerText.toLowerCase().includes('brand') ? 1 : 0;
+        const defaultThBg = isStock ? '#2980b9' : (isLight ? '#1e3a5f' : '#132b4f');
+
+        for (let i = startIndex; i < ths.length; i++) {
+          const thClone = ths[i].cloneNode(true);
+          thClone.style.cssText = `
+            background: ${defaultThBg} !important;
+            color: #ffffff !important;
+            padding: 6px 10px;
+            font-weight: 800;
+            border: 1px solid rgba(255,255,255,0.25);
+            text-align: ${thClone.classList.contains('num') ? 'right' : 'left'};
+            white-space: nowrap;
+          `;
+          headerRow.appendChild(thClone);
+        }
+        theadClone.appendChild(headerRow);
+        clonedTable.appendChild(theadClone);
+      }
+
+      const tbodyClone = document.createElement('tbody');
+      rowsToCapture.forEach((r, rIdx) => {
+        const trClone = document.createElement('tr');
+        const tds = Array.from(r.querySelectorAll('td')).filter(td => td.style.display !== 'none');
+        const startIndex = isStock && tds.length > 2 && sourceTable.querySelector('th')?.innerText.toLowerCase().includes('brand') ? 1 : 0;
+
+        const isTotalRow = r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
+        let rowBg = (rIdx % 2 === 0) ? (isLight ? '#ffffff' : '#0b1526') : (isLight ? '#f8fafc' : '#091222');
+        if (r.classList.contains('brand-total-row')) rowBg = '#fff3cd';
+        if (r.classList.contains('cat-total-row')) rowBg = '#e2efda';
+        if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) rowBg = '#1e3a5f';
+
+        for (let i = startIndex; i < tds.length; i++) {
+          const tdClone = tds[i].cloneNode(true);
+          const isNum = tdClone.classList.contains('num');
+          let textClr = baseTextColor;
+          if (isTotalRow && !r.classList.contains('stock-grand-total') && !r.classList.contains('total-row')) textClr = '#000000';
+          if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) textClr = '#ffffff';
+
+          tdClone.style.cssText = `
+            background: ${rowBg} !important;
+            color: ${textClr} !important;
+            padding: 5px 8px;
+            border: 1px solid ${cellBorder};
+            font-weight: ${isTotalRow ? '800' : (i === startIndex ? '700' : '600')};
+            text-align: ${isNum ? 'right' : 'left'};
+            font-family: ${isNum ? "'Consolas', monospace" : "inherit"};
+            white-space: nowrap;
+          `;
+          trClone.appendChild(tdClone);
+        }
+        tbodyClone.appendChild(trClone);
+      });
+      clonedTable.appendChild(tbodyClone);
+
+      captureBox.appendChild(clonedTable);
+      document.body.appendChild(captureBox);
+
+      const canvas = await html2canvas(captureBox, {
+        backgroundColor: cardBg,
+        scale: 2.5,
+        logging: false,
+        useCORS: true
+      });
+
+      document.body.removeChild(captureBox);
+
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
+      if (res && res.success) {
+        showBannerAlert(`🎉 HD Report Card with Heading Copied to Clipboard!`, "#10b981");
+      } else {
+        alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
+      }
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', async (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+        const table = getActiveTableElement();
+        if (!table) return;
+
+        let selectedRows = Array.from(table.querySelectorAll('tbody tr.excel-selected'));
+
+        if (selectedRows.length === 0) {
+          const sel = window.getSelection();
+          if (sel && sel.rangeCount > 0 && sel.toString().trim().length > 0) {
+            const range = sel.getRangeAt(0);
+            const container = document.createElement('div');
+            container.appendChild(range.cloneContents());
+            const matchedRows = Array.from(container.querySelectorAll('tr'));
+            if (matchedRows.length > 0) selectedRows = matchedRows;
+          }
+        }
+
+        if (selectedRows.length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          await captureAndCopyHDImage(selectedRows, table);
+          return;
+        }
+
+        e.preventDefault();
+        copyTableAsImage(table.id);
+      }
+
+      // Arrow Down Navigation
+      if (e.key === 'ArrowDown') {
+        const table = getActiveTableElement();
+        if (!table) return;
+        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
+        if (!rows.length) return;
+
+        let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
+        if (focusedIdx === -1) focusedIdx = 0;
+
+        if (focusedIdx < rows.length - 1) {
+          e.preventDefault();
+          const nextIdx = focusedIdx + 1;
+          if (e.shiftKey && activeAnchorRow) {
+            const anchorIdx = rows.indexOf(activeAnchorRow);
+            const min = Math.min(anchorIdx, nextIdx);
+            const max = Math.max(anchorIdx, nextIdx);
+            rows.forEach((r, i) => {
+              r.classList.toggle('excel-selected', i >= min && i <= max);
+              r.classList.remove('excel-active-focus');
+            });
+            rows[nextIdx].classList.add('excel-active-focus');
+            rows[nextIdx].scrollIntoView({ block: 'nearest' });
+          } else {
+            clearExcelSelection();
+            rows[nextIdx].classList.add('excel-selected', 'excel-active-focus');
+            activeAnchorRow = rows[nextIdx];
+            rows[nextIdx].scrollIntoView({ block: 'nearest' });
+          }
+        }
+      }
+
+      // Arrow Up Navigation
+      if (e.key === 'ArrowUp') {
+        const table = getActiveTableElement();
+        if (!table) return;
+        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
+        if (!rows.length) return;
+
+        let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
+        if (focusedIdx <= 0) return;
+
+        e.preventDefault();
+        const prevIdx = focusedIdx - 1;
+        if (e.shiftKey && activeAnchorRow) {
+          const anchorIdx = rows.indexOf(activeAnchorRow);
+          const min = Math.min(anchorIdx, prevIdx);
+          const max = Math.max(anchorIdx, prevIdx);
+          rows.forEach((r, i) => {
+            r.classList.toggle('excel-selected', i >= min && i <= max);
+            r.classList.remove('excel-active-focus');
+          });
+          rows[prevIdx].classList.add('excel-active-focus');
+          rows[prevIdx].scrollIntoView({ block: 'nearest' });
+        } else {
+          clearExcelSelection();
+          rows[prevIdx].classList.add('excel-selected', 'excel-active-focus');
+          activeAnchorRow = rows[prevIdx];
+          rows[prevIdx].scrollIntoView({ block: 'nearest' });
+        }
+      }
+    });
+
+    // Dynamic Full Table Image Capture
+    async function copyTableAsImage(tableId) {
+      let targetTable = document.getElementById(tableId);
+      if (!targetTable) targetTable = getActiveTableElement();
+      if (!targetTable) return alert("Table mojood nahi hai!");
+
+      const rows = Array.from(targetTable.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+      if (rows.length === 0) return alert("Table mein koi data nahi mila!");
+      await captureAndCopyHDImage(rows, targetTable);
+    }
+
+    async function loadBothDumps() {
+      try {
+        const res = await ipcRenderer.invoke('get-both-sales-dumps');
+        if (res.success) {
+          lmDump = res.lmData;
+          cmDump = res.cmData;
+          initDumpDates();
+          populateProdFilters();
+        }
+      } catch (e) {}
+    }
+
+    function initDumpDates() {
+      const lmDates = (lmDump && lmDump.deliveredRecords) ? lmDump.deliveredRecords.map(r => r.date).filter(Boolean).sort() : [];
+      if (lmDates.length > 0) {
+        lmSelectedFrom = lmDates[0]; lmSelectedTo = lmDates[lmDates.length - 1];
+        const f = document.getElementById('lmFromDate'); const t = document.getElementById('lmToDate');
+        if (f) f.value = lmSelectedFrom; if (t) t.value = lmSelectedTo;
+      }
+      const cmDates = (cmDump && cmDump.deliveredRecords) ? cmDump.deliveredRecords.map(r => r.date).filter(Boolean).sort() : [];
+      if (cmDates.length > 0) {
+        cmSelectedFrom = cmDates[0]; cmSelectedTo = cmDates[cmDates.length - 1];
+        const f = document.getElementById('cmFromDate'); const t = document.getElementById('cmToDate');
+        if (f) f.value = cmSelectedFrom; if (t) t.value = cmSelectedTo;
+      }
+    }
+
+    async function openSnDWindow() { await ipcRenderer.invoke('launch-snd-portal'); }
+    async function openDSSWindow() { await ipcRenderer.invoke('launch-dss-portal'); }
+
+    async function openSettingsModal() {
+      const res = await ipcRenderer.invoke('get-all-credentials');
+      if (res.success && res.credentials) {
+        document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
+        document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
+        document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
+        document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
+        document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
+      }
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+    function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+
+    async function saveAllSettingsCredentials() {
+      const sndDist = document.getElementById('settingSndDist').value.trim();
+      const sndUser = document.getElementById('settingSndUser').value.trim();
+      const sndPass = document.getElementById('settingSndPass').value.trim();
+      const dssUser = document.getElementById('settingDssUser').value.trim();
+      const dssPass = document.getElementById('settingDssPass').value.trim();
+
+      const res = await ipcRenderer.invoke('save-all-credentials', {
+        snd: { distributor: sndDist, username: sndUser, password: sndPass },
+        dss: { username: dssUser, password: dssPass }
+      });
+      if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); }
+    }
+
+    function showBannerAlert(msg, bg = 'linear-gradient(90deg, #10b981 0%, #059669 100%)') {
+      const banner = document.getElementById('liveBanner') || document.getElementById('prodAlertBanner');
+      if (!banner) return;
+      banner.innerText = msg; banner.style.background = bg; banner.style.display = 'block';
+      setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        if (window.DashboardModule && document.getElementById('moduleDashboardView')) {
+          document.getElementById('moduleDashboardView').innerHTML = DashboardModule.renderHTML();
+        }
+        if (window.DsrPerformanceModule && document.getElementById('moduleDsrPerfView')) {
+          document.getElementById('moduleDsrPerfView').innerHTML = DsrPerformanceModule.renderHTML();
+        }
+        if (window.StockReportModule && document.getElementById('moduleStockView')) {
+          document.getElementById('moduleStockView').innerHTML = StockReportModule.renderHTML();
+        }
+        if (window.AiBrainModule && document.getElementById('moduleAiBrainView')) {
+          document.getElementById('moduleAiBrainView').innerHTML = AiBrainModule.renderHTML();
+        }
+        if (window.TargetModule && document.getElementById('moduleTargetView')) {
+          document.getElementById('moduleTargetView').innerHTML = TargetModule.renderHTML();
+        }
+        if (window.ProductivityModule && document.getElementById('moduleProdView')) {
+          document.getElementById('moduleProdView').innerHTML = ProductivityModule.renderHTML();
+        }
+        if (window.ZeroShopModule && document.getElementById('moduleZeroShopView')) {
+          document.getElementById('moduleZeroShopView').innerHTML = ZeroShopModule.renderHTML();
+        }
+        if (window.ZeroBrandModule && document.getElementById('moduleZeroBrandView')) {
+          document.getElementById('moduleZeroBrandView').innerHTML = ZeroBrandModule.renderHTML();
+        }
+        if (window.ZeroSkuModule && document.getElementById('moduleZeroSkuView')) {
+          document.getElementById('moduleZeroSkuView').innerHTML = ZeroSkuModule.renderHTML();
+        }
+        if (window.SourceFilesModule && document.getElementById('moduleSourceView')) {
+          document.getElementById('moduleSourceView').innerHTML = SourceFilesModule.renderHTML();
+        }
+
+        applyTheme();
+        startLiveClock();
+
+        try { await loadBothDumps(); } catch (e) {}
+        try { await loadSavedData(); } catch (e) {}
+
+        if (window.DashboardModule && typeof DashboardModule.update === 'function') {
+          DashboardModule.update();
+        }
+
+        // Apply Independent Formatting for the initial page
+        applyFormattingToModule('DASHBOARD');
+      } catch (err) {
+        console.error("DOM Init Error:", err);
+      }
+    });
+  </script>
+</body>
+</html>
