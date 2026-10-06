@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell, clipboard, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const ExcelJS = require('exceljs');
 
 let mainWindow;
@@ -34,6 +35,28 @@ const STOCK_BALANCE_FILE = path.join(STORAGE_DIR, 'STOCK_CURRENT_BALANCE.json');
 const DISPATCH_DATA_FILE = path.join(STORAGE_DIR, 'TODAY_DISPATCH_DATA.json');
 const MAPPING_CONFIG_FILE = path.join(STORAGE_DIR, 'STOCK_MAPPING_CONFIG.json');
 const HIDDEN_SKU_FILE = path.join(STORAGE_DIR, 'HIDDEN_SKU_CONFIG.json');
+
+// -------------------------------------------------------------
+// GITHUB AUTO-SYNC / AUTO-UPDATE ENGINE
+// -------------------------------------------------------------
+function syncWithGitHub() {
+  try {
+    console.log("Checking for GitHub updates...");
+    // Check if git is initialized in current directory
+    if (fs.existsSync(path.join(__dirname, '.git'))) {
+      execSync('git pull origin main', {
+        cwd: __dirname,
+        stdio: 'inherit',
+        timeout: 10000
+      });
+      console.log("App code is fully up to date with GitHub!");
+    } else {
+      console.log("Git repository not initialized in this directory. Skipping sync.");
+    }
+  } catch (err) {
+    console.log("GitHub sync skipped or offline:", err.message);
+  }
+}
 
 // Helper: Wait until file is unlocked
 async function waitForFileUnlock(filePath, maxRetries = 25, delayMs = 300) {
@@ -146,6 +169,10 @@ function createMainWindow() {
 }
 
 app.whenReady().then(() => {
+  // 1. Check for GitHub updates automatically
+  syncWithGitHub();
+
+  // 2. Start main UI and Watchers
   createMainWindow();
   startFolderWatchers();
 
@@ -334,20 +361,19 @@ async function parseDispatchReport(filePath) {
   for (let r = 2; r <= totalRows; r++) {
     const row = sheet.getRow(r);
     
-    // Column C (3): Distributor Code (e.g. 102336 for BR2, 102280 for BR1)
+    // Column C (3): Distributor Code
     const distCode = (row.getCell(3).value || '').toString().trim();
 
     // Column D (4): Distributor Name
     const rawDistName = (row.getCell(4).value || '').toString().trim();
 
-    // Normalize en-dash (–) to hyphen (-) and uppercase
+    // Normalize en-dash to hyphen and uppercase
     const cleanDistName = rawDistName.replace(/\u2013|\u2014/g, '-').replace(/\s+/g, ' ').toUpperCase();
 
     // STRICT MATCH: Only KHI - REHMAN ENT-BR2 (Code 102336)
-    // REHMAN ENT BR1 (102280) aur baqi parties bilkul filter out ho jayengi!
     const isTargetBR2 = 
       distCode === "102336" || 
-      cleanDistName === "KHI - REHMAN ENT-BR2" ||
+      cleanDistName === "KHI - REHMAN ENT-BR2" || 
       (cleanDistName.includes("REHMAN ENT") && (cleanDistName.includes("BR2") || cleanDistName.includes("BR-2")));
 
     if (isTargetBR2) {
