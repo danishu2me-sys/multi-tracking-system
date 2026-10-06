@@ -7,7 +7,7 @@ window.ZeroSkuModule = {
 
   standardizePop: function(val) {
     if (!val) return "";
-    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    let s = typeof val === 'object' ? (val.result || val.text || '') : String(val).trim();
     s = String(s).trim();
     if (s.length > 10) s = s.slice(-8);
     const num = s.replace(/^0+/, '');
@@ -88,8 +88,8 @@ window.ZeroSkuModule = {
           <table id="zeroSkuTable">
             <thead id="zeroSkuThead">
               <tr>
-                <th style="color:#ffffff !important; width:100px;">Shop Code</th>
-                <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+                <th style="color:#ffffff !important; width:110px;">Shop Code</th>
+                <th style="color:#ffffff !important; width:220px;">Shop / Customer Name</th>
                 <th style="color:#ffffff !important; width:160px;">DSR Name</th>
                 <th style="color:#ffffff !important; width:160px;">Section / Town</th>
                 <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
@@ -241,8 +241,8 @@ window.ZeroSkuModule = {
     if (this.selectedSku === 'NONE') {
       thead.innerHTML = `
         <tr>
-          <th style="color:#ffffff !important; width:100px;">Shop Code</th>
-          <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+          <th style="color:#ffffff !important; width:110px;">Shop Code</th>
+          <th style="color:#ffffff !important; width:220px;">Shop / Customer Name</th>
           <th style="color:#ffffff !important; width:160px;">DSR Name</th>
           <th style="color:#ffffff !important; width:160px;">Section / Town</th>
           <th style="color:#ffffff !important; text-align:center; width:130px;">Status</th>
@@ -272,8 +272,8 @@ window.ZeroSkuModule = {
 
     thead.innerHTML = `
       <tr>
-        <th style="color:#ffffff !important; width:100px;">Shop Code</th>
-        <th style="color:#ffffff !important; width:170px;">Shop / Customer Name</th>
+        <th style="color:#ffffff !important; width:110px;">Shop Code</th>
+        <th style="color:#ffffff !important; width:220px;">Shop / Customer Name</th>
         <th style="color:#ffffff !important; width:160px;">DSR Name</th>
         <th style="color:#ffffff !important; width:160px;">Section / Town</th>
         <th style="color:#ffffff !important; text-align:center; width:140px;">SKU Status</th>
@@ -288,15 +288,21 @@ window.ZeroSkuModule = {
     let totalZeroCount = 0;
 
     rawShopList.forEach(shop => {
+      // Safe Pop Code Extraction
       let rawCode = '';
-      if (typeof shop.pop === 'object') {
-        rawCode = String(shop.pop?.text || shop.pop?.result || '');
-      } else {
-        rawCode = String(shop.pop || '').trim();
+      if (typeof shop.pop === 'string' && shop.pop !== '[object Object]') {
+        rawCode = shop.pop.trim();
+      } else if (typeof shop.pop === 'number') {
+        rawCode = String(shop.pop);
+      } else if (typeof shop.pop === 'object' && shop.pop !== null) {
+        rawCode = String(shop.pop.result || shop.pop.text || '');
       }
-      if (!rawCode && shop.fullPop) {
-        rawCode = String(shop.fullPop).slice(-8);
+
+      if (!rawCode || rawCode === '[object Object]') {
+        const fp = String(shop.fullPop || '').trim();
+        rawCode = fp.length >= 7 ? fp.slice(-7) : fp;
       }
+      rawCode = rawCode.replace(/^0+/, '');
 
       const stdCode = this.standardizePop(rawCode);
 
@@ -359,7 +365,7 @@ window.ZeroSkuModule = {
       rowsHtml += `
         <tr>
           <td style="font-family:'Consolas', monospace; font-weight:700; color:#0284c7;">${r.code}</td>
-          <td style="font-weight:700; max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
+          <td style="font-weight:700; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${r.name}">${r.name}</td>
           <td style="font-weight:700; color:#0f172a;">${r.dsr}</td>
           <td style="color:#475569; font-size:11.5px;">${r.section}</td>
           <td style="text-align:center;">${statusBadge}</td>

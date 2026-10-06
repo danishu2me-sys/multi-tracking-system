@@ -5,7 +5,7 @@ window.ZeroShopModule = {
 
   standardizePop: function(val) {
     if (!val) return "";
-    let s = typeof val === 'object' ? (val.text || val.result || '') : String(val).trim();
+    let s = typeof val === 'object' ? (val.result || val.text || '') : String(val).trim();
     s = String(s).trim();
     if (s.length > 10) s = s.slice(-8);
     const num = s.replace(/^0+/, '');
@@ -72,7 +72,7 @@ window.ZeroShopModule = {
           <table id="zeroShopTable">
             <thead>
               <tr>
-                <th style="color:#ffffff !important; width:110px;">Shop Code (Col B)</th>
+                <th style="color:#ffffff !important; width:110px;">Shop Code</th>
                 <th style="color:#ffffff !important; width:220px;">Shop / Customer Name</th>
                 <th style="color:#ffffff !important; width:160px;">DSR Name</th>
                 <th style="color:#ffffff !important; width:160px;">Section / Town</th>
@@ -187,15 +187,22 @@ window.ZeroShopModule = {
     let totalZeroCount = 0;
 
     rawShopList.forEach(shop => {
+      // Clean pop code extraction:
       let rawCode = '';
-      if (typeof shop.pop === 'object') {
-        rawCode = String(shop.pop?.text || shop.pop?.result || '');
-      } else {
-        rawCode = String(shop.pop || '').trim();
+      if (typeof shop.pop === 'string' && shop.pop !== '[object Object]') {
+        rawCode = shop.pop.trim();
+      } else if (typeof shop.pop === 'number') {
+        rawCode = String(shop.pop);
+      } else if (typeof shop.pop === 'object' && shop.pop !== null) {
+        rawCode = String(shop.pop.result || shop.pop.text || '');
       }
-      if (!rawCode && shop.fullPop) {
-        rawCode = String(shop.fullPop).slice(-8);
+
+      // Agar Col B abhi bhi [object Object] ya khali ho, Col A (fullPop) se nikaalein
+      if (!rawCode || rawCode === '[object Object]') {
+        const fp = String(shop.fullPop || '').trim();
+        rawCode = fp.length >= 7 ? fp.slice(-7) : fp;
       }
+      rawCode = rawCode.replace(/^0+/, '');
 
       const stdCode = this.standardizePop(rawCode);
 

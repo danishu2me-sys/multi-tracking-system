@@ -414,10 +414,15 @@
     </div>
 
     <div class="portal-actions">
+      <!-- ☁️ 1-CLICK CLOUD SYNC BUTTON -->
+      <button class="btn-portal" style="background:#10b981; border:1px solid #34d399; font-weight:800;" onclick="triggerCloudSync()" title="Sync all master data to Supabase Cloud">
+        ☁️ Sync to Cloud
+      </button>
+
       <button id="themeToggleBtn" class="btn-util" onclick="toggleTheme()">☀️ Light Mode</button>
       
       <button class="btn-util" style="background:#0284c7; border-color:#38bdf8; color:#fff;" onclick="openSettingsModal()" title="SnD & DSS Login Credentials">
-        ⚙️ Settings
+        ⚙ Settings
       </button>
 
       <span class="portal-status-dot"></span>
@@ -578,7 +583,135 @@
 
   <!-- CONTROLLER -->
   <script>
-    const { ipcRenderer, clipboard } = require('electron');
+    // -------------------------------------------------------------
+    // DIRECT INLINE SUPABASE CLOUD STORAGE ENGINE
+    // -------------------------------------------------------------
+    const SUPABASE_URL = "https://hkjyudfujhrqduyiaqss.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhranl1ZGZ1amhycWR1eWlhcXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMDk4MTgsImV4cCI6MjEwNjg4NTgxOH0.7jLLKRhWljpUuzSgO_feWXh-nwVyYC-fGIS1mJNYRD4";
+
+    window.CloudStorage = {
+      save: async function(key, dataPayload) {
+        try {
+          console.log(`[CloudSync] Uploading ${key} to Supabase...`);
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/app_store`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify({
+              key: key,
+              data: dataPayload,
+              updated_at: new Date().toISOString()
+            })
+          });
+
+          if (!res.ok) throw new Error(await res.text());
+          console.log(`[CloudSync] ${key} synced successfully!`);
+          return { success: true };
+        } catch (err) {
+          console.error(`[CloudSync] Error saving ${key}:`, err);
+          return { success: false, error: err.message };
+        }
+      },
+
+      load: async function(key) {
+        try {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/app_store?key=eq.${key}&select=data`, {
+            method: 'GET',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!res.ok) throw new Error(await res.text());
+          const json = await res.json();
+          if (json && json.length > 0) return json[0].data;
+          return null;
+        } catch (err) {
+          console.error(`[CloudSync] Error loading ${key}:`, err);
+          return null;
+        }
+      },
+
+      syncAllToCloud: async function() {
+        let count = 0;
+        const isElectronEnv = (typeof require !== 'undefined');
+        let ipc = null;
+        if (isElectronEnv) {
+          try { ipc = require('electron').ipcRenderer; } catch(e) {}
+        }
+
+        // 1. Shop Master (2,391 Shops)
+        let shops = window.shopDataMaster;
+        if ((!shops || shops.length === 0) && ipc) {
+          const res = await ipc.invoke('get-saved-shop-data');
+          if (res && res.success && Array.isArray(res.shops)) shops = res.shops;
+        }
+        if (shops && shops.length > 0) {
+          const sRes = await this.save('SHOP_MASTER', shops);
+          if (sRes.success) count++;
+        }
+
+        // 2. Monthly Target
+        let targets = (typeof allRecords !== 'undefined' && allRecords.length > 0) ? allRecords : window.targetReportData;
+        if ((!targets || targets.length === 0) && ipc) {
+          const res = await ipc.invoke('get-target-report-data');
+          if (res && res.success && Array.isArray(res.data)) targets = res.data;
+        }
+        if (targets && targets.length > 0) {
+          const tRes = await this.save('MONTHLY_TARGET', targets);
+          if (tRes.success) count++;
+        }
+
+        // 3. CM Sales Dump
+        let cm = (typeof cmDump !== 'undefined' && cmDump) ? cmDump : null;
+        if ((!cm || !cm.deliveredRecords) && ipc) {
+          const res = await ipc.invoke('get-both-sales-dumps');
+          if (res && res.success && res.cmData) cm = res.cmData;
+        }
+        if (cm && cm.deliveredRecords && cm.deliveredRecords.length > 0) {
+          const cRes = await this.save('SALES_DUMP_CM', cm);
+          if (cRes.success) count++;
+        }
+
+        alert(`☁️ Cloud Sync Complete! (${count} data sets synced to live cloud).`);
+      },
+
+      pullAllFromCloud: async function() {
+        console.log("[CloudSync] Pulling datasets from Supabase Cloud...");
+        const shops = await this.load('SHOP_MASTER');
+        if (shops && Array.isArray(shops)) window.shopDataMaster = shops;
+
+        const targets = await this.load('MONTHLY_TARGET');
+        if (targets && Array.isArray(targets)) {
+          window.targetReportData = targets;
+          if (typeof allRecords !== 'undefined') allRecords = targets;
+        }
+
+        const cm = await this.load('SALES_DUMP_CM');
+        if (cm) window.cmDump = cm;
+      }
+    };
+
+    // DUAL ENVIRONMENT DETECTOR
+    const isElectron = (typeof require !== 'undefined');
+    let ipcRenderer = null;
+    let clipboard = null;
+
+    if (isElectron) {
+      try {
+        const electron = require('electron');
+        ipcRenderer = electron.ipcRenderer;
+        clipboard = electron.clipboard;
+      } catch (e) {
+        console.warn("Electron module load bypassed. Web environment active.");
+      }
+    }
 
     let currentActiveModuleKey = 'DASHBOARD';
     let allRecords = [];
@@ -909,57 +1042,68 @@
       }, 50);
     }
 
-    // Auto Listeners for downloads & merges
-    ipcRenderer.on('auto-merge-completed', (ev, payload) => {
-      showBannerAlert("🎉 SnD Sales Data Auto-Merged Successfully!", "#10b981");
-      if (payload && payload.data) {
-        allRecords = payload.data;
-        liveCachedRecords = JSON.parse(JSON.stringify(payload.data));
-        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(payload.data));
-        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
-        populateDropdowns();
-        if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
-          if (window.TargetModule) TargetModule.renderTable();
+    if (ipcRenderer) {
+      ipcRenderer.on('auto-merge-completed', (ev, payload) => {
+        showBannerAlert("🎉 SnD Sales Data Auto-Merged Successfully!", "#10b981");
+        if (payload && payload.data) {
+          allRecords = payload.data;
+          liveCachedRecords = JSON.parse(JSON.stringify(payload.data));
+          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(payload.data));
+          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+          populateDropdowns();
+          if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
+            if (window.TargetModule) TargetModule.renderTable();
+          }
+          applyFormattingToModule(currentActiveModuleKey);
         }
-        applyFormattingToModule(currentActiveModuleKey);
-      }
-    });
+      });
 
-    ipcRenderer.on('stock-balance-updated', () => {
-      showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
-      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
-        StockReportModule.renderTable();
-        applyFormattingToModule('STOCK_REPORT');
-      }
-    });
+      ipcRenderer.on('stock-balance-updated', () => {
+        showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
+        if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+          StockReportModule.renderTable();
+          applyFormattingToModule('STOCK_REPORT');
+        }
+      });
 
-    ipcRenderer.on('dispatch-data-updated', () => {
-      showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
-      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
-        StockReportModule.renderTable();
-        applyFormattingToModule('STOCK_REPORT');
-      }
-    });
+      ipcRenderer.on('dispatch-data-updated', () => {
+        showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
+        if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+          StockReportModule.renderTable();
+          applyFormattingToModule('STOCK_REPORT');
+        }
+      });
 
-    ipcRenderer.on('dump-auto-updated', (ev, data) => {
-      showBannerAlert(`🎉 ${data.dumpType} Sales Dump Auto-Updated!`, "#10b981");
-      loadBothDumps();
-      if (window.SourceFilesModule) SourceFilesModule.updateStatus();
-      if (window.DashboardModule) DashboardModule.update();
-      if (document.getElementById('moduleProdView')?.classList.contains('active')) {
-        populateProdFilters();
-        if (window.ProductivityModule) ProductivityModule.renderTable();
-        applyFormattingToModule('PRODUCTIVITY');
-      }
-    });
+      ipcRenderer.on('dump-auto-updated', (ev, data) => {
+        showBannerAlert(`🎉 ${data.dumpType} Sales Dump Auto-Updated!`, "#10b981");
+        loadBothDumps();
+        if (window.SourceFilesModule) SourceFilesModule.updateStatus();
+        if (window.DashboardModule) DashboardModule.update();
+        if (document.getElementById('moduleProdView')?.classList.contains('active')) {
+          populateProdFilters();
+          if (window.ProductivityModule) ProductivityModule.renderTable();
+          applyFormattingToModule('PRODUCTIVITY');
+        }
+      });
+    }
 
-    // FORCE FLUSH SHOP DATA LOADER
     async function loadSavedShopData(forceReload = false) {
       try {
         if (!forceReload && window.shopDataMaster && window.shopDataMaster.length > 0) return;
-        const res = await ipcRenderer.invoke('get-saved-shop-data');
-        if (res && res.success && Array.isArray(res.shops)) {
-          window.shopDataMaster = res.shops;
+        
+        if (ipcRenderer) {
+          const res = await ipcRenderer.invoke('get-saved-shop-data');
+          if (res && res.success && Array.isArray(res.shops)) {
+            window.shopDataMaster = res.shops;
+            return;
+          }
+        }
+
+        if (window.CloudStorage) {
+          const cloudShops = await CloudStorage.load('SHOP_MASTER');
+          if (cloudShops && Array.isArray(cloudShops)) {
+            window.shopDataMaster = cloudShops;
+          }
         }
       } catch (e) {
         console.error("Shop load error:", e);
@@ -1019,7 +1163,8 @@
         txt += Array.from(r.querySelectorAll('th, td')).map(c => c.innerText.trim()).join('\t') + '\n';
       });
       try {
-        clipboard.writeText(txt);
+        if (clipboard) clipboard.writeText(txt);
+        else navigator.clipboard.writeText(txt);
         showBannerAlert("📋 Productivity report copied to clipboard!", "#10b981");
       } catch(e) {}
     }
@@ -1057,7 +1202,6 @@
 
     function populateProdFilters() {
       const activeDump = (cmDump ? cmDump.deliveredRecords : []) || (lmDump ? lmDump.deliveredRecords : []) || [];
-      
       const rawDsrs = [...new Set(activeDump.map(r => r.rawDsr || r.dsr))].filter(Boolean).sort();
       const dsrSelect = document.getElementById('selectDSRFilterProd');
       if (dsrSelect) {
@@ -1073,7 +1217,6 @@
       }
     }
 
-    // Bridges for Target Module
     window.applyHistoryDateRange = function() {
       if (window.TargetModule && typeof TargetModule.applyHistoryDateRange === 'function') {
         TargetModule.applyHistoryDateRange();
@@ -1141,16 +1284,23 @@
       if (recordsToSave.length === 0) return alert("Save karne ke liye table me data mojood nahi hai!");
 
       showBannerAlert(`⏳ ${selectedDate} ke liye snapshot save ho raha hai...`, "#0284c7");
-      const res = await ipcRenderer.invoke('save-daily-sales-history', {
-        dateKey: selectedDate,
-        records: recordsToSave
-      });
+      
+      if (ipcRenderer) {
+        const res = await ipcRenderer.invoke('save-daily-sales-history', {
+          dateKey: selectedDate,
+          records: recordsToSave
+        });
+        if (res && res.success) {
+          closeSaveDateModal();
+          showBannerAlert(`✅ Report successfully save ho gayi (${selectedDate})!`, "#10b981");
+          return;
+        }
+      }
 
-      if (res && res.success) {
+      if (window.CloudStorage) {
+        await CloudStorage.save(`HISTORY_${selectedDate}`, recordsToSave);
         closeSaveDateModal();
-        showBannerAlert(`✅ Report successfully save ho gayi (${selectedDate})!`, "#10b981");
-      } else {
-        alert("Error: " + (res ? res.message : 'Save nahi ho saki'));
+        showBannerAlert(`✅ Cloud Snapshot saved (${selectedDate})!`, "#10b981");
       }
     }
 
@@ -1214,7 +1364,10 @@
       if (!bName) return alert("Pehle Brand ka naam enter karein!");
       if (selectedCustomSKUs.size === 0) return alert("Kam az kam ek SKU select karein!");
       customBrandsMap[bName] = Array.from(selectedCustomSKUs);
-      await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+
+      if (ipcRenderer) await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+      if (window.CloudStorage) await CloudStorage.save('CUSTOM_BRANDS', customBrandsMap);
+
       closeCustomBrandModal();
       populateDropdowns();
       showBannerAlert(`🎉 Custom Brand '${bName}' save ho gaya!`, "#10b981");
@@ -1238,7 +1391,8 @@
     async function deleteCustomBrandByName(bName) {
       if (confirm(`Custom brand '${bName}' delete karna hai?`)) {
         delete customBrandsMap[bName];
-        await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+        if (ipcRenderer) await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+        if (window.CloudStorage) await CloudStorage.save('CUSTOM_BRANDS', customBrandsMap);
         renderCustomBrandPills();
         populateDropdowns();
         showBannerAlert(`🗑️ Custom Brand '${bName}' delete ho gaya!`, "#dc2626");
@@ -1257,18 +1411,37 @@
     }
 
     async function loadSavedData() {
-      const cRes = await ipcRenderer.invoke('get-custom-brands');
-      if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
-      
-      const res = await ipcRenderer.invoke('get-target-report-data');
-      if (res && res.success && res.data && res.data.length > 0) {
-        allRecords = res.data;
-        liveCachedRecords = JSON.parse(JSON.stringify(res.data));
-        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(res.data));
-        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
-        populateDropdowns();
-        if (window.TargetModule) TargetModule.renderTable();
-        applyFormattingToModule('TARGET');
+      if (ipcRenderer) {
+        const cRes = await ipcRenderer.invoke('get-custom-brands');
+        if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
+        
+        const res = await ipcRenderer.invoke('get-target-report-data');
+        if (res && res.success && res.data && res.data.length > 0) {
+          allRecords = res.data;
+          liveCachedRecords = JSON.parse(JSON.stringify(res.data));
+          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(res.data));
+          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+          populateDropdowns();
+          if (window.TargetModule) TargetModule.renderTable();
+          applyFormattingToModule('TARGET');
+          return;
+        }
+      }
+
+      if (window.CloudStorage) {
+        const cloudData = await CloudStorage.load('MONTHLY_TARGET');
+        if (cloudData && Array.isArray(cloudData) && cloudData.length > 0) {
+          allRecords = cloudData;
+          liveCachedRecords = JSON.parse(JSON.stringify(cloudData));
+          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(cloudData));
+          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+          populateDropdowns();
+          if (window.TargetModule) TargetModule.renderTable();
+          applyFormattingToModule('TARGET');
+        }
+
+        const cloudCustom = await CloudStorage.load('CUSTOM_BRANDS');
+        if (cloudCustom) customBrandsMap = cloudCustom;
       }
     }
 
@@ -1302,9 +1475,6 @@
       dsrEl.innerHTML = dsrs.map(ds => `<option value="${ds}" ${ds === activeDSR ? 'selected':''}>${ds === 'ALL' ? 'ALL DSRs' : ds}</option>`).join('');
     }
 
-    // -------------------------------------------------------------
-    // MULTI-TABLE AWARE EXCEL SELECTION ENGINE
-    // -------------------------------------------------------------
     let activeAnchorRow = null;
     let currentlyFocusedTable = null;
 
@@ -1378,9 +1548,6 @@
       }
     });
 
-    // -------------------------------------------------------------
-    // HD IMAGE CLIPBOARD ENGINE (PROPORTIONAL FIT)
-    // -------------------------------------------------------------
     async function captureAndCopyHDImage(rowsToCapture, sourceTable) {
       showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai...", "#0284c7");
 
@@ -1572,12 +1739,17 @@
         });
 
         const dataUrl = canvas.toDataURL('image/png', 1.0);
-        const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
-        if (res && res.success) {
-          showBannerAlert(`🎉 HD Report Card Copied to Clipboard!`, "#10b981");
-        } else {
-          alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
+        if (ipcRenderer) {
+          const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
+          if (res && res.success) {
+            showBannerAlert(`🎉 HD Report Card Copied to Clipboard!`, "#10b981");
+            return;
+          }
         }
+        
+        const blob = await (await fetch(dataUrl)).blob();
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        showBannerAlert(`🎉 HD Report Card Copied!`, "#10b981");
       } catch (err) {
         console.error("Capture Error:", err);
       } finally {
@@ -1617,7 +1789,6 @@
         copyTableAsImage(table.id);
       }
 
-      // Arrow Down Navigation
       if (e.key === 'ArrowDown') {
         const table = getActiveTableElement();
         if (!table) return;
@@ -1649,7 +1820,6 @@
         }
       }
 
-      // Arrow Up Navigation
       if (e.key === 'ArrowUp') {
         const table = getActiveTableElement();
         if (!table) return;
@@ -1692,10 +1862,20 @@
 
     async function loadBothDumps() {
       try {
-        const res = await ipcRenderer.invoke('get-both-sales-dumps');
-        if (res.success) {
-          lmDump = res.lmData;
-          cmDump = res.cmData;
+        if (ipcRenderer) {
+          const res = await ipcRenderer.invoke('get-both-sales-dumps');
+          if (res.success) {
+            lmDump = res.lmData;
+            cmDump = res.cmData;
+            initDumpDates();
+            populateProdFilters();
+            return;
+          }
+        }
+
+        if (window.CloudStorage) {
+          const cloudCm = await CloudStorage.load('SALES_DUMP_CM');
+          if (cloudCm) cmDump = cloudCm;
           initDumpDates();
           populateProdFilters();
         }
@@ -1717,17 +1897,26 @@
       }
     }
 
-    async function openSnDWindow() { await ipcRenderer.invoke('launch-snd-portal'); }
-    async function openDSSWindow() { await ipcRenderer.invoke('launch-dss-portal'); }
+    async function openSnDWindow() { 
+      if (ipcRenderer) await ipcRenderer.invoke('launch-snd-portal'); 
+      else window.open('https://snd.example.com', '_blank');
+    }
+    
+    async function openDSSWindow() { 
+      if (ipcRenderer) await ipcRenderer.invoke('launch-dss-portal'); 
+      else window.open('https://dss.example.com', '_blank');
+    }
 
     async function openSettingsModal() {
-      const res = await ipcRenderer.invoke('get-all-credentials');
-      if (res.success && res.credentials) {
-        document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
-        document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
-        document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
-        document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
-        document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
+      if (ipcRenderer) {
+        const res = await ipcRenderer.invoke('get-all-credentials');
+        if (res.success && res.credentials) {
+          document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
+          document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
+          document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
+          document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
+          document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
+        }
       }
       document.getElementById('settingsModal').style.display = 'flex';
     }
@@ -1740,11 +1929,19 @@
       const dssUser = document.getElementById('settingDssUser').value.trim();
       const dssPass = document.getElementById('settingDssPass').value.trim();
 
-      const res = await ipcRenderer.invoke('save-all-credentials', {
+      const credObj = {
         snd: { distributor: sndDist, username: sndUser, password: sndPass },
         dss: { username: dssUser, password: dssPass }
-      });
-      if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); }
+      };
+
+      if (ipcRenderer) {
+        const res = await ipcRenderer.invoke('save-all-credentials', credObj);
+        if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); return; }
+      }
+      
+      localStorage.setItem('appCredentials', JSON.stringify(credObj));
+      closeSettingsModal(); 
+      showBannerAlert("⚙️ Credentials saved locally!", "#059669");
     }
 
     function showBannerAlert(msg, bg = 'linear-gradient(90deg, #10b981 0%, #059669 100%)') {
@@ -1752,6 +1949,12 @@
       if (!banner) return;
       banner.innerText = msg; banner.style.background = bg; banner.style.display = 'block';
       setTimeout(() => { banner.style.display = 'none'; }, 4000);
+    }
+
+    // 1-Click Trigger Cloud Sync
+    async function triggerCloudSync() {
+      showBannerAlert("☁️ Syncing all reports to Supabase Cloud...", "#0284c7");
+      await CloudStorage.syncAllToCloud();
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -1789,6 +1992,11 @@
 
         applyTheme();
         startLiveClock();
+
+        // Browser link fallback
+        if (window.CloudStorage) {
+          await CloudStorage.pullAllFromCloud();
+        }
 
         try { await loadBothDumps(); } catch (e) {}
         try { await loadSavedData(); } catch (e) {}
