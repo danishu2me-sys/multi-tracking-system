@@ -125,7 +125,9 @@
       color: var(--text-main); padding: 2px 7px; border-radius: 4px; font-size: 10.5px; cursor: pointer; font-weight: bold; height: 26px;
     }
 
-    /* EXCEL-STYLE RIBBON TOOLBAR */
+    /* -------------------------------------------------------------
+       EXCEL-STYLE RIBBON TOOLBAR (PER-PAGE SETTINGS)
+       ------------------------------------------------------------- */
     .excel-ribbon-bar {
       background: #eef2f6;
       border-bottom: 1.5px solid #cbd5e1;
@@ -414,31 +416,21 @@
     </div>
 
     <div class="portal-actions">
-      <!-- ☁️ 1-CLICK CLOUD SYNC BUTTON -->
-      <button class="btn-portal" style="background:#10b981; border:1px solid #34d399; font-weight:800;" onclick="triggerCloudSync()" title="Sync all master data to Supabase Cloud">
-        ☁️ Sync to Cloud
-      </button>
-
       <button id="themeToggleBtn" class="btn-util" onclick="toggleTheme()">☀️ Light Mode</button>
       
       <button class="btn-util" style="background:#0284c7; border-color:#38bdf8; color:#fff;" onclick="openSettingsModal()" title="SnD & DSS Login Credentials">
-        ⚙ Settings
+        ⚙️ Settings
       </button>
 
       <span class="portal-status-dot"></span>
-      <!-- SnD Pro Portal Direct Link -->
-      <a href="https://mayfair.sndpro.app:1132/Mayfair/Default.aspx" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-        <button type="button" class="btn-portal">🌐 SnD Portal</button>
-      </a>
-
-      <!-- DSS Portal Direct Link -->
-      <a href="https://mayfair.sndpro.app:1163/DSS/Presentation/Login.aspx" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
-        <button type="button" class="btn-portal" style="background:#b91c1c; border:1px solid #ef4444;">🏢 DSS Portal</button>
-      </a>
+      <button class="btn-portal" onclick="openSnDWindow()">🌐 SnD Portal</button>
+      <button class="btn-portal" style="background:#b91c1c; border:1px solid #ef4444;" onclick="openDSSWindow()">🏢 DSS Portal</button>
     </div>
+  </div>
 
   <!-- EXCEL HOME RIBBON TOOLBAR -->
   <div class="excel-ribbon-bar">
+    <!-- FONT FAMILY & SIZE -->
     <div class="ribbon-group">
       <select id="ribbonFontFamily" class="ribbon-select" style="min-width:115px;" onchange="applyExcelRibbonAction('fontFamily', this.value)">
         <option value="'Calibri', 'Segoe UI', sans-serif" selected>Calibri</option>
@@ -466,6 +458,7 @@
 
     <div class="ribbon-divider"></div>
 
+    <!-- BOLD, ITALIC, UNDERLINE -->
     <div class="ribbon-group">
       <button id="ribbonBoldBtn" class="ribbon-btn" style="font-weight:900;" title="Bold" onclick="applyExcelRibbonAction('bold')"><b>B</b></button>
       <button id="ribbonItalicBtn" class="ribbon-btn" style="font-style:italic;" title="Italic" onclick="applyExcelRibbonAction('italic')"><i>I</i></button>
@@ -474,6 +467,7 @@
 
     <div class="ribbon-divider"></div>
 
+    <!-- ALIGNMENT -->
     <div class="ribbon-group">
       <button class="ribbon-btn" title="Align Left" onclick="applyExcelRibbonAction('align', 'left')">⫷</button>
       <button class="ribbon-btn" title="Align Center" onclick="applyExcelRibbonAction('align', 'center')">≡</button>
@@ -482,6 +476,7 @@
 
     <div class="ribbon-divider"></div>
 
+    <!-- COLOR PICKERS -->
     <div class="ribbon-group">
       <div class="color-picker-wrap" title="Fill Color (Background)">
         <span class="ribbon-btn" style="color:#eab308;">🪣</span>
@@ -589,135 +584,7 @@
 
   <!-- CONTROLLER -->
   <script>
-    // -------------------------------------------------------------
-    // DIRECT INLINE SUPABASE CLOUD STORAGE ENGINE
-    // -------------------------------------------------------------
-    const SUPABASE_URL = "https://hkjyudfujhrqduyiaqss.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhranl1ZGZ1amhycWR1eWlhcXNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMDk4MTgsImV4cCI6MjEwNjg4NTgxOH0.7jLLKRhWljpUuzSgO_feWXh-nwVyYC-fGIS1mJNYRD4";
-
-    window.CloudStorage = {
-      save: async function(key, dataPayload) {
-        try {
-          console.log(`[CloudSync] Uploading ${key} to Supabase...`);
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/app_store`, {
-            method: 'POST',
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json',
-              'Prefer': 'resolution=merge-duplicates'
-            },
-            body: JSON.stringify({
-              key: key,
-              data: dataPayload,
-              updated_at: new Date().toISOString()
-            })
-          });
-
-          if (!res.ok) throw new Error(await res.text());
-          console.log(`[CloudSync] ${key} synced successfully!`);
-          return { success: true };
-        } catch (err) {
-          console.error(`[CloudSync] Error saving ${key}:`, err);
-          return { success: false, error: err.message };
-        }
-      },
-
-      load: async function(key) {
-        try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/app_store?key=eq.${key}&select=data`, {
-            method: 'GET',
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json'
-            }
-          });
-
-          if (!res.ok) throw new Error(await res.text());
-          const json = await res.json();
-          if (json && json.length > 0) return json[0].data;
-          return null;
-        } catch (err) {
-          console.error(`[CloudSync] Error loading ${key}:`, err);
-          return null;
-        }
-      },
-
-      syncAllToCloud: async function() {
-        let count = 0;
-        const isElectronEnv = (typeof require !== 'undefined');
-        let ipc = null;
-        if (isElectronEnv) {
-          try { ipc = require('electron').ipcRenderer; } catch(e) {}
-        }
-
-        // 1. Shop Master (2,391 Shops)
-        let shops = window.shopDataMaster;
-        if ((!shops || shops.length === 0) && ipc) {
-          const res = await ipc.invoke('get-saved-shop-data');
-          if (res && res.success && Array.isArray(res.shops)) shops = res.shops;
-        }
-        if (shops && shops.length > 0) {
-          const sRes = await this.save('SHOP_MASTER', shops);
-          if (sRes.success) count++;
-        }
-
-        // 2. Monthly Target
-        let targets = (typeof allRecords !== 'undefined' && allRecords.length > 0) ? allRecords : window.targetReportData;
-        if ((!targets || targets.length === 0) && ipc) {
-          const res = await ipc.invoke('get-target-report-data');
-          if (res && res.success && Array.isArray(res.data)) targets = res.data;
-        }
-        if (targets && targets.length > 0) {
-          const tRes = await this.save('MONTHLY_TARGET', targets);
-          if (tRes.success) count++;
-        }
-
-        // 3. CM Sales Dump
-        let cm = (typeof cmDump !== 'undefined' && cmDump) ? cmDump : null;
-        if ((!cm || !cm.deliveredRecords) && ipc) {
-          const res = await ipc.invoke('get-both-sales-dumps');
-          if (res && res.success && res.cmData) cm = res.cmData;
-        }
-        if (cm && cm.deliveredRecords && cm.deliveredRecords.length > 0) {
-          const cRes = await this.save('SALES_DUMP_CM', cm);
-          if (cRes.success) count++;
-        }
-
-        alert(`☁️ Cloud Sync Complete! (${count} data sets synced to live cloud).`);
-      },
-
-      pullAllFromCloud: async function() {
-        console.log("[CloudSync] Pulling datasets from Supabase Cloud...");
-        const shops = await this.load('SHOP_MASTER');
-        if (shops && Array.isArray(shops)) window.shopDataMaster = shops;
-
-        const targets = await this.load('MONTHLY_TARGET');
-        if (targets && Array.isArray(targets)) {
-          window.targetReportData = targets;
-          if (typeof allRecords !== 'undefined') allRecords = targets;
-        }
-
-        const cm = await this.load('SALES_DUMP_CM');
-        if (cm) window.cmDump = cm;
-      }
-    };
-
-    // DUAL ENVIRONMENT DETECTOR
-    const isElectron = (typeof require !== 'undefined');
-    let ipcRenderer = null;
-    let clipboard = null;
-
-    if (isElectron) {
-      try {
-        const electron = require('electron');
-        ipcRenderer = electron.ipcRenderer;
-        clipboard = electron.clipboard;
-      } catch (e) {
-        console.warn("Electron module load bypassed. Web environment active.");
-      }
-    }
+    const { ipcRenderer, clipboard } = require('electron');
 
     let currentActiveModuleKey = 'DASHBOARD';
     let allRecords = [];
@@ -770,7 +637,7 @@
     let timeGonePct = daysGone / totalDays;
 
     // -------------------------------------------------------------
-    // PER-PAGE FORMATTING MEMORY STORE
+    // PER-PAGE FORMATTING MEMORY STORE (STRICTLY INDEPENDENT)
     // -------------------------------------------------------------
     let pageFormatStore = JSON.parse(localStorage.getItem('appPageFormatStore') || '{}');
 
@@ -809,6 +676,7 @@
       const viewEl = viewMap[modKey];
       if (!viewEl) return;
 
+      // Apply specifically to all tables, th and td inside this page
       const allTables = viewEl.querySelectorAll('table');
       allTables.forEach(tbl => {
         tbl.style.fontFamily = cfg.fontFamily;
@@ -824,6 +692,7 @@
         });
       });
 
+      // Synchronize Ribbon Toolbar UI
       const fFamSelect = document.getElementById('ribbonFontFamily');
       const fSizeSelect = document.getElementById('ribbonFontSize');
       const bBtn = document.getElementById('ribbonBoldBtn');
@@ -850,13 +719,13 @@
         cfg.fontFamily = val;
         savePageFormat(modKey, cfg);
         applyFormattingToModule(modKey);
-        showBannerAlert(`Font family set to ${val.split(',')[0]}!`, "#0284c7");
+        showBannerAlert(`Font family for this page set to ${val.split(',')[0]}!`, "#0284c7");
       }
       else if (action === 'fontSize') {
         cfg.fontSize = parseInt(val, 10);
         savePageFormat(modKey, cfg);
         applyFormattingToModule(modKey);
-        showBannerAlert(`Font size set to ${cfg.fontSize}px!`, "#0284c7");
+        showBannerAlert(`Font size for this page set to ${cfg.fontSize}px!`, "#0284c7");
       }
       else if (action === 'fontGrow') {
         cfg.fontSize = Math.min(22, Math.max(8, cfg.fontSize + val));
@@ -1043,73 +912,62 @@
         SourceFilesModule.updateStatus();
       }
 
+      // Synchronize and apply independent page formatting
       setTimeout(() => {
         applyFormattingToModule(mod);
       }, 50);
     }
 
-    if (ipcRenderer) {
-      ipcRenderer.on('auto-merge-completed', (ev, payload) => {
-        showBannerAlert("🎉 SnD Sales Data Auto-Merged Successfully!", "#10b981");
-        if (payload && payload.data) {
-          allRecords = payload.data;
-          liveCachedRecords = JSON.parse(JSON.stringify(payload.data));
-          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(payload.data));
-          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
-          populateDropdowns();
-          if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
-            if (window.TargetModule) TargetModule.renderTable();
-          }
-          applyFormattingToModule(currentActiveModuleKey);
+    // Auto Listeners for downloads & merges
+    ipcRenderer.on('auto-merge-completed', (ev, payload) => {
+      showBannerAlert("🎉 SnD Sales Data Auto-Merged Successfully!", "#10b981");
+      if (payload && payload.data) {
+        allRecords = payload.data;
+        liveCachedRecords = JSON.parse(JSON.stringify(payload.data));
+        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(payload.data));
+        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+        populateDropdowns();
+        if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
+          if (window.TargetModule) TargetModule.renderTable();
         }
-      });
+        applyFormattingToModule(currentActiveModuleKey);
+      }
+    });
 
-      ipcRenderer.on('stock-balance-updated', () => {
-        showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
-        if (document.getElementById('moduleStockView')?.classList.contains('active')) {
-          StockReportModule.renderTable();
-          applyFormattingToModule('STOCK_REPORT');
-        }
-      });
+    ipcRenderer.on('stock-balance-updated', () => {
+      showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
+      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+        StockReportModule.renderTable();
+        applyFormattingToModule('STOCK_REPORT');
+      }
+    });
 
-      ipcRenderer.on('dispatch-data-updated', () => {
-        showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
-        if (document.getElementById('moduleStockView')?.classList.contains('active')) {
-          StockReportModule.renderTable();
-          applyFormattingToModule('STOCK_REPORT');
-        }
-      });
+    ipcRenderer.on('dispatch-data-updated', () => {
+      showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
+      if (document.getElementById('moduleStockView')?.classList.contains('active')) {
+        StockReportModule.renderTable();
+        applyFormattingToModule('STOCK_REPORT');
+      }
+    });
 
-      ipcRenderer.on('dump-auto-updated', (ev, data) => {
-        showBannerAlert(`🎉 ${data.dumpType} Sales Dump Auto-Updated!`, "#10b981");
-        loadBothDumps();
-        if (window.SourceFilesModule) SourceFilesModule.updateStatus();
-        if (window.DashboardModule) DashboardModule.update();
-        if (document.getElementById('moduleProdView')?.classList.contains('active')) {
-          populateProdFilters();
-          if (window.ProductivityModule) ProductivityModule.renderTable();
-          applyFormattingToModule('PRODUCTIVITY');
-        }
-      });
-    }
+    ipcRenderer.on('dump-auto-updated', (ev, data) => {
+      showBannerAlert(`🎉 ${data.dumpType} Sales Dump Auto-Updated!`, "#10b981");
+      loadBothDumps();
+      if (window.SourceFilesModule) SourceFilesModule.updateStatus();
+      if (window.DashboardModule) DashboardModule.update();
+      if (document.getElementById('moduleProdView')?.classList.contains('active')) {
+        populateProdFilters();
+        if (window.ProductivityModule) ProductivityModule.renderTable();
+        applyFormattingToModule('PRODUCTIVITY');
+      }
+    });
 
-    async function loadSavedShopData(forceReload = false) {
+    async function loadSavedShopData() {
       try {
-        if (!forceReload && window.shopDataMaster && window.shopDataMaster.length > 0) return;
-        
-        if (ipcRenderer) {
-          const res = await ipcRenderer.invoke('get-saved-shop-data');
-          if (res && res.success && Array.isArray(res.shops)) {
-            window.shopDataMaster = res.shops;
-            return;
-          }
-        }
-
-        if (window.CloudStorage) {
-          const cloudShops = await CloudStorage.load('SHOP_MASTER');
-          if (cloudShops && Array.isArray(cloudShops)) {
-            window.shopDataMaster = cloudShops;
-          }
+        if (window.shopDataMaster && window.shopDataMaster.length > 0) return;
+        const res = await ipcRenderer.invoke('get-saved-shop-data');
+        if (res && res.success && Array.isArray(res.shops)) {
+          window.shopDataMaster = res.shops;
         }
       } catch (e) {
         console.error("Shop load error:", e);
@@ -1169,8 +1027,7 @@
         txt += Array.from(r.querySelectorAll('th, td')).map(c => c.innerText.trim()).join('\t') + '\n';
       });
       try {
-        if (clipboard) clipboard.writeText(txt);
-        else navigator.clipboard.writeText(txt);
+        clipboard.writeText(txt);
         showBannerAlert("📋 Productivity report copied to clipboard!", "#10b981");
       } catch(e) {}
     }
@@ -1208,6 +1065,7 @@
 
     function populateProdFilters() {
       const activeDump = (cmDump ? cmDump.deliveredRecords : []) || (lmDump ? lmDump.deliveredRecords : []) || [];
+      
       const rawDsrs = [...new Set(activeDump.map(r => r.rawDsr || r.dsr))].filter(Boolean).sort();
       const dsrSelect = document.getElementById('selectDSRFilterProd');
       if (dsrSelect) {
@@ -1223,6 +1081,7 @@
       }
     }
 
+    // Bridges for Target Module
     window.applyHistoryDateRange = function() {
       if (window.TargetModule && typeof TargetModule.applyHistoryDateRange === 'function') {
         TargetModule.applyHistoryDateRange();
@@ -1290,23 +1149,16 @@
       if (recordsToSave.length === 0) return alert("Save karne ke liye table me data mojood nahi hai!");
 
       showBannerAlert(`⏳ ${selectedDate} ke liye snapshot save ho raha hai...`, "#0284c7");
-      
-      if (ipcRenderer) {
-        const res = await ipcRenderer.invoke('save-daily-sales-history', {
-          dateKey: selectedDate,
-          records: recordsToSave
-        });
-        if (res && res.success) {
-          closeSaveDateModal();
-          showBannerAlert(`✅ Report successfully save ho gayi (${selectedDate})!`, "#10b981");
-          return;
-        }
-      }
+      const res = await ipcRenderer.invoke('save-daily-sales-history', {
+        dateKey: selectedDate,
+        records: recordsToSave
+      });
 
-      if (window.CloudStorage) {
-        await CloudStorage.save(`HISTORY_${selectedDate}`, recordsToSave);
+      if (res && res.success) {
         closeSaveDateModal();
-        showBannerAlert(`✅ Cloud Snapshot saved (${selectedDate})!`, "#10b981");
+        showBannerAlert(`✅ Report successfully save ho gayi (${selectedDate})!`, "#10b981");
+      } else {
+        alert("Error: " + (res ? res.message : 'Save nahi ho saki'));
       }
     }
 
@@ -1370,10 +1222,7 @@
       if (!bName) return alert("Pehle Brand ka naam enter karein!");
       if (selectedCustomSKUs.size === 0) return alert("Kam az kam ek SKU select karein!");
       customBrandsMap[bName] = Array.from(selectedCustomSKUs);
-
-      if (ipcRenderer) await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
-      if (window.CloudStorage) await CloudStorage.save('CUSTOM_BRANDS', customBrandsMap);
-
+      await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
       closeCustomBrandModal();
       populateDropdowns();
       showBannerAlert(`🎉 Custom Brand '${bName}' save ho gaya!`, "#10b981");
@@ -1397,8 +1246,7 @@
     async function deleteCustomBrandByName(bName) {
       if (confirm(`Custom brand '${bName}' delete karna hai?`)) {
         delete customBrandsMap[bName];
-        if (ipcRenderer) await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
-        if (window.CloudStorage) await CloudStorage.save('CUSTOM_BRANDS', customBrandsMap);
+        await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
         renderCustomBrandPills();
         populateDropdowns();
         showBannerAlert(`🗑️ Custom Brand '${bName}' delete ho gaya!`, "#dc2626");
@@ -1417,37 +1265,18 @@
     }
 
     async function loadSavedData() {
-      if (ipcRenderer) {
-        const cRes = await ipcRenderer.invoke('get-custom-brands');
-        if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
-        
-        const res = await ipcRenderer.invoke('get-target-report-data');
-        if (res && res.success && res.data && res.data.length > 0) {
-          allRecords = res.data;
-          liveCachedRecords = JSON.parse(JSON.stringify(res.data));
-          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(res.data));
-          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
-          populateDropdowns();
-          if (window.TargetModule) TargetModule.renderTable();
-          applyFormattingToModule('TARGET');
-          return;
-        }
-      }
-
-      if (window.CloudStorage) {
-        const cloudData = await CloudStorage.load('MONTHLY_TARGET');
-        if (cloudData && Array.isArray(cloudData) && cloudData.length > 0) {
-          allRecords = cloudData;
-          liveCachedRecords = JSON.parse(JSON.stringify(cloudData));
-          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(cloudData));
-          activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
-          populateDropdowns();
-          if (window.TargetModule) TargetModule.renderTable();
-          applyFormattingToModule('TARGET');
-        }
-
-        const cloudCustom = await CloudStorage.load('CUSTOM_BRANDS');
-        if (cloudCustom) customBrandsMap = cloudCustom;
+      const cRes = await ipcRenderer.invoke('get-custom-brands');
+      if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
+      
+      const res = await ipcRenderer.invoke('get-target-report-data');
+      if (res && res.success && res.data && res.data.length > 0) {
+        allRecords = res.data;
+        liveCachedRecords = JSON.parse(JSON.stringify(res.data));
+        window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(res.data));
+        activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
+        populateDropdowns();
+        if (window.TargetModule) TargetModule.renderTable();
+        applyFormattingToModule('TARGET');
       }
     }
 
@@ -1481,34 +1310,28 @@
       dsrEl.innerHTML = dsrs.map(ds => `<option value="${ds}" ${ds === activeDSR ? 'selected':''}>${ds === 'ALL' ? 'ALL DSRs' : ds}</option>`).join('');
     }
 
+    // -------------------------------------------------------------
+    // EXCEL SELECTION ENGINE (CLICK & SHIFT+CLICK RANGE)
+    // -------------------------------------------------------------
     let activeAnchorRow = null;
-    let currentlyFocusedTable = null;
 
     function getActiveTableElement() {
-      if (currentlyFocusedTable && document.body.contains(currentlyFocusedTable)) {
-        return currentlyFocusedTable;
-      }
-      const activeEl = document.activeElement;
-      if (activeEl) {
-        const parentTbl = activeEl.closest('table') || activeEl.querySelector('table');
-        if (parentTbl) return parentTbl;
-      }
       const activeView = document.querySelector('.module-view.active');
-      if (activeView) {
-        const tables = activeView.querySelectorAll('table');
-        if (tables.length > 0) return tables[tables.length - 1];
-      }
-      return document.getElementById('mainTable') || document.querySelector('table');
+      if (!activeView) return document.getElementById('mainTable') || document.querySelector('table');
+      return activeView.querySelector('table') || document.getElementById('mainTable');
     }
 
-    function clearExcelSelection(targetTable = null) {
-      const scope = targetTable || document;
-      scope.querySelectorAll('tr.excel-selected, tr.excel-active-focus').forEach(r => {
+    function getActiveTableRows() {
+      const table = getActiveTableElement();
+      if (!table) return [];
+      return Array.from(table.querySelectorAll('tbody tr'));
+    }
+
+    function clearExcelSelection() {
+      document.querySelectorAll('tr.excel-selected, tr.excel-active-focus').forEach(r => {
         r.classList.remove('excel-selected', 'excel-active-focus');
       });
-      if (!targetTable || targetTable === currentlyFocusedTable) {
-        activeAnchorRow = null;
-      }
+      activeAnchorRow = null;
     }
 
     document.addEventListener('click', function(e) {
@@ -1520,11 +1343,6 @@
       const currentRow = td.closest('tr');
       const table = currentRow ? currentRow.closest('table') : null;
       if (!table || !currentRow) return;
-
-      if (currentlyFocusedTable && currentlyFocusedTable !== table) {
-        clearExcelSelection(currentlyFocusedTable);
-      }
-      currentlyFocusedTable = table;
 
       const allRows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
       const currentIndex = allRows.indexOf(currentRow);
@@ -1548,14 +1366,19 @@
         currentRow.classList.toggle('excel-selected');
         activeAnchorRow = currentRow;
       } else {
-        clearExcelSelection(table);
+        clearExcelSelection();
         currentRow.classList.add('excel-selected', 'excel-active-focus');
         activeAnchorRow = currentRow;
       }
     });
 
+    function attachExcelSelectionListeners() {}
+
+    // -------------------------------------------------------------
+    // HD IMAGE CLIPBOARD ENGINE WITH DYNAMIC REPORT HEADER CARD
+    // -------------------------------------------------------------
     async function captureAndCopyHDImage(rowsToCapture, sourceTable) {
-      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai...", "#0284c7");
+      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai (Heading ke sath)...", "#0284c7");
 
       const isLight = document.body.classList.contains('light-theme');
       const cardBg = isLight ? '#ffffff' : '#070e1b';
@@ -1568,42 +1391,22 @@
       const cellBorder = isLight ? '#cbd5e1' : '#1e2e4a';
       const baseTextColor = isLight ? '#0f172a' : '#ffffff';
 
-      const tblId = sourceTable.id || '';
-      const isStock = (tblId === 'stockMainTable' || tblId === 'stockMissingTable');
-      const isProd = (tblId === 'prodTable');
-      const isDsrPerf = (tblId === 'perfMainTable' || tblId === 'perfDivTable' || tblId === 'dsrPerfTable');
-      const isZeroShop = (tblId === 'zeroShopTable');
-      const isZeroBrand = (tblId === 'zeroBrandTable');
-      const isZeroSku = (tblId === 'zeroSkuTable');
+      const isStock = (sourceTable.id === 'stockMainTable' || sourceTable.id === 'stockMissingTable');
+      const isProd = (sourceTable.id === 'prodTable');
+      const isDsrPerf = (sourceTable.id === 'dsrPerfTable');
 
       let reportTitle = '🎯 TARGET VS ACHIEVEMENT REPORT';
       let reportSubMode = (currentMode === 'DIVISION' ? 'DSR WISE DIVISION SUMMARY (CTN ONLY)' : (currentMode === 'BRAND' ? 'BRAND CLUB SUMMARY' : 'DSR WISE DETAILED REPORT'));
 
-      if (isZeroShop) {
-        reportTitle = '🚫 SHOP WISE ZERO PURCHASE REPORT';
-        const dsrVal = document.getElementById('selectZeroShopDSR')?.value || 'ALL';
-        const secVal = document.getElementById('selectZeroShopSection')?.value || 'ALL';
-        reportSubMode = `ALL OUTLETS STATUS | DSR: ${dsrVal} | Section: ${secVal}`;
-      } else if (isZeroBrand) {
-        const brandVal = document.getElementById('selectZeroBrandName')?.value || 'ALL';
-        reportTitle = `🏷️ BRAND WISE ZERO PURCHASE REPORT (${brandVal.toUpperCase()})`;
-        const dsrVal = document.getElementById('selectZeroBrandDSR')?.value || 'ALL';
-        const secVal = document.getElementById('selectZeroBrandSection')?.value || 'ALL';
-        reportSubMode = `BRAND SPECIFIC ACTIVE BREAKDOWN | DSR: ${dsrVal} | Section: ${secVal}`;
-      } else if (isZeroSku) {
-        const skuVal = document.getElementById('selectZeroSkuName')?.value || 'ALL';
-        reportTitle = `📦 SKU WISE ZERO PURCHASE REPORT`;
-        const dsrVal = document.getElementById('selectZeroSkuDSR')?.value || 'ALL';
-        reportSubMode = `SKU: ${skuVal} | DSR: ${dsrVal}`;
-      } else if (isDsrPerf) {
-        reportTitle = tblId === 'perfDivTable' ? '🍩 DIVISION WISE TARGET VS ACHIEVEMENT' : '🏆 DSR PERFORMANCE & EXECUTION SUMMARY';
-        reportSubMode = 'DAILY ROUTING, TARGET & GROWTH REPORT';
-      } else if (isStock) {
+      if (isStock) {
         reportTitle = '📦 CURRENT STOCK & TODAY DISPATCH REPORT';
         reportSubMode = 'STOCK CLOSING BALANCE + TOTAL DISPATCH';
       } else if (isProd) {
         reportTitle = '⚡ UNIQUE PRODUCTIVITY REPORT';
         reportSubMode = `${currentMonthView} - ${currentProdTab} WISE COMPLETE ANALYSIS`;
+      } else if (isDsrPerf) {
+        reportTitle = '👤 DSR PERFORMANCE REPORT';
+        reportSubMode = 'BOOKING VS EXECUTION & ROUTING';
       }
 
       let dateTag = `Date: ${new Date().toLocaleDateString('en-GB')}`;
@@ -1611,14 +1414,14 @@
         const dFrom = (currentMonthView === 'CM') ? (document.getElementById('cmFromDate')?.value || cmSelectedFrom) : (document.getElementById('lmFromDate')?.value || lmSelectedFrom);
         const dTo = (currentMonthView === 'CM') ? (document.getElementById('cmToDate')?.value || cmSelectedTo) : (document.getElementById('lmToDate')?.value || lmSelectedTo);
         if (dFrom && dTo) dateTag = `Range: ${dFrom} to ${dTo}`;
-      } else if (isDsrPerf) {
-        const pStart = document.getElementById('perfStartDate')?.value || '';
-        const pEnd = document.getElementById('perfEndDate')?.value || '';
-        if (pStart && pEnd) dateTag = `Range: ${pStart} to ${pEnd}`;
+      } else {
+        const hFrom = document.getElementById('historyFromDate')?.value;
+        const hTo = document.getElementById('historyToDate')?.value;
+        if (hFrom && hTo) dateTag = `Range: ${hFrom} to ${hTo}`;
       }
 
       const selDist = isStock ? 'KHI – REHMAN ENT-BR2' : (document.getElementById('selectDist')?.value || 'KHI – REHMAN ENT-BR2');
-      const naturalWidth = Math.max(760, Math.min(1350, sourceTable.scrollWidth || sourceTable.offsetWidth || 950));
+      const selDsr = isProd ? (document.getElementById('selectDSRFilterProd')?.value || 'ALL') : (document.getElementById('selectDSR')?.value || 'ALL');
 
       const captureBox = document.createElement('div');
       captureBox.style.cssText = `
@@ -1626,10 +1429,11 @@
         left: -99999px;
         top: 0px;
         background: ${cardBg};
-        padding: 16px;
+        padding: 14px;
         border: 2px solid #0284c7;
         border-radius: 8px;
-        width: ${naturalWidth + 32}px;
+        width: max-content;
+        min-width: 820px;
         box-sizing: border-box;
       `;
 
@@ -1641,23 +1445,23 @@
         background: ${headerBoxBg};
         border: 1.5px solid ${headerBoxBorder};
         border-radius: 6px;
-        padding: 10px 14px;
-        margin-bottom: 12px;
+        padding: 9px 14px;
+        margin-bottom: 10px;
       `;
       headerDiv.innerHTML = `
         <div>
           <div style="font-size: 14.5px; font-weight: 900; color: ${titleColor}; letter-spacing: 0.4px; text-transform: uppercase;">
             ${reportTitle}
           </div>
-          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 3px;">
-            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist}
+          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 2px;">
+            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist} ${selDsr !== 'ALL' ? `&nbsp;|&nbsp; <b>DSR:</b> ${selDsr}` : ''}
           </div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7; display: inline-block;">
+          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7;">
             📅 ${dateTag}
           </div>
-          <div style="font-size: 9.5px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
+          <div style="font-size: 9px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
         </div>
       `;
       captureBox.appendChild(headerDiv);
@@ -1674,61 +1478,60 @@
       const origThead = sourceTable.querySelector('thead');
       if (origThead) {
         const theadClone = document.createElement('thead');
-        Array.from(origThead.querySelectorAll('tr')).forEach(origTr => {
-          const trClone = document.createElement('tr');
-          Array.from(origTr.querySelectorAll('th')).forEach(th => {
-            if (th.style.display === 'none') return;
-            const thClone = th.cloneNode(true);
-            const isNum = th.classList.contains('num');
-            thClone.style.cssText = `
-              background: #1e3a5f !important;
-              color: #ffffff !important;
-              padding: 6px 8px;
-              font-weight: 800;
-              border: 1px solid rgba(255,255,255,0.25);
-              text-align: ${isNum ? 'right' : 'left'};
-              white-space: nowrap;
-              font-size: 10.5px;
-            `;
-            trClone.appendChild(thClone);
-          });
-          theadClone.appendChild(trClone);
-        });
+        const headerRow = document.createElement('tr');
+        const ths = Array.from(origThead.querySelectorAll('th')).filter(th => th.style.display !== 'none');
+        
+        const startIndex = isStock && ths.length > 2 && ths[0].innerText.toLowerCase().includes('brand') ? 1 : 0;
+        const defaultThBg = isStock ? '#2980b9' : (isLight ? '#1e3a5f' : '#132b4f');
+
+        for (let i = startIndex; i < ths.length; i++) {
+          const thClone = ths[i].cloneNode(true);
+          thClone.style.cssText = `
+            background: ${defaultThBg} !important;
+            color: #ffffff !important;
+            padding: 6px 10px;
+            font-weight: 800;
+            border: 1px solid rgba(255,255,255,0.25);
+            text-align: ${thClone.classList.contains('num') ? 'right' : 'left'};
+            white-space: nowrap;
+          `;
+          headerRow.appendChild(thClone);
+        }
+        theadClone.appendChild(headerRow);
         clonedTable.appendChild(theadClone);
       }
 
       const tbodyClone = document.createElement('tbody');
       rowsToCapture.forEach((r, rIdx) => {
         const trClone = document.createElement('tr');
-        const isSubtotal = r.classList.contains('subtotal-row') || r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row');
-        const isGrandTotal = r.classList.contains('grandtotal-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
+        const tds = Array.from(r.querySelectorAll('td')).filter(td => td.style.display !== 'none');
+        const startIndex = isStock && tds.length > 2 && sourceTable.querySelector('th')?.innerText.toLowerCase().includes('brand') ? 1 : 0;
 
+        const isTotalRow = r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
         let rowBg = (rIdx % 2 === 0) ? (isLight ? '#ffffff' : '#0b1526') : (isLight ? '#f8fafc' : '#091222');
-        if (isSubtotal) rowBg = isLight ? '#dbeafe' : '#1e3a5f';
-        if (isGrandTotal) rowBg = '#091322';
+        if (r.classList.contains('brand-total-row')) rowBg = '#fff3cd';
+        if (r.classList.contains('cat-total-row')) rowBg = '#e2efda';
+        if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) rowBg = '#1e3a5f';
 
-        Array.from(r.querySelectorAll('td')).forEach((td, cIdx) => {
-          if (td.style.display === 'none') return;
-          const tdClone = td.cloneNode(true);
-          const isNum = td.classList.contains('num');
-
+        for (let i = startIndex; i < tds.length; i++) {
+          const tdClone = tds[i].cloneNode(true);
+          const isNum = tdClone.classList.contains('num');
           let textClr = baseTextColor;
-          if (isSubtotal) textClr = isLight ? '#1e3a5f' : '#ffffff';
-          if (isGrandTotal) textClr = '#fbbf24';
+          if (isTotalRow && !r.classList.contains('stock-grand-total') && !r.classList.contains('total-row')) textClr = '#000000';
+          if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) textClr = '#ffffff';
 
           tdClone.style.cssText = `
             background: ${rowBg} !important;
             color: ${textClr} !important;
-            padding: 5px 7px;
+            padding: 5px 8px;
             border: 1px solid ${cellBorder};
-            font-weight: ${(isSubtotal || isGrandTotal) ? '900' : (cIdx === 0 ? '700' : '600')};
+            font-weight: ${isTotalRow ? '800' : (i === startIndex ? '700' : '600')};
             text-align: ${isNum ? 'right' : 'left'};
             font-family: ${isNum ? "'Consolas', monospace" : "inherit"};
             white-space: nowrap;
-            font-size: ${isGrandTotal ? '12px' : '10.5px'};
           `;
           trClone.appendChild(tdClone);
-        });
+        }
         tbodyClone.appendChild(trClone);
       });
       clonedTable.appendChild(tbodyClone);
@@ -1736,30 +1539,21 @@
       captureBox.appendChild(clonedTable);
       document.body.appendChild(captureBox);
 
-      try {
-        const canvas = await html2canvas(captureBox, {
-          backgroundColor: cardBg,
-          scale: 2,
-          logging: false,
-          useCORS: true
-        });
+      const canvas = await html2canvas(captureBox, {
+        backgroundColor: cardBg,
+        scale: 2.5,
+        logging: false,
+        useCORS: true
+      });
 
-        const dataUrl = canvas.toDataURL('image/png', 1.0);
-        if (ipcRenderer) {
-          const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
-          if (res && res.success) {
-            showBannerAlert(`🎉 HD Report Card Copied to Clipboard!`, "#10b981");
-            return;
-          }
-        }
-        
-        const blob = await (await fetch(dataUrl)).blob();
-        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-        showBannerAlert(`🎉 HD Report Card Copied!`, "#10b981");
-      } catch (err) {
-        console.error("Capture Error:", err);
-      } finally {
-        document.body.removeChild(captureBox);
+      document.body.removeChild(captureBox);
+
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
+      if (res && res.success) {
+        showBannerAlert(`🎉 HD Report Card with Heading Copied to Clipboard!`, "#10b981");
+      } else {
+        alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
       }
     }
 
@@ -1795,10 +1589,11 @@
         copyTableAsImage(table.id);
       }
 
+      // Arrow Down Navigation
       if (e.key === 'ArrowDown') {
         const table = getActiveTableElement();
         if (!table) return;
-        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
         if (!rows.length) return;
 
         let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
@@ -1807,7 +1602,7 @@
         if (focusedIdx < rows.length - 1) {
           e.preventDefault();
           const nextIdx = focusedIdx + 1;
-          if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
+          if (e.shiftKey && activeAnchorRow) {
             const anchorIdx = rows.indexOf(activeAnchorRow);
             const min = Math.min(anchorIdx, nextIdx);
             const max = Math.max(anchorIdx, nextIdx);
@@ -1818,7 +1613,7 @@
             rows[nextIdx].classList.add('excel-active-focus');
             rows[nextIdx].scrollIntoView({ block: 'nearest' });
           } else {
-            clearExcelSelection(table);
+            clearExcelSelection();
             rows[nextIdx].classList.add('excel-selected', 'excel-active-focus');
             activeAnchorRow = rows[nextIdx];
             rows[nextIdx].scrollIntoView({ block: 'nearest' });
@@ -1826,10 +1621,11 @@
         }
       }
 
+      // Arrow Up Navigation
       if (e.key === 'ArrowUp') {
         const table = getActiveTableElement();
         if (!table) return;
-        const rows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+        const rows = getActiveTableRows().filter(r => r.style.display !== 'none');
         if (!rows.length) return;
 
         let focusedIdx = rows.findIndex(r => r.classList.contains('excel-active-focus'));
@@ -1837,7 +1633,7 @@
 
         e.preventDefault();
         const prevIdx = focusedIdx - 1;
-        if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
+        if (e.shiftKey && activeAnchorRow) {
           const anchorIdx = rows.indexOf(activeAnchorRow);
           const min = Math.min(anchorIdx, prevIdx);
           const max = Math.max(anchorIdx, prevIdx);
@@ -1848,7 +1644,7 @@
           rows[prevIdx].classList.add('excel-active-focus');
           rows[prevIdx].scrollIntoView({ block: 'nearest' });
         } else {
-          clearExcelSelection(table);
+          clearExcelSelection();
           rows[prevIdx].classList.add('excel-selected', 'excel-active-focus');
           activeAnchorRow = rows[prevIdx];
           rows[prevIdx].scrollIntoView({ block: 'nearest' });
@@ -1856,6 +1652,7 @@
       }
     });
 
+    // Dynamic Full Table Image Capture
     async function copyTableAsImage(tableId) {
       let targetTable = document.getElementById(tableId);
       if (!targetTable) targetTable = getActiveTableElement();
@@ -1868,20 +1665,10 @@
 
     async function loadBothDumps() {
       try {
-        if (ipcRenderer) {
-          const res = await ipcRenderer.invoke('get-both-sales-dumps');
-          if (res.success) {
-            lmDump = res.lmData;
-            cmDump = res.cmData;
-            initDumpDates();
-            populateProdFilters();
-            return;
-          }
-        }
-
-        if (window.CloudStorage) {
-          const cloudCm = await CloudStorage.load('SALES_DUMP_CM');
-          if (cloudCm) cmDump = cloudCm;
+        const res = await ipcRenderer.invoke('get-both-sales-dumps');
+        if (res.success) {
+          lmDump = res.lmData;
+          cmDump = res.cmData;
           initDumpDates();
           populateProdFilters();
         }
@@ -1903,39 +1690,17 @@
       }
     }
 
-    async function openSnDWindow() { 
-  if (ipcRenderer) {
-    await ipcRenderer.invoke('launch-snd-portal'); 
-  } else {
-    // Web Browser me direct Mayfair SnD Pro khulega:
-    window.open('https://mayfair.sndpro.net', '_blank');
-  }
-}
-
-async function openDSSWindow() { 
-  if (ipcRenderer) {
-    await ipcRenderer.invoke('launch-dss-portal'); 
-  } else {
-    // Web Browser me direct Centegy DSS Portal khulega:
-    window.open('https://dss.centegytechnologies.com', '_blank');
-  }
-}
-    
-    async function openDSSWindow() { 
-      if (ipcRenderer) await ipcRenderer.invoke('launch-dss-portal'); 
-      else window.open('https://dss.example.com', '_blank');
-    }
+    async function openSnDWindow() { await ipcRenderer.invoke('launch-snd-portal'); }
+    async function openDSSWindow() { await ipcRenderer.invoke('launch-dss-portal'); }
 
     async function openSettingsModal() {
-      if (ipcRenderer) {
-        const res = await ipcRenderer.invoke('get-all-credentials');
-        if (res.success && res.credentials) {
-          document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
-          document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
-          document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
-          document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
-          document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
-        }
+      const res = await ipcRenderer.invoke('get-all-credentials');
+      if (res.success && res.credentials) {
+        document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
+        document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
+        document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
+        document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
+        document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
       }
       document.getElementById('settingsModal').style.display = 'flex';
     }
@@ -1948,19 +1713,11 @@ async function openDSSWindow() {
       const dssUser = document.getElementById('settingDssUser').value.trim();
       const dssPass = document.getElementById('settingDssPass').value.trim();
 
-      const credObj = {
+      const res = await ipcRenderer.invoke('save-all-credentials', {
         snd: { distributor: sndDist, username: sndUser, password: sndPass },
         dss: { username: dssUser, password: dssPass }
-      };
-
-      if (ipcRenderer) {
-        const res = await ipcRenderer.invoke('save-all-credentials', credObj);
-        if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); return; }
-      }
-      
-      localStorage.setItem('appCredentials', JSON.stringify(credObj));
-      closeSettingsModal(); 
-      showBannerAlert("⚙️ Credentials saved locally!", "#059669");
+      });
+      if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); }
     }
 
     function showBannerAlert(msg, bg = 'linear-gradient(90deg, #10b981 0%, #059669 100%)') {
@@ -1968,12 +1725,6 @@ async function openDSSWindow() {
       if (!banner) return;
       banner.innerText = msg; banner.style.background = bg; banner.style.display = 'block';
       setTimeout(() => { banner.style.display = 'none'; }, 4000);
-    }
-
-    // 1-Click Trigger Cloud Sync
-    async function triggerCloudSync() {
-      showBannerAlert("☁️ Syncing all reports to Supabase Cloud...", "#0284c7");
-      await CloudStorage.syncAllToCloud();
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
@@ -2012,11 +1763,6 @@ async function openDSSWindow() {
         applyTheme();
         startLiveClock();
 
-        // Browser link fallback
-        if (window.CloudStorage) {
-          await CloudStorage.pullAllFromCloud();
-        }
-
         try { await loadBothDumps(); } catch (e) {}
         try { await loadSavedData(); } catch (e) {}
 
@@ -2024,6 +1770,7 @@ async function openDSSWindow() {
           DashboardModule.update();
         }
 
+        // Apply Independent Formatting for the initial page
         applyFormattingToModule('DASHBOARD');
       } catch (err) {
         console.error("DOM Init Error:", err);
