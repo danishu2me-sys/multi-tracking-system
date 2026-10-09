@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MULTI TRACKING SYSTEM - POWERED BY DANISH RAIS (CLOUD SYNC ACTIVE)</title>
+  <title>MULTI TRACKING SYSTEM - POWERED BY DANISH RAIS</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     :root {
@@ -21,6 +21,7 @@
       --total-row-text: #ffffff;
       --input-bg: #070e1c;
       --input-border: #0284c7;
+      --report-font-scale: 12px;
 
       --metric-prod: #10b981;
       --metric-pct: #38bdf8;
@@ -51,15 +52,15 @@
       --metric-drop: #d97706;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Calibri', 'Segoe UI', sans-serif; transition: background 0.15s ease, color 0.15s ease; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Calibri, sans-serif; transition: background 0.15s ease, color 0.15s ease; }
     body { background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; font-size: 12px; }
 
     /* Top Navigation Bar */
     .top-header {
       background: var(--bg-panel); color: #ffffff;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1.5px solid var(--border-color);
       display: flex; justify-content: space-between; align-items: center; padding: 0 12px;
-      height: 38px; flex-shrink: 0; position: relative;
+      height: 40px; flex-shrink: 0; position: relative;
       z-index: 999999 !important; white-space: nowrap;
     }
 
@@ -125,104 +126,12 @@
       color: var(--text-main); padding: 2px 7px; border-radius: 4px; font-size: 10.5px; cursor: pointer; font-weight: bold; height: 26px;
     }
 
-    /* -------------------------------------------------------------
-       EXCEL-STYLE RIBBON TOOLBAR (PER-PAGE SETTINGS)
-       ------------------------------------------------------------- */
-    .excel-ribbon-bar {
-      background: #eef2f6;
-      border-bottom: 1.5px solid #cbd5e1;
-      padding: 3px 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      height: 38px;
-      flex-shrink: 0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      user-select: none;
-    }
-    body:not(.light-theme) .excel-ribbon-bar {
-      background: #091322;
-      border-bottom-color: #1a2c47;
-    }
-
-    .ribbon-group {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      position: relative;
-    }
-    .ribbon-divider {
-      width: 1px;
-      height: 24px;
-      background: #cbd5e1;
-      margin: 0 4px;
-    }
-    body:not(.light-theme) .ribbon-divider {
-      background: #1e2e4a;
-    }
-
-    .ribbon-select {
-      background: #ffffff;
-      color: #0f172a;
-      border: 1px solid #cbd5e1;
-      border-radius: 3px;
-      padding: 2px 6px;
-      font-size: 11px;
-      font-weight: 600;
-      height: 24px;
-      outline: none;
-    }
-    body:not(.light-theme) .ribbon-select {
-      background: #070e1c;
-      color: #f8fafc;
-      border-color: #1e3a5f;
-    }
-
-    .ribbon-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 3px;
-      width: 26px;
-      height: 24px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: bold;
-      color: var(--text-main);
-      transition: 0.15s;
-    }
-    .ribbon-btn:hover {
-      background: rgba(2, 132, 199, 0.15);
-      border-color: #0284c7;
-    }
-    .ribbon-btn.active {
-      background: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
-    }
-
-    .color-picker-wrap {
-      display: inline-flex;
-      align-items: center;
-      position: relative;
-      cursor: pointer;
-    }
-    .color-picker-wrap input[type="color"] {
-      position: absolute;
-      opacity: 0;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-    }
-
     /* Main Workspace */
     .main-workspace {
       flex: 1; display: flex; flex-direction: column; overflow: hidden;
-      padding: 6px 12px; width: 100%; height: calc(100vh - 78px);
+      padding: 6px 12px; width: 100%; height: calc(100vh - 40px);
     }
-    
+
     .module-view { flex: 1; display: none; flex-direction: column; overflow: hidden; width: 100%; height: 100%; }
     .module-view.active { display: flex; }
 
@@ -286,12 +195,12 @@
       width: 100%; overflow: auto; background: var(--bg-panel); border-radius: 6px; border: 1px solid var(--border-color);
       height: 100%; box-shadow: 0 4px 10px rgba(0,0,0,0.2); user-select: text;
     }
-    
-    .table-wrapper table { width: 100%; border-collapse: separate; border-spacing: 0; }
+
+    .table-wrapper table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--report-font-scale); }
     .table-wrapper th {
       background: var(--table-header-bg) !important; color: #ffffff !important;
       padding: 8px 10px; text-align: left; vertical-align: middle; position: sticky; top: 0; z-index: 10;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15); font-size: calc(var(--report-font-scale) - 0.5px);
       font-weight: 800; letter-spacing: 0.3px; white-space: nowrap;
     }
     .table-wrapper th.num { text-align: right !important; }
@@ -329,12 +238,12 @@
       outline: 2px solid #f59e0b !important;
     }
 
-    .table-wrapper .num { text-align: right !important; font-family: 'Consolas', monospace; color: var(--text-main); }
-    .table-wrapper .total-row {
+    .table-wrapper .num { text-align: right !important; font-family: 'Consolas', monospace; font-size: calc(var(--report-font-scale) - 0.5px); color: var(--text-main); }
+    .table-wrapper .total-row, tfoot tr {
       background: var(--total-row-bg) !important; color: var(--total-row-text) !important; font-weight: bold;
-      position: sticky; bottom: 0; border-top: 2px solid #38bdf8; z-index: 15;
+      position: sticky; bottom: 0; border-top: 2px solid #38bdf8; font-size: var(--report-font-scale); z-index: 15;
     }
-    .table-wrapper .total-row td { color: var(--total-row-text) !important; font-weight: bold; }
+    .table-wrapper .total-row td, tfoot tr td { color: var(--total-row-text) !important; font-weight: bold; }
 
     .cell-dsr-name { font-weight: 700; color: var(--text-main) !important; font-size: 11.5px; text-align: left; }
     .cf-green { color: #10b981 !important; font-weight: bold; }
@@ -368,6 +277,59 @@
       border: 1px solid transparent; width: 100%; box-sizing: border-box;
     }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+    /* DSR PERFORMANCE STICKY HEADERS */
+    #dsrPerfTable th:first-child,
+    #dsrPerfView th:first-child,
+    #perfMainTable th:first-child,
+    #perfDivTable th:first-child {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 30 !important;
+      background: var(--table-header-bg, #132b4f) !important;
+      color: #ffffff !important;
+      border-right: 2px solid #38bdf8 !important;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    #dsrPerfTable td:first-child,
+    #dsrPerfView td:first-child,
+    #perfMainTable td:first-child,
+    #perfDivTable td:first-child {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 15 !important;
+      background: var(--bg-panel, #0b1526) !important;
+      color: var(--text-main, #f8fafc) !important;
+      font-weight: 700 !important;
+      border-right: 2px solid #38bdf8 !important;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    #dsrPerfTable tr:nth-child(even) td:first-child,
+    #perfMainTable tr:nth-child(even) td:first-child,
+    #perfDivTable tr:nth-child(even) td:first-child {
+      background: var(--bg-row-alt, #091222) !important;
+    }
+
+    #dsrPerfTable tr:hover td:first-child,
+    #perfMainTable tr:hover td:first-child,
+    #perfDivTable tr:hover td:first-child {
+      background: var(--bg-row-hover, #142442) !important;
+    }
+
+    #dsrPerfTable tfoot tr td:first-child,
+    #dsrPerfTable tr.total-row td:first-child,
+    #perfMainTable tr.total-row td:first-child,
+    #perfDivTable tr.total-row td:first-child {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 32 !important;
+      background: var(--total-row-bg, #1e3a5f) !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      border-right: 2px solid #38bdf8 !important;
+    }
   </style>
 </head>
 <body>
@@ -387,7 +349,7 @@
           <button onclick="switchMainModule('TARGET')">🎯 Target vs Achievement</button>
           <button onclick="switchMainModule('PRODUCTIVITY')">⚡ Unique Productivity (CM vs LM)</button>
           <button onclick="switchMainModule('STOCK_REPORT')">📦 Stock Report & Dispatch</button>
-          
+
           <div class="dropdown-submenu">
             <div class="dropdown-submenu-btn">
               <span>🚫 Zero Purchase Reports</span>
@@ -416,9 +378,25 @@
     </div>
 
     <div class="portal-actions">
+      <button class="btn-portal" style="background:#6366f1; border:1px solid #818cf8; font-weight:800;" onclick="syncAppFromGitHub()" title="Pull Latest Cloud Data">
+        🔄 Update App
+      </button>
+
+      <!-- UNIVERSAL SAME-LAYOUT EXCEL DOWNLOAD BUTTON -->
+      <button class="btn-util" style="background:#16a34a; border-color:#22c55e; color:#fff;" onclick="exportActiveReportToExcel()" title="Download Excel (Exact Same Layout)">
+        📥 Export Excel
+      </button>
+
+      <div class="header-utils">
+        <span style="font-size:10px; color:var(--text-muted);">Font:</span>
+        <button class="btn-util" onclick="changeReportFontSize(-1)">A-</button>
+        <button class="btn-util" onclick="resetReportFontSize()">A</button>
+        <button class="btn-util" onclick="changeReportFontSize(1)">A+</button>
+      </div>
+
       <button id="themeToggleBtn" class="btn-util" onclick="toggleTheme()">☀️ Light Mode</button>
-      
-      <button class="btn-util" style="background:#0284c7; border-color:#38bdf8; color:#fff;" onclick="openSettingsModal()" title="SnD & DSS Login Credentials">
+
+      <button class="btn-util" style="background:#0284c7; border-color:#38bdf8; color:#fff;" onclick="openSettingsModal()" title="Module Customization & Credentials">
         ⚙️ Settings
       </button>
 
@@ -428,69 +406,8 @@
     </div>
   </div>
 
-  <!-- EXCEL HOME RIBBON TOOLBAR -->
-  <div class="excel-ribbon-bar">
-    <!-- FONT FAMILY & SIZE -->
-    <div class="ribbon-group">
-      <select id="ribbonFontFamily" class="ribbon-select" style="min-width:115px;" onchange="applyExcelRibbonAction('fontFamily', this.value)">
-        <option value="'Calibri', 'Segoe UI', sans-serif" selected>Calibri</option>
-        <option value="'Aptos', sans-serif">Aptos</option>
-        <option value="'Segoe UI', sans-serif">Segoe UI</option>
-        <option value="'Arial', sans-serif">Arial</option>
-        <option value="'Consolas', monospace">Consolas</option>
-        <option value="'Tahoma', sans-serif">Tahoma</option>
-      </select>
-
-      <select id="ribbonFontSize" class="ribbon-select" style="min-width:48px;" onchange="applyExcelRibbonAction('fontSize', this.value)">
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12" selected>12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="16">16</option>
-        <option value="18">18</option>
-      </select>
-
-      <button class="ribbon-btn" title="Increase Font Size (A^)" onclick="applyExcelRibbonAction('fontGrow', 1)">A<sup>▲</sup></button>
-      <button class="ribbon-btn" title="Decrease Font Size (Av)" onclick="applyExcelRibbonAction('fontGrow', -1)">A<sup>▼</sup></button>
-    </div>
-
-    <div class="ribbon-divider"></div>
-
-    <!-- BOLD, ITALIC, UNDERLINE -->
-    <div class="ribbon-group">
-      <button id="ribbonBoldBtn" class="ribbon-btn" style="font-weight:900;" title="Bold" onclick="applyExcelRibbonAction('bold')"><b>B</b></button>
-      <button id="ribbonItalicBtn" class="ribbon-btn" style="font-style:italic;" title="Italic" onclick="applyExcelRibbonAction('italic')"><i>I</i></button>
-      <button id="ribbonUnderlineBtn" class="ribbon-btn" style="text-decoration:underline;" title="Underline" onclick="applyExcelRibbonAction('underline')"><u>U</u></button>
-    </div>
-
-    <div class="ribbon-divider"></div>
-
-    <!-- ALIGNMENT -->
-    <div class="ribbon-group">
-      <button class="ribbon-btn" title="Align Left" onclick="applyExcelRibbonAction('align', 'left')">⫷</button>
-      <button class="ribbon-btn" title="Align Center" onclick="applyExcelRibbonAction('align', 'center')">≡</button>
-      <button class="ribbon-btn" title="Align Right" onclick="applyExcelRibbonAction('align', 'right')">⫸</button>
-    </div>
-
-    <div class="ribbon-divider"></div>
-
-    <!-- COLOR PICKERS -->
-    <div class="ribbon-group">
-      <div class="color-picker-wrap" title="Fill Color (Background)">
-        <span class="ribbon-btn" style="color:#eab308;">🪣</span>
-        <input type="color" onchange="applyExcelRibbonAction('bgColor', this.value)" />
-      </div>
-
-      <div class="color-picker-wrap" title="Font Color">
-        <span class="ribbon-btn" style="color:#ef4444; text-decoration:underline; font-weight:900;">A</span>
-        <input type="color" onchange="applyExcelRibbonAction('textColor', this.value)" />
-      </div>
-
-      <button class="ribbon-btn" title="Reset Formatting on this page" style="color:#64748b; font-size:11px;" onclick="applyExcelRibbonAction('reset')">✕</button>
-    </div>
-  </div>
+  <!-- Live Alert Banner -->
+  <div id="liveBanner" class="live-alert-banner"></div>
 
   <!-- Main Workspace -->
   <div class="main-workspace">
@@ -506,14 +423,74 @@
     <div id="moduleAiBrainView" class="module-view"></div>
   </div>
 
-  <!-- MODALS -->
+  <!-- COMPLETE UNIVERSAL SETTINGS MODAL (ALL 11 MODULES) -->
   <div id="settingsModal" class="modal-overlay">
-    <div class="modal-box" style="width:500px;">
-      <div style="font-size:14px; font-weight:bold; color:#38bdf8; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
-        ⚙ System Portals Login Credentials
+    <div class="modal-box" style="width:680px; max-width:95vw;">
+      <div style="font-size:15px; font-weight:900; color:#38bdf8; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">
+        <span>⚙️ App & Module Customization Engine</span>
+        <span onclick="closeSettingsModal()" style="cursor:pointer; color:#94a3b8; font-size:16px;">✕</span>
       </div>
-      <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">SnD Pro aur DSS Portal ke credentials save karein:</p>
-      <div style="display:flex; flex-direction:column; gap:10px;">
+
+      <!-- Settings Tabs -->
+      <div style="display:flex; gap:8px; border-bottom:1px solid var(--border-color); padding-bottom:8px; margin-bottom:12px;">
+        <button id="tabBtnModuleConfig" class="btn-mode active" onclick="switchSettingsTab('MODULE_CONFIG')">🎨 Module & Report UI Settings</button>
+        <button id="tabBtnCredentials" class="btn-mode" onclick="switchSettingsTab('CREDENTIALS')">🌐 Portal Credentials</button>
+      </div>
+
+      <!-- TAB 1: MODULE UI & HEADER CUSTOMIZATION -->
+      <div id="settingsTabModuleConfig" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+          <label style="font-size:11px; font-weight:800; color:#f59e0b; display:block; margin-bottom:4px;">SELECT MODULE TO CONFIGURE:</label>
+          <select id="cfgModuleSelector" class="custom-select" style="width:100%; font-weight: bold;" onchange="loadSelectedModuleConfig(this.value)">
+            <option value="TARGET">🎯 Target vs Achievement (targetReport)</option>
+            <option value="DSR_PERFORMANCE">👤 DSR Performance & Execution (dsrPerformance)</option>
+            <option value="PRODUCTIVITY">⚡ Unique Productivity (productivityReport)</option>
+            <option value="STOCK_REPORT">📦 Stock Report & Total Dispatch (stockReport)</option>
+            <option value="DASHBOARD">📈 Executive Dashboard (dashboard)</option>
+            <option value="AI_BRAIN">🧠 AI Brain Analyzer (aiBrainAnalyzer)</option>
+            <option value="ZERO_SHOP">🏪 Shop Wise Zero Purchase (zeroShopWise)</option>
+            <option value="ZERO_BRAND">🏷️ Brand Wise Zero Purchase (zeroBrandWise)</option>
+            <option value="ZERO_SKU">📦 SKU Wise Zero Purchase (zeroSkuWise)</option>
+            <option value="ZERO_PURCHASE">🚫 General Zero Purchase (zeroPurchaseReport)</option>
+            <option value="SOURCE">📁 Source Files Manager (sourceFiles)</option>
+          </select>
+        </div>
+
+        <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:11.5px; font-weight:800; color:#38bdf8;">📸 WhatsApp Copy Card / Header Customization</div>
+          <div>
+            <label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Report Main Header Title (Copy Card Title):</label>
+            <input type="text" id="cfgReportTitle" class="modal-input" placeholder="e.g. TARGET VS ACHIEVEMENT REPORT" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div>
+              <label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Sub-Header / Mode Description:</label>
+              <input type="text" id="cfgReportSubMode" class="modal-input" placeholder="e.g. DSR WISE DETAILED REPORT" />
+            </div>
+            <div>
+              <label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Distributor Tag / Footer Brand:</label>
+              <input type="text" id="cfgDistributorTag" class="modal-input" placeholder="e.g. KHI – REHMAN ENT-BR2" />
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid var(--border-color); display:flex; flex-direction:column; gap:8px;">
+          <div style="font-size:11.5px; font-weight:800; color:#10b981;">🔤 Font & Layout Customization</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div>
+              <label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Table Font Size (px):</label>
+              <input type="number" id="cfgFontSize" class="modal-input" min="8" max="22" placeholder="11" />
+            </div>
+            <div>
+              <label style="font-size:10px; font-weight:bold; color:#94a3b8; display:block;">Row Cell Padding (px):</label>
+              <input type="number" id="cfgCellPadding" class="modal-input" min="2" max="15" placeholder="5" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PORTAL CREDENTIALS -->
+      <div id="settingsTabCredentials" style="display:none; flex-direction:column; gap:10px;">
         <div style="background:var(--bg-card); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
           <div style="font-size:11.5px; font-weight:800; color:#38bdf8; margin-bottom:6px;">🌐 SnD Pro Credentials</div>
           <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
@@ -530,9 +507,10 @@
           </div>
         </div>
       </div>
-      <div class="modal-actions">
+
+      <div class="modal-actions" style="margin-top:14px;">
         <button onclick="closeSettingsModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">Cancel</button>
-        <button onclick="saveAllSettingsCredentials()" style="background:#059669; color:#fff; border:none; padding:6px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">💾 Save Credentials</button>
+        <button onclick="saveCurrentSettings()" style="background:#059669; color:#fff; border:none; padding:6px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">💾 Save Settings</button>
       </div>
     </div>
   </div>
@@ -586,14 +564,13 @@
   <script>
     const { ipcRenderer, clipboard } = require('electron');
 
-    let currentActiveModuleKey = 'DASHBOARD';
     let allRecords = [];
     let liveCachedRecords = [];
     window.LIVE_CURRENT_SNAPSHOT = [];
     let currentMode = localStorage.getItem('savedTargetViewMode') || 'DSR';
     let currentMonthView = 'LM';
     let currentProdTab = 'DSR';
-    
+
     let lmDump = null;
     let cmDump = null;
     window.shopDataMaster = [];
@@ -636,170 +613,6 @@
     let daysLeft = Math.max(1, totalDays - daysGone);
     let timeGonePct = daysGone / totalDays;
 
-    // -------------------------------------------------------------
-    // PER-PAGE FORMATTING MEMORY STORE (STRICTLY INDEPENDENT)
-    // -------------------------------------------------------------
-    let pageFormatStore = JSON.parse(localStorage.getItem('appPageFormatStore') || '{}');
-
-    function getPageFormat(modKey) {
-      if (!pageFormatStore[modKey]) {
-        pageFormatStore[modKey] = {
-          fontFamily: "'Calibri', 'Segoe UI', sans-serif",
-          fontSize: (modKey === 'STOCK_REPORT' ? 11 : 12),
-          bold: false,
-          italic: false,
-          underline: false,
-          align: 'left'
-        };
-      }
-      return pageFormatStore[modKey];
-    }
-
-    function savePageFormat(modKey, formatObj) {
-      pageFormatStore[modKey] = formatObj;
-      localStorage.setItem('appPageFormatStore', JSON.stringify(pageFormatStore));
-    }
-
-    function applyFormattingToModule(modKey) {
-      const cfg = getPageFormat(modKey);
-      const viewMap = {
-        'DASHBOARD': document.getElementById('moduleDashboardView'),
-        'TARGET': document.getElementById('moduleTargetView'),
-        'PRODUCTIVITY': document.getElementById('moduleProdView'),
-        'STOCK_REPORT': document.getElementById('moduleStockView'),
-        'ZERO_SHOP': document.getElementById('moduleZeroShopView'),
-        'ZERO_BRAND': document.getElementById('moduleZeroBrandView'),
-        'ZERO_SKU': document.getElementById('moduleZeroSkuView'),
-        'DSR_PERFORMANCE': document.getElementById('moduleDsrPerfView')
-      };
-
-      const viewEl = viewMap[modKey];
-      if (!viewEl) return;
-
-      // Apply specifically to all tables, th and td inside this page
-      const allTables = viewEl.querySelectorAll('table');
-      allTables.forEach(tbl => {
-        tbl.style.fontFamily = cfg.fontFamily;
-        tbl.style.fontSize = cfg.fontSize + 'px';
-
-        tbl.querySelectorAll('th, td').forEach(cell => {
-          cell.style.fontFamily = cfg.fontFamily;
-          cell.style.fontSize = cfg.fontSize + 'px';
-          if (cfg.bold) cell.style.fontWeight = '900';
-          if (cfg.italic) cell.style.fontStyle = 'italic';
-          if (cfg.underline) cell.style.textDecoration = 'underline';
-          if (cfg.align && !cell.classList.contains('num')) cell.style.textAlign = cfg.align;
-        });
-      });
-
-      // Synchronize Ribbon Toolbar UI
-      const fFamSelect = document.getElementById('ribbonFontFamily');
-      const fSizeSelect = document.getElementById('ribbonFontSize');
-      const bBtn = document.getElementById('ribbonBoldBtn');
-      const iBtn = document.getElementById('ribbonItalicBtn');
-      const uBtn = document.getElementById('ribbonUnderlineBtn');
-
-      if (fFamSelect) fFamSelect.value = cfg.fontFamily;
-      if (fSizeSelect) fSizeSelect.value = String(cfg.fontSize);
-      if (bBtn) bBtn.classList.toggle('active', !!cfg.bold);
-      if (iBtn) iBtn.classList.toggle('active', !!cfg.italic);
-      if (uBtn) uBtn.classList.toggle('active', !!cfg.underline);
-    }
-
-    function applyExcelRibbonAction(action, val) {
-      const modKey = currentActiveModuleKey;
-      const cfg = getPageFormat(modKey);
-      const viewEl = document.querySelector('.module-view.active');
-      if (!viewEl) return;
-
-      const selectedRows = Array.from(viewEl.querySelectorAll('tbody tr.excel-selected'));
-      const targetRows = selectedRows.length > 0 ? selectedRows : Array.from(viewEl.querySelectorAll('tbody tr'));
-
-      if (action === 'fontFamily') {
-        cfg.fontFamily = val;
-        savePageFormat(modKey, cfg);
-        applyFormattingToModule(modKey);
-        showBannerAlert(`Font family for this page set to ${val.split(',')[0]}!`, "#0284c7");
-      }
-      else if (action === 'fontSize') {
-        cfg.fontSize = parseInt(val, 10);
-        savePageFormat(modKey, cfg);
-        applyFormattingToModule(modKey);
-        showBannerAlert(`Font size for this page set to ${cfg.fontSize}px!`, "#0284c7");
-      }
-      else if (action === 'fontGrow') {
-        cfg.fontSize = Math.min(22, Math.max(8, cfg.fontSize + val));
-        savePageFormat(modKey, cfg);
-        applyFormattingToModule(modKey);
-        showBannerAlert(`Font size: ${cfg.fontSize}px`, "#0284c7");
-      }
-      else if (action === 'bold') {
-        if (selectedRows.length > 0) {
-          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.fontWeight = '900'));
-        } else {
-          cfg.bold = !cfg.bold;
-          savePageFormat(modKey, cfg);
-          applyFormattingToModule(modKey);
-        }
-      }
-      else if (action === 'italic') {
-        if (selectedRows.length > 0) {
-          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.fontStyle = 'italic'));
-        } else {
-          cfg.italic = !cfg.italic;
-          savePageFormat(modKey, cfg);
-          applyFormattingToModule(modKey);
-        }
-      }
-      else if (action === 'underline') {
-        if (selectedRows.length > 0) {
-          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.textDecoration = 'underline'));
-        } else {
-          cfg.underline = !cfg.underline;
-          savePageFormat(modKey, cfg);
-          applyFormattingToModule(modKey);
-        }
-      }
-      else if (action === 'align') {
-        if (selectedRows.length > 0) {
-          targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.textAlign = val));
-        } else {
-          cfg.align = val;
-          savePageFormat(modKey, cfg);
-          applyFormattingToModule(modKey);
-        }
-        showBannerAlert(`Aligned: ${val.toUpperCase()}`, "#0284c7");
-      }
-      else if (action === 'bgColor') {
-        targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.backgroundColor = val));
-        showBannerAlert("Fill color applied!", "#0284c7");
-      }
-      else if (action === 'textColor') {
-        targetRows.forEach(r => r.querySelectorAll('td').forEach(c => c.style.color = val));
-        showBannerAlert("Font color applied!", "#0284c7");
-      }
-      else if (action === 'reset') {
-        cfg.fontFamily = "'Calibri', 'Segoe UI', sans-serif";
-        cfg.fontSize = (modKey === 'STOCK_REPORT' ? 11 : 12);
-        cfg.bold = false;
-        cfg.italic = false;
-        cfg.underline = false;
-        cfg.align = 'left';
-        savePageFormat(modKey, cfg);
-        
-        viewEl.querySelectorAll('td, th').forEach(c => {
-          c.style.backgroundColor = '';
-          c.style.color = '';
-          c.style.fontWeight = '';
-          c.style.fontStyle = '';
-          c.style.textDecoration = '';
-          c.style.textAlign = '';
-        });
-        applyFormattingToModule(modKey);
-        showBannerAlert("Page formatting reset!", "#64748b");
-      }
-    }
-
     function startLiveClock() {
       function update() {
         const d = new Date();
@@ -826,7 +639,6 @@
       if (window.DashboardModule && typeof DashboardModule.update === 'function') DashboardModule.update();
       if (window.DsrPerformanceModule && typeof DsrPerformanceModule.renderTable === 'function') DsrPerformanceModule.renderTable();
       if (window.StockReportModule && typeof StockReportModule.renderTable === 'function') StockReportModule.renderTable();
-      applyFormattingToModule(currentActiveModuleKey);
     }
     function toggleTheme() {
       isLightMode = !isLightMode;
@@ -867,8 +679,6 @@
     }
 
     function switchMainModule(mod) {
-      currentActiveModuleKey = mod;
-
       document.getElementById('navBtnDash')?.classList.toggle('active', mod === 'DASHBOARD');
       document.getElementById('navBtnReports')?.classList.toggle('active', ['TARGET', 'PRODUCTIVITY', 'STOCK_REPORT', 'ZERO_SHOP', 'ZERO_BRAND', 'ZERO_SKU'].includes(mod));
       document.getElementById('navBtnSource')?.classList.toggle('active', mod === 'SOURCE');
@@ -912,9 +722,8 @@
         SourceFilesModule.updateStatus();
       }
 
-      // Synchronize and apply independent page formatting
       setTimeout(() => {
-        applyFormattingToModule(mod);
+        applyReportFont();
       }, 50);
     }
 
@@ -930,7 +739,7 @@
         if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
           if (window.TargetModule) TargetModule.renderTable();
         }
-        applyFormattingToModule(currentActiveModuleKey);
+        pushSalesToCloud(payload.data);
       }
     });
 
@@ -938,7 +747,6 @@
       showBannerAlert("📦 SnD Stock Report auto-downloaded & processed!", "#10b981");
       if (document.getElementById('moduleStockView')?.classList.contains('active')) {
         StockReportModule.renderTable();
-        applyFormattingToModule('STOCK_REPORT');
       }
     });
 
@@ -946,7 +754,6 @@
       showBannerAlert("🚚 Total Dispatch auto-merged!", "#10b981");
       if (document.getElementById('moduleStockView')?.classList.contains('active')) {
         StockReportModule.renderTable();
-        applyFormattingToModule('STOCK_REPORT');
       }
     });
 
@@ -958,7 +765,6 @@
       if (document.getElementById('moduleProdView')?.classList.contains('active')) {
         populateProdFilters();
         if (window.ProductivityModule) ProductivityModule.renderTable();
-        applyFormattingToModule('PRODUCTIVITY');
       }
     });
 
@@ -977,27 +783,23 @@
     function switchMonthView(mode) {
       currentMonthView = mode;
       if (window.ProductivityModule) ProductivityModule.renderTable();
-      applyFormattingToModule('PRODUCTIVITY');
     }
 
     function switchProductivitySubTab(tab) {
       currentProdTab = tab;
       if (window.ProductivityModule) ProductivityModule.renderTable();
-      applyFormattingToModule('PRODUCTIVITY');
     }
 
     function onBarDateFilterChange(type, val) {
       if (type === 'from') lmSelectedFrom = val;
       if (type === 'to') lmSelectedTo = val;
       if (window.ProductivityModule) ProductivityModule.renderTable();
-      applyFormattingToModule('PRODUCTIVITY');
     }
 
     function onCmRangeDateChange(type, val) {
       if (type === 'from') cmSelectedFrom = val;
       if (type === 'to') cmSelectedTo = val;
       if (window.ProductivityModule) ProductivityModule.renderTable();
-      applyFormattingToModule('PRODUCTIVITY');
     }
 
     function onAdjustProdTimeGone() {
@@ -1016,7 +818,6 @@
       if (dl) dl.innerText = prodDaysLeft;
       if (tg) tg.innerText = (prodTimeGonePct * 100).toFixed(1) + '%';
       if (window.ProductivityModule) ProductivityModule.renderTable();
-      applyFormattingToModule('PRODUCTIVITY');
     }
 
     function copyProductivitySummary() {
@@ -1065,7 +866,7 @@
 
     function populateProdFilters() {
       const activeDump = (cmDump ? cmDump.deliveredRecords : []) || (lmDump ? lmDump.deliveredRecords : []) || [];
-      
+
       const rawDsrs = [...new Set(activeDump.map(r => r.rawDsr || r.dsr))].filter(Boolean).sort();
       const dsrSelect = document.getElementById('selectDSRFilterProd');
       if (dsrSelect) {
@@ -1085,35 +886,30 @@
     window.applyHistoryDateRange = function() {
       if (window.TargetModule && typeof TargetModule.applyHistoryDateRange === 'function') {
         TargetModule.applyHistoryDateRange();
-        applyFormattingToModule('TARGET');
       }
     };
 
     window.revertToLiveView = function() {
       if (window.TargetModule && typeof TargetModule.revertToLiveView === 'function') {
         TargetModule.revertToLiveView();
-        applyFormattingToModule('TARGET');
       }
     };
 
     function switchMode(m) {
       if (window.TargetModule && typeof TargetModule.switchMode === 'function') {
         TargetModule.switchMode(m);
-        applyFormattingToModule('TARGET');
       }
     }
 
     function onAdjustTimeGone() {
       if (window.TargetModule && typeof TargetModule.onAdjustTimeGone === 'function') {
         TargetModule.onAdjustTimeGone();
-        applyFormattingToModule('TARGET');
       }
     }
 
     function showAllData() {
       if (window.TargetModule && typeof TargetModule.showAllData === 'function') {
         TargetModule.showAllData();
-        applyFormattingToModule('TARGET');
       }
     }
 
@@ -1126,14 +922,12 @@
     function updateReportLive() {
       if (window.TargetModule && typeof TargetModule.updateReportLive === 'function') {
         TargetModule.updateReportLive();
-        applyFormattingToModule('TARGET');
       }
     }
 
     function onDropdownFilterChange(type, val) {
       if (window.TargetModule && typeof TargetModule.onDropdownFilterChange === 'function') {
         TargetModule.onDropdownFilterChange(type, val);
-        applyFormattingToModule('TARGET');
       }
     }
 
@@ -1223,6 +1017,7 @@
       if (selectedCustomSKUs.size === 0) return alert("Kam az kam ek SKU select karein!");
       customBrandsMap[bName] = Array.from(selectedCustomSKUs);
       await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+      pushCustomBrandsToCloud(customBrandsMap);
       closeCustomBrandModal();
       populateDropdowns();
       showBannerAlert(`🎉 Custom Brand '${bName}' save ho gaya!`, "#10b981");
@@ -1247,6 +1042,7 @@
       if (confirm(`Custom brand '${bName}' delete karna hai?`)) {
         delete customBrandsMap[bName];
         await ipcRenderer.invoke('save-custom-brands', customBrandsMap);
+        pushCustomBrandsToCloud(customBrandsMap);
         renderCustomBrandPills();
         populateDropdowns();
         showBannerAlert(`🗑️ Custom Brand '${bName}' delete ho gaya!`, "#dc2626");
@@ -1260,14 +1056,13 @@
         activeBrand = 'ALL';
         populateDropdowns();
         if (window.TargetModule) TargetModule.renderTable();
-        applyFormattingToModule('TARGET');
       }
     }
 
     async function loadSavedData() {
       const cRes = await ipcRenderer.invoke('get-custom-brands');
       if (cRes && cRes.success) customBrandsMap = cRes.customBrands || {};
-      
+
       const res = await ipcRenderer.invoke('get-target-report-data');
       if (res && res.success && res.data && res.data.length > 0) {
         allRecords = res.data;
@@ -1276,7 +1071,6 @@
         activeArea = 'ALL'; activeDist = 'ALL'; activeBrand = 'ALL'; activeDSR = 'ALL';
         populateDropdowns();
         if (window.TargetModule) TargetModule.renderTable();
-        applyFormattingToModule('TARGET');
       }
     }
 
@@ -1316,6 +1110,15 @@
     let activeAnchorRow = null;
 
     function getActiveTableElement() {
+      if (activeAnchorRow && activeAnchorRow.closest('table')) {
+        return activeAnchorRow.closest('table');
+      }
+
+      const focusedRow = document.querySelector('tr.excel-active-focus, tr.excel-selected');
+      if (focusedRow && focusedRow.closest('table')) {
+        return focusedRow.closest('table');
+      }
+
       const activeView = document.querySelector('.module-view.active');
       if (!activeView) return document.getElementById('mainTable') || document.querySelector('table');
       return activeView.querySelector('table') || document.getElementById('mainTable');
@@ -1324,7 +1127,7 @@
     function getActiveTableRows() {
       const table = getActiveTableElement();
       if (!table) return [];
-      return Array.from(table.querySelectorAll('tbody tr'));
+      return Array.from(table.querySelectorAll('tbody tr, tfoot tr'));
     }
 
     function clearExcelSelection() {
@@ -1337,14 +1140,14 @@
     document.addEventListener('click', function(e) {
       if (['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
-      const td = e.target.closest('tbody td');
+      const td = e.target.closest('tbody td, tfoot td');
       if (!td) return;
 
       const currentRow = td.closest('tr');
       const table = currentRow ? currentRow.closest('table') : null;
       if (!table || !currentRow) return;
 
-      const allRows = Array.from(table.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+      const allRows = Array.from(table.querySelectorAll('tbody tr, tfoot tr')).filter(r => r.style.display !== 'none');
       const currentIndex = allRows.indexOf(currentRow);
 
       if (e.shiftKey && activeAnchorRow && activeAnchorRow.closest('table') === table) {
@@ -1375,10 +1178,310 @@
     function attachExcelSelectionListeners() {}
 
     // -------------------------------------------------------------
-    // HD IMAGE CLIPBOARD ENGINE WITH DYNAMIC REPORT HEADER CARD
+    // UNIVERSAL MODULE CONFIGURATION REPOSITORY (ALL 11 MODULES)
+    // -------------------------------------------------------------
+    const DEFAULT_MODULE_CONFIGS = {
+      TARGET: {
+        title: '🎯 TARGET VS ACHIEVEMENT REPORT',
+        subMode: 'DSR WISE DETAILED REPORT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      DSR_PERFORMANCE: {
+        title: '👤 DSR PERFORMANCE & EXECUTION REPORT',
+        subMode: 'TARGET VS EXECUTION & GROWTH SUMMARY',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 4
+      },
+      PRODUCTIVITY: {
+        title: '⚡ UNIQUE PRODUCTIVITY REPORT',
+        subMode: 'MONTHLY UNIQUE PRODUCTIVITY AUDIT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      STOCK_REPORT: {
+        title: '📦 CURRENT STOCK & TOTAL DISPATCH REPORT',
+        subMode: 'CLOSING BALANCE + LOAD DISPATCH AUDIT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      DASHBOARD: {
+        title: '📈 EXECUTIVE SALES DASHBOARD',
+        subMode: 'REAL-TIME KPI METRICS & PERFORMANCE',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 12,
+        cellPadding: 6
+      },
+      AI_BRAIN: {
+        title: '🧠 AI BRAIN ANALYZER REPORT',
+        subMode: 'DEEP SALES GAP & ANOMALY DETECTION',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      ZERO_SHOP: {
+        title: '🏪 SHOP WISE ZERO PURCHASE AUDIT',
+        subMode: 'UNBILLED OUTLETS ROUTE AUDIT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      ZERO_BRAND: {
+        title: '🏷️ BRAND WISE ZERO PURCHASE AUDIT',
+        subMode: 'BRAND PENETRATION & ZERO DEFICIT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      ZERO_SKU: {
+        title: '📦 SKU WISE ZERO PURCHASE AUDIT',
+        subMode: 'NON-SELLING SKUs AUDIT REPORT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      ZERO_PURCHASE: {
+        title: '🚫 MASTER ZERO PURCHASE AUDIT',
+        subMode: 'COMPLETE ZERO COVERAGE AUDIT',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      },
+      SOURCE: {
+        title: '📁 SOURCE FILES AUDIT LOG',
+        subMode: 'ACTIVE DUMPS & SYNCHRONIZATION STATUS',
+        distributor: 'KHI – REHMAN ENT-BR2',
+        fontSize: 11,
+        cellPadding: 5
+      }
+    };
+
+    function getModuleConfig(modKey) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('appModuleConfig_' + modKey) || '{}');
+        return Object.assign({}, DEFAULT_MODULE_CONFIGS[modKey] || DEFAULT_MODULE_CONFIGS.TARGET, saved);
+      } catch (e) {
+        return DEFAULT_MODULE_CONFIGS[modKey] || DEFAULT_MODULE_CONFIGS.TARGET;
+      }
+    }
+
+    function saveModuleConfig(modKey, newCfg) {
+      localStorage.setItem('appModuleConfig_' + modKey, JSON.stringify(newCfg));
+      localStorage.setItem('reportTableFont_' + modKey, newCfg.fontSize);
+      applyReportFont();
+    }
+
+    // -------------------------------------------------------------
+    // SETTINGS MODAL ENGINE (CLOSE, SAVE & TAB HANDLERS)
+    // -------------------------------------------------------------
+    function closeSettingsModal() {
+      const modal = document.getElementById('settingsModal');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    function switchSettingsTab(tab) {
+      const btnMod = document.getElementById('tabBtnModuleConfig');
+      const btnCred = document.getElementById('tabBtnCredentials');
+      const tabMod = document.getElementById('settingsTabModuleConfig');
+      const tabCred = document.getElementById('settingsTabCredentials');
+
+      if (btnMod) btnMod.classList.toggle('active', tab === 'MODULE_CONFIG');
+      if (btnCred) btnCred.classList.toggle('active', tab === 'CREDENTIALS');
+      if (tabMod) tabMod.style.display = (tab === 'MODULE_CONFIG') ? 'flex' : 'none';
+      if (tabCred) tabCred.style.display = (tab === 'CREDENTIALS') ? 'flex' : 'none';
+    }
+
+    function loadSelectedModuleConfig(modKey) {
+      const cfg = getModuleConfig(modKey);
+      const tInp = document.getElementById('cfgReportTitle');
+      const sInp = document.getElementById('cfgReportSubMode');
+      const dInp = document.getElementById('cfgDistributorTag');
+      const fInp = document.getElementById('cfgFontSize');
+      const pInp = document.getElementById('cfgCellPadding');
+
+      if (tInp) tInp.value = cfg.title || '';
+      if (sInp) sInp.value = cfg.subMode || '';
+      if (dInp) dInp.value = cfg.distributor || '';
+      if (fInp) fInp.value = cfg.fontSize || 11;
+      if (pInp) pInp.value = cfg.cellPadding || 5;
+    }
+
+    async function openSettingsModal() {
+      const activeMod = getActiveModuleKey();
+      const selector = document.getElementById('cfgModuleSelector');
+      if (selector) {
+        selector.value = DEFAULT_MODULE_CONFIGS[activeMod] ? activeMod : 'TARGET';
+        loadSelectedModuleConfig(selector.value);
+      }
+
+      try {
+        const res = await ipcRenderer.invoke('get-all-credentials');
+        if (res && res.success && res.credentials) {
+          const sDist = document.getElementById('settingSndDist');
+          const sUser = document.getElementById('settingSndUser');
+          const sPass = document.getElementById('settingSndPass');
+          const dUser = document.getElementById('settingDssUser');
+          const dPass = document.getElementById('settingDssPass');
+
+          if (sDist) sDist.value = res.credentials.snd?.distributor || '';
+          if (sUser) sUser.value = res.credentials.snd?.username || '';
+          if (sPass) sPass.value = res.credentials.snd?.password || '';
+          if (dUser) dUser.value = res.credentials.dss?.username || '';
+          if (dPass) dPass.value = res.credentials.dss?.password || '';
+        }
+      } catch(e) {}
+
+      switchSettingsTab('MODULE_CONFIG');
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    async function saveCurrentSettings() {
+      try {
+        const sel = document.getElementById('cfgModuleSelector');
+        const modKey = sel ? sel.value : 'TARGET';
+
+        const tVal = document.getElementById('cfgReportTitle')?.value || '';
+        const sVal = document.getElementById('cfgReportSubMode')?.value || '';
+        const dVal = document.getElementById('cfgDistributorTag')?.value || '';
+        const fVal = parseInt(document.getElementById('cfgFontSize')?.value, 10) || 11;
+        const pVal = parseInt(document.getElementById('cfgCellPadding')?.value, 10) || 5;
+
+        const updatedCfg = {
+          title: tVal.trim(),
+          subMode: sVal.trim(),
+          distributor: dVal.trim(),
+          fontSize: fVal,
+          cellPadding: pVal
+        };
+
+        saveModuleConfig(modKey, updatedCfg);
+
+        try {
+          await saveAllSettingsCredentials();
+        } catch(e) {}
+
+        closeSettingsModal();
+        showBannerAlert(`🎉 Settings successfully saved for ${modKey}!`, "#10b981");
+
+        applyReportFont();
+        const currentActive = getActiveModuleKey();
+        if (currentActive === 'DSR_PERFORMANCE' && window.DsrPerformanceModule) DsrPerformanceModule.renderTable();
+        if (currentActive === 'TARGET' && window.TargetModule) TargetModule.renderTable();
+        if (currentActive === 'PRODUCTIVITY' && window.ProductivityModule) ProductivityModule.renderTable();
+        if (currentActive === 'STOCK_REPORT' && window.StockReportModule) StockReportModule.renderTable();
+        if (currentActive === 'DASHBOARD' && window.DashboardModule) DashboardModule.update();
+      } catch (err) {
+        console.error("Save error:", err);
+        closeSettingsModal();
+      }
+    }
+
+    async function saveAllSettingsCredentials() {
+      const sndDist = document.getElementById('settingSndDist').value.trim();
+      const sndUser = document.getElementById('settingSndUser').value.trim();
+      const sndPass = document.getElementById('settingSndPass').value.trim();
+      const dssUser = document.getElementById('settingDssUser').value.trim();
+      const dssPass = document.getElementById('settingDssPass').value.trim();
+
+      await ipcRenderer.invoke('save-all-credentials', {
+        snd: { distributor: sndDist, username: sndUser, password: sndPass },
+        dss: { username: dssUser, password: dssPass }
+      });
+    }
+
+    // -------------------------------------------------------------
+    // UNIVERSAL EXACT-LAYOUT EXCEL DOWNLOADER
+    // -------------------------------------------------------------
+    async function exportActiveReportToExcel() {
+      const table = getActiveTableElement();
+      if (!table) return alert("Download karne ke liye koi table nahi mila!");
+
+      const modKey = getActiveModuleKey();
+      const cfg = getModuleConfig(modKey);
+      const reportTitle = cfg.title || 'Sales Performance Report';
+
+      // 1. Extract Headers (Multi-Tier)
+      const headers = [];
+      const thead = table.querySelector('thead');
+      if (thead) {
+        thead.querySelectorAll('tr').forEach(tr => {
+          const rowVals = [];
+          tr.querySelectorAll('th').forEach(th => {
+            rowVals.push(th.innerText.replace(/\n/g, ' ').trim());
+          });
+          if (rowVals.length) headers.push(rowVals);
+        });
+      }
+
+      // 2. Extract Data Rows
+      const rows = [];
+      const tbody = table.querySelector('tbody');
+      if (tbody) {
+        tbody.querySelectorAll('tr').forEach(tr => {
+          if (tr.style.display === 'none') return;
+          const rVals = [];
+          tr.querySelectorAll('td').forEach(td => {
+            const raw = td.innerText.trim();
+            const cleanNum = raw.replace(/,/g, '').replace(/%/g, '');
+            const parsed = parseFloat(cleanNum);
+            if (!isNaN(parsed) && cleanNum !== '' && !raw.includes('-') && !raw.includes('/')) {
+              rVals.push(parsed);
+            } else {
+              rVals.push(raw);
+            }
+          });
+          if (rVals.length) rows.push(rVals);
+        });
+      }
+
+      // 3. Extract Total Row
+      const totalRow = [];
+      const tfoot = table.querySelector('tfoot') || tbody.querySelector('tr.grandtotal-row');
+      if (tfoot) {
+        const targetRow = tfoot.tagName === 'TR' ? tfoot : tfoot.querySelector('tr');
+        if (targetRow) {
+          targetRow.querySelectorAll('td').forEach(td => {
+            const raw = td.innerText.trim();
+            const cleanNum = raw.replace(/,/g, '').replace(/%/g, '');
+            const parsed = parseFloat(cleanNum);
+            if (!isNaN(parsed) && cleanNum !== '' && !raw.includes('-') && !raw.includes('/')) {
+              totalRow.push(parsed);
+            } else {
+              totalRow.push(raw);
+            }
+          });
+        }
+      }
+
+      showBannerAlert("📥 Excel file generate ho rahi hai...", "#0284c7");
+
+      const res = await ipcRenderer.invoke('export-table-to-excel', {
+        defaultName: modKey.toLowerCase() + '_report',
+        reportTitle: reportTitle,
+        headers: headers,
+        rows: rows,
+        totalRow: totalRow
+      });
+
+      if (res && res.success) {
+        showBannerAlert(`🎉 ${res.message}`, "#10b981");
+      } else if (res && res.message) {
+        showBannerAlert(res.message, "#ef4444");
+      }
+    }
+
+    // -------------------------------------------------------------
+    // ULTRA-HD IMAGE CLIPBOARD ENGINE (WITH TOTAL ROW PRESERVATION)
     // -------------------------------------------------------------
     async function captureAndCopyHDImage(rowsToCapture, sourceTable) {
-      showBannerAlert("📸 WhatsApp ke liye HD Card ban raha hai (Heading ke sath)...", "#0284c7");
+      showBannerAlert("📸 WhatsApp ke liye Ultra-HD Razor Sharp Card ban raha hai...", "#0284c7");
 
       const isLight = document.body.classList.contains('light-theme');
       const cardBg = isLight ? '#ffffff' : '#070e1b';
@@ -1388,29 +1491,24 @@
       const subTextColor = isLight ? '#475569' : '#94a3b8';
       const dateBadgeBg = isLight ? '#e2e8f0' : '#132b4f';
       const dateBadgeColor = isLight ? '#b45309' : '#f59e0b';
-      const cellBorder = isLight ? '#cbd5e1' : '#1e2e4a';
-      const baseTextColor = isLight ? '#0f172a' : '#ffffff';
 
-      const isStock = (sourceTable.id === 'stockMainTable' || sourceTable.id === 'stockMissingTable');
-      const isProd = (sourceTable.id === 'prodTable');
-      const isDsrPerf = (sourceTable.id === 'dsrPerfTable');
+      const modKey = getActiveModuleKey();
+      const cfg = getModuleConfig(modKey);
 
-      let reportTitle = '🎯 TARGET VS ACHIEVEMENT REPORT';
-      let reportSubMode = (currentMode === 'DIVISION' ? 'DSR WISE DIVISION SUMMARY (CTN ONLY)' : (currentMode === 'BRAND' ? 'BRAND CLUB SUMMARY' : 'DSR WISE DETAILED REPORT'));
+      let reportTitle = cfg.title;
+      let reportSubMode = cfg.subMode;
+      let selDist = cfg.distributor;
 
-      if (isStock) {
-        reportTitle = '📦 CURRENT STOCK & TODAY DISPATCH REPORT';
-        reportSubMode = 'STOCK CLOSING BALANCE + TOTAL DISPATCH';
-      } else if (isProd) {
-        reportTitle = '⚡ UNIQUE PRODUCTIVITY REPORT';
-        reportSubMode = `${currentMonthView} - ${currentProdTab} WISE COMPLETE ANALYSIS`;
-      } else if (isDsrPerf) {
-        reportTitle = '👤 DSR PERFORMANCE REPORT';
-        reportSubMode = 'BOOKING VS EXECUTION & ROUTING';
+      if (modKey === 'TARGET' && typeof currentMode !== 'undefined') {
+        reportSubMode = (currentMode === 'DIVISION') ? 'DSR WISE DIVISION SUMMARY (CTN ONLY)' : (currentMode === 'BRAND' ? 'BRAND CLUB SUMMARY' : cfg.subMode);
       }
 
       let dateTag = `Date: ${new Date().toLocaleDateString('en-GB')}`;
-      if (isProd) {
+      if (modKey === 'DSR_PERFORMANCE') {
+        const sD = document.getElementById('perfStartDate')?.value;
+        const eD = document.getElementById('perfEndDate')?.value;
+        if (sD && eD) dateTag = `Range: ${sD} to ${eD}`;
+      } else if (modKey === 'PRODUCTIVITY') {
         const dFrom = (currentMonthView === 'CM') ? (document.getElementById('cmFromDate')?.value || cmSelectedFrom) : (document.getElementById('lmFromDate')?.value || lmSelectedFrom);
         const dTo = (currentMonthView === 'CM') ? (document.getElementById('cmToDate')?.value || cmSelectedTo) : (document.getElementById('lmToDate')?.value || lmSelectedTo);
         if (dFrom && dTo) dateTag = `Range: ${dFrom} to ${dTo}`;
@@ -1420,21 +1518,21 @@
         if (hFrom && hTo) dateTag = `Range: ${hFrom} to ${hTo}`;
       }
 
-      const selDist = isStock ? 'KHI – REHMAN ENT-BR2' : (document.getElementById('selectDist')?.value || 'KHI – REHMAN ENT-BR2');
-      const selDsr = isProd ? (document.getElementById('selectDSRFilterProd')?.value || 'ALL') : (document.getElementById('selectDSR')?.value || 'ALL');
-
       const captureBox = document.createElement('div');
       captureBox.style.cssText = `
         position: fixed;
         left: -99999px;
         top: 0px;
         background: ${cardBg};
-        padding: 14px;
+        padding: 12px;
         border: 2px solid #0284c7;
-        border-radius: 8px;
-        width: max-content;
-        min-width: 820px;
+        border-radius: 6px;
+        display: inline-block;
+        width: max-content !important;
         box-sizing: border-box;
+        font-family: 'Segoe UI', Calibri, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
       `;
 
       const headerDiv = document.createElement('div');
@@ -1444,104 +1542,91 @@
         align-items: center;
         background: ${headerBoxBg};
         border: 1.5px solid ${headerBoxBorder};
-        border-radius: 6px;
-        padding: 9px 14px;
-        margin-bottom: 10px;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        width: 100%;
+        box-sizing: border-box;
       `;
       headerDiv.innerHTML = `
-        <div>
-          <div style="font-size: 14.5px; font-weight: 900; color: ${titleColor}; letter-spacing: 0.4px; text-transform: uppercase;">
+        <div style="flex-shrink: 0; margin-right: 30px;">
+          <div style="font-size: 13.5px; font-weight: 900; color: ${titleColor}; letter-spacing: 0.4px; text-transform: uppercase;">
             ${reportTitle}
           </div>
-          <div style="font-size: 11px; color: ${subTextColor}; margin-top: 2px;">
-            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist} ${selDsr !== 'ALL' ? `&nbsp;|&nbsp; <b>DSR:</b> ${selDsr}` : ''}
+          <div style="font-size: 10px; color: ${subTextColor}; margin-top: 2px; font-weight: 700;">
+            <b>Mode:</b> ${reportSubMode} &nbsp;|&nbsp; <b>Distributor:</b> ${selDist}
           </div>
         </div>
-        <div style="text-align: right;">
-          <div style="font-size: 11px; font-weight: 800; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 9px; border-radius: 4px; border: 1px solid #0284c7;">
+        <div style="text-align: right; flex-shrink: 0;">
+          <div style="font-size: 10.5px; font-weight: 900; color: ${dateBadgeColor}; background: ${dateBadgeBg}; padding: 3px 8px; border-radius: 4px; border: 1.5px solid #0284c7;">
             📅 ${dateTag}
           </div>
-          <div style="font-size: 9px; color: ${subTextColor}; margin-top: 3px; font-weight: bold;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
+          <div style="font-size: 8px; color: ${subTextColor}; margin-top: 3px; font-weight: 800;">MULTI TRACKING SYSTEM • DANISH RAIS</div>
         </div>
       `;
       captureBox.appendChild(headerDiv);
 
       const clonedTable = document.createElement('table');
+      clonedTable.className = sourceTable.className || 'exec-table';
       clonedTable.style.cssText = `
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: ${cfg.fontSize}px;
         width: 100%;
-        border-collapse: collapse;
-        font-size: 11px;
-        background: ${cardBg};
-        color: ${baseTextColor};
+        table-layout: auto;
       `;
 
       const origThead = sourceTable.querySelector('thead');
       if (origThead) {
-        const theadClone = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-        const ths = Array.from(origThead.querySelectorAll('th')).filter(th => th.style.display !== 'none');
-        
-        const startIndex = isStock && ths.length > 2 && ths[0].innerText.toLowerCase().includes('brand') ? 1 : 0;
-        const defaultThBg = isStock ? '#2980b9' : (isLight ? '#1e3a5f' : '#132b4f');
-
-        for (let i = startIndex; i < ths.length; i++) {
-          const thClone = ths[i].cloneNode(true);
-          thClone.style.cssText = `
-            background: ${defaultThBg} !important;
-            color: #ffffff !important;
-            padding: 6px 10px;
-            font-weight: 800;
-            border: 1px solid rgba(255,255,255,0.25);
-            text-align: ${thClone.classList.contains('num') ? 'right' : 'left'};
-            white-space: nowrap;
-          `;
-          headerRow.appendChild(thClone);
-        }
-        theadClone.appendChild(headerRow);
-        clonedTable.appendChild(theadClone);
+        clonedTable.appendChild(origThead.cloneNode(true));
       }
 
       const tbodyClone = document.createElement('tbody');
-      rowsToCapture.forEach((r, rIdx) => {
-        const trClone = document.createElement('tr');
-        const tds = Array.from(r.querySelectorAll('td')).filter(td => td.style.display !== 'none');
-        const startIndex = isStock && tds.length > 2 && sourceTable.querySelector('th')?.innerText.toLowerCase().includes('brand') ? 1 : 0;
+      let capturedHasTotal = false;
 
-        const isTotalRow = r.classList.contains('brand-total-row') || r.classList.contains('cat-total-row') || r.classList.contains('stock-grand-total') || r.classList.contains('total-row');
-        let rowBg = (rIdx % 2 === 0) ? (isLight ? '#ffffff' : '#0b1526') : (isLight ? '#f8fafc' : '#091222');
-        if (r.classList.contains('brand-total-row')) rowBg = '#fff3cd';
-        if (r.classList.contains('cat-total-row')) rowBg = '#e2efda';
-        if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) rowBg = '#1e3a5f';
+      rowsToCapture.forEach(r => {
+        const trClone = r.cloneNode(true);
+        trClone.classList.remove('excel-selected', 'excel-active-focus');
 
-        for (let i = startIndex; i < tds.length; i++) {
-          const tdClone = tds[i].cloneNode(true);
-          const isNum = tdClone.classList.contains('num');
-          let textClr = baseTextColor;
-          if (isTotalRow && !r.classList.contains('stock-grand-total') && !r.classList.contains('total-row')) textClr = '#000000';
-          if (r.classList.contains('stock-grand-total') || r.classList.contains('total-row')) textClr = '#ffffff';
+        const isSubtotal = trClone.classList.contains('subtotal-row');
+        const isGrandTotal = trClone.classList.contains('grandtotal-row') || trClone.classList.contains('total-row');
 
-          tdClone.style.cssText = `
-            background: ${rowBg} !important;
-            color: ${textClr} !important;
-            padding: 5px 8px;
-            border: 1px solid ${cellBorder};
-            font-weight: ${isTotalRow ? '800' : (i === startIndex ? '700' : '600')};
-            text-align: ${isNum ? 'right' : 'left'};
-            font-family: ${isNum ? "'Consolas', monospace" : "inherit"};
-            white-space: nowrap;
-          `;
-          trClone.appendChild(tdClone);
-        }
+        if (isGrandTotal) capturedHasTotal = true;
+
+        trClone.querySelectorAll('td').forEach(td => {
+          td.style.padding = `${cfg.cellPadding}px 6px`;
+          if (!isSubtotal && !isGrandTotal) {
+            td.style.color = '#000000';
+            td.style.fontWeight = '800';
+          }
+        });
+
         tbodyClone.appendChild(trClone);
       });
       clonedTable.appendChild(tbodyClone);
+
+      const origTfoot = sourceTable.querySelector('tfoot');
+      if (origTfoot && !capturedHasTotal) {
+        const tfootClone = origTfoot.cloneNode(true);
+        tfootClone.querySelectorAll('tr').forEach(tr => {
+          tr.classList.remove('excel-selected', 'excel-active-focus');
+          tr.style.backgroundColor = '#1e3a5f';
+          tr.style.color = '#ffffff';
+          tr.querySelectorAll('td').forEach(td => {
+            td.style.padding = `${cfg.cellPadding}px 6px`;
+            td.style.color = '#ffffff';
+            td.style.fontWeight = '900';
+          });
+        });
+        clonedTable.appendChild(tfootClone);
+      }
 
       captureBox.appendChild(clonedTable);
       document.body.appendChild(captureBox);
 
       const canvas = await html2canvas(captureBox, {
         backgroundColor: cardBg,
-        scale: 2.5,
+        scale: 3.2,
         logging: false,
         useCORS: true
       });
@@ -1551,13 +1636,15 @@
       const dataUrl = canvas.toDataURL('image/png', 1.0);
       const res = await ipcRenderer.invoke('copy-image-to-clipboard', dataUrl);
       if (res && res.success) {
-        showBannerAlert(`🎉 HD Report Card with Heading Copied to Clipboard!`, "#10b981");
+        showBannerAlert(`🎉 Ultra-HD Card Copied (With Total Row)!`, "#10b981");
       } else {
-        alert("Clipboard Image Copy Error: " + (res ? res.message : 'Unknown'));
+        alert("Clipboard Error: " + (res ? res.message : 'Unknown'));
       }
     }
 
-    // Keyboard Shortcuts
+    // -------------------------------------------------------------
+    // KEYBOARD LISTENER (CTRL + C: HD IMAGE COPY WITH HEADER & TOTAL)
+    // -------------------------------------------------------------
     window.addEventListener('keydown', async (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
 
@@ -1565,7 +1652,7 @@
         const table = getActiveTableElement();
         if (!table) return;
 
-        let selectedRows = Array.from(table.querySelectorAll('tbody tr.excel-selected'));
+        let selectedRows = Array.from(table.querySelectorAll('tbody tr.excel-selected, tfoot tr.excel-selected'));
 
         if (selectedRows.length === 0) {
           const sel = window.getSelection();
@@ -1589,7 +1676,6 @@
         copyTableAsImage(table.id);
       }
 
-      // Arrow Down Navigation
       if (e.key === 'ArrowDown') {
         const table = getActiveTableElement();
         if (!table) return;
@@ -1621,7 +1707,6 @@
         }
       }
 
-      // Arrow Up Navigation
       if (e.key === 'ArrowUp') {
         const table = getActiveTableElement();
         if (!table) return;
@@ -1652,13 +1737,12 @@
       }
     });
 
-    // Dynamic Full Table Image Capture
     async function copyTableAsImage(tableId) {
       let targetTable = document.getElementById(tableId);
       if (!targetTable) targetTable = getActiveTableElement();
       if (!targetTable) return alert("Table mojood nahi hai!");
 
-      const rows = Array.from(targetTable.querySelectorAll('tbody tr')).filter(r => r.style.display !== 'none');
+      const rows = Array.from(targetTable.querySelectorAll('tbody tr, tfoot tr')).filter(r => r.style.display !== 'none');
       if (rows.length === 0) return alert("Table mein koi data nahi mila!");
       await captureAndCopyHDImage(rows, targetTable);
     }
@@ -1693,31 +1777,101 @@
     async function openSnDWindow() { await ipcRenderer.invoke('launch-snd-portal'); }
     async function openDSSWindow() { await ipcRenderer.invoke('launch-dss-portal'); }
 
-    async function openSettingsModal() {
-      const res = await ipcRenderer.invoke('get-all-credentials');
-      if (res.success && res.credentials) {
-        document.getElementById('settingSndDist').value = res.credentials.snd.distributor || '';
-        document.getElementById('settingSndUser').value = res.credentials.snd.username || '';
-        document.getElementById('settingSndPass').value = res.credentials.snd.password || '';
-        document.getElementById('settingDssUser').value = res.credentials.dss.username || '';
-        document.getElementById('settingDssPass').value = res.credentials.dss.password || '';
+    // -------------------------------------------------------------
+    // CLOUD 1-CLICK LIVE SYNC FUNCTION
+    // -------------------------------------------------------------
+    async function syncAppFromGitHub() {
+      showBannerAlert("⏳ Cloud se latest data sync ho raha hai...", "#0284c7");
+
+      if (typeof autoPullFromCloud === 'function') {
+        await autoPullFromCloud();
+        showBannerAlert("🎉 App data Cloud se kamyabi ke sath update ho gaya!", "#10b981");
+      } else {
+        showBannerAlert("✅ App is up to date!", "#10b981");
       }
-      document.getElementById('settingsModal').style.display = 'flex';
     }
-    function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
 
-    async function saveAllSettingsCredentials() {
-      const sndDist = document.getElementById('settingSndDist').value.trim();
-      const sndUser = document.getElementById('settingSndUser').value.trim();
-      const sndPass = document.getElementById('settingSndPass').value.trim();
-      const dssUser = document.getElementById('settingDssUser').value.trim();
-      const dssPass = document.getElementById('settingDssPass').value.trim();
+    async function autoPullFromCloud() {
+      if (typeof ipcRenderer === 'undefined') return;
+      try {
+        const tRes = await ipcRenderer.invoke('cloud-pull-data', 'sales_current_data');
+        if (tRes && tRes.success && Array.isArray(tRes.data) && tRes.data.length > 0) {
+          allRecords = tRes.data;
+          liveCachedRecords = JSON.parse(JSON.stringify(tRes.data));
+          window.LIVE_CURRENT_SNAPSHOT = JSON.parse(JSON.stringify(tRes.data));
+          populateDropdowns();
+          if (document.getElementById('moduleTargetView')?.classList.contains('active')) {
+            if (window.TargetModule) TargetModule.renderTable();
+          }
+          showBannerAlert("☁️ Cloud se latest sales data auto-sync ho gaya!", "#10b981");
+        }
 
-      const res = await ipcRenderer.invoke('save-all-credentials', {
-        snd: { distributor: sndDist, username: sndUser, password: sndPass },
-        dss: { username: dssUser, password: dssPass }
+        const bRes = await ipcRenderer.invoke('cloud-pull-data', 'custom_brands_map');
+        if (bRes && bRes.success && bRes.data) {
+          customBrandsMap = bRes.data;
+          populateDropdowns();
+        }
+      } catch (e) {
+        console.error("Cloud pull error:", e);
+      }
+    }
+
+    async function pushSalesToCloud(records) {
+      if (typeof ipcRenderer === 'undefined' || !records || !records.length) return;
+      const res = await ipcRenderer.invoke('cloud-push-data', {
+        collectionKey: 'sales_current_data',
+        payload: records
       });
-      if (res.success) { closeSettingsModal(); showBannerAlert("⚙️ Credentials saved!", "#059669"); }
+      if (res && res.success) {
+        showBannerAlert("☁️ Data live Cloud par sync ho gaya!", "#0284c7");
+      }
+    }
+
+    async function pushCustomBrandsToCloud(bMap) {
+      if (typeof ipcRenderer === 'undefined') return;
+      await ipcRenderer.invoke('cloud-push-data', {
+        collectionKey: 'custom_brands_map',
+        payload: bMap
+      });
+    }
+
+    // -------------------------------------------------------------
+    // PER-MODULE INDEPENDENT TABLE FONT SCALING ENGINE
+    // -------------------------------------------------------------
+    function getActiveModuleKey() {
+      const activeView = document.querySelector('.module-view.active');
+      if (!activeView) return 'DASHBOARD';
+      return activeView.id.replace('module', '').replace('View', '').toUpperCase();
+    }
+
+    function applyReportFont() {
+      const modKey = getActiveModuleKey();
+      const savedFont = parseInt(localStorage.getItem('reportTableFont_' + modKey) || '11', 10);
+
+      const activeView = document.querySelector('.module-view.active');
+      if (activeView) {
+        activeView.style.setProperty('--report-font-scale', savedFont + 'px');
+        activeView.querySelectorAll('table, .exec-table, .table-wrapper table').forEach(tbl => {
+          tbl.style.fontSize = savedFont + 'px';
+          tbl.querySelectorAll('th, td').forEach(c => {
+            c.style.fontSize = savedFont + 'px';
+          });
+        });
+      }
+    }
+
+    function changeReportFontSize(delta) {
+      const modKey = getActiveModuleKey();
+      let currentFont = parseInt(localStorage.getItem('reportTableFont_' + modKey) || '11', 10);
+      currentFont = Math.min(22, Math.max(8, currentFont + delta));
+      localStorage.setItem('reportTableFont_' + modKey, currentFont);
+      applyReportFont();
+    }
+
+    function resetReportFontSize() {
+      const modKey = getActiveModuleKey();
+      localStorage.setItem('reportTableFont_' + modKey, 11);
+      applyReportFont();
     }
 
     function showBannerAlert(msg, bg = 'linear-gradient(90deg, #10b981 0%, #059669 100%)') {
@@ -1770,8 +1924,8 @@
           DashboardModule.update();
         }
 
-        // Apply Independent Formatting for the initial page
-        applyFormattingToModule('DASHBOARD');
+        autoPullFromCloud();
+        setTimeout(applyReportFont, 100);
       } catch (err) {
         console.error("DOM Init Error:", err);
       }
